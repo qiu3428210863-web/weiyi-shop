@@ -1,0 +1,6 @@
+{
+  "name": "LuxeSpirit 批发商城",
+  "description": "专业的高端烈酒与白酒 B2B 批发管理平台，支持最小起订量校验、授信额度支付、全套物流追踪及交互式订单与分类管理系统。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
