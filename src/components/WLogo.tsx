@@ -1,120 +1,21 @@
 import React from 'react';
 
 interface WLogoProps {
-  className?: string; // Tailwind overrides
+  className?: string;
   color?: 'white' | 'brand';
 }
 
 export const WLogo: React.FC<WLogoProps> = ({ className = 'w-10 h-10', color = 'brand' }) => {
-  // Slate-purple color code from the user image: #5c62b5
   const primaryColor = '#5c62b5';
-  
+
   return (
-    <svg 
-      viewBox="0 0 500 320" 
-      className={`${className} transition-all duration-300`} 
-      fill="none" 
+    <svg
+      viewBox="0 0 235 141"
+      className={`${className} transition-all duration-300`}
+      fill={color === 'white' ? 'white' : primaryColor}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Background container just for reference in vector pathing */}
-      <g>
-        {/* The main stylized "W" body */}
-        <path 
-          d="M 50 120 
-             C 50 80, 110 80, 115 120 
-             L 170 240 
-             C 175 270, 225 270, 230 240 
-             L 270 140 
-             C 275 110, 325 110, 330 140 
-             L 375 230 
-             C 380 260, 430 265, 435 230 
-             L 350 125" 
-          stroke={color === 'white' ? 'white' : primaryColor} 
-          strokeWidth="0" 
-          fill="none"
-        />
-        
-        {/* Highly precise stylized bold letter W connected to circular badge */}
-        <path
-          d="M 120 70 
-             C 70 70, 70 140, 70 150 
-             L 115 240 
-             C 130 270, 175 270, 190 240 
-             L 245 130 
-             C 255 110, 285 110, 295 130 
-             L 350 240 
-             C 365 270, 410 270, 425 240 
-             L 470 150 
-             O"
-          fill="none"
-        />
-
-        {/* Real Bezier Path tracing the double-u curve and speed circles */}
-        <g>
-          {/* Main shape body */}
-          <path
-            d="M 90 90 
-               C 60 90, 45 120, 45 150 
-               L 85 235 
-               C 105 275, 155 275, 175 235 
-               L 230 125 
-               C 240 105, 270 105, 280 125 
-               L 335 235 
-               C 355 275, 405 275, 425 235 
-               L 440 205
-               L 380 150
-               C 335 150, 310 180, 295 210
-               L 260 140
-               C 240 105, 210 105, 195 120
-               L 150 210
-               L 110 120
-               C 105 100, 100 90, 90 90 Z"
-            fill={color === 'white' ? 'white' : primaryColor}
-          />
-
-          {/* Corrected fluid connector to upper-right circle */}
-          <path
-            d="M 335 235 
-               L 410 115 
-               C 405 105, 400 95, 400 90
-               C 390 70, 410 50, 430 45
-               C 455 40, 480 55, 485 80
-               C 490 105, 475 125, 450 130
-               L 375 250
-               C 355 280, 310 275, 295 245 
-               C 295 245, 320 255, 335 235 Z"
-            fill={color === 'white' ? 'white' : primaryColor}
-          />
-          
-          {/* Upper Right Circle Wrapper badge background */}
-          <circle 
-            cx="445" 
-            cy="85" 
-            r="45" 
-            fill={color === 'white' ? 'white' : primaryColor} 
-          />
-
-          {/* Inner Badge Background: white when brand is used; brand colored when logo group is white */}
-          <circle 
-            cx="445" 
-            cy="85" 
-            r="38" 
-            fill={color === 'white' ? primaryColor : 'white'} 
-          />
-
-          {/* Inner Custom wing element (represents the F/E wings inside the circle) */}
-          <path 
-            d="M 425 80 
-               C 425 70, 445 68, 465 68 
-               C 458 75, 445 76, 438 78
-               C 442 82, 458 80, 468 80
-               C 455 86, 445 87, 438 88
-               C 440 93, 455 92, 465 92
-               C 450 97, 435 97, 430 90 Z" 
-            fill={color === 'white' ? 'white' : primaryColor}
-          />
-        </g>
-      </g>
+      <path d="M230.62,9.92c5.57,7.95,5.64,19.84.95,28.24-2.66,4.78-10.45,10.57-15.92,11.51-2.75.47-7.78-.22-9.32,1.16l-33.86,53.43c2.99,6.83,3.11,16.14-.52,22.81-1.39,2.54-6.03,7.91-8.45,9.31-5.76,3.34-13.28,5.41-20.06,3.43-.69-.2-4.81-1.88-5.79-2.3-4.15-1.77-5.65-5.28-8.93-7.98l-28.75-50.4-10.72,16.71c1.61,3.93,4.19,7.21,5.12,11.53,5.95,27.59-26.1,41.89-44.29,22.6C36.35,102.32,15.51,74.12,3.01,46.25-10.62,15.86,25.29-5.79,45.93,18.57l30.21,54.4,1.66.5,10.21-16.56c-6.95-11.95-12.48-21.61-4.98-35.18,8.3-15.02,29.71-16.2,41.07-3.95l32.54,57.88,3.77,5.09,27.49-42.01c.57-2.09-2.69-8.02-2.89-11.75-.71-13.21,7.92-24.61,20.91-26.69,8.74-1.4,19.62,2.35,24.72,9.63ZM230.92,16.9h-28.2c-.11,0-.03,1.26-.85,1.95-6.77,5.71-9.04,8.56-8.02,18.26h12.49c1.13,0,4.53-3.1,3.63-4.85h-12.09c1.17-15.73,17.28-8.83,27.61-10.7,2.24-.41,5.36-1.99,5.43-4.66ZM222.06,23.36h-12.49c-2.24,0-5.8,4.33-6.04,6.47h13.3c2.31,0,5.89-3.76,5.24-6.47Z" />
     </svg>
   );
 };
