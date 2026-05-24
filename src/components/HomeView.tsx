@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { Product } from '../types';
-import { Search, Volume2, Plus, Minus, ChevronRight, PlayCircle, QrCode } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Product, CartItem } from '../types';
+import { Search, ShoppingCart, SlidersHorizontal, ArrowUpDown, RefreshCw, AlertTriangle, ShieldCheck, Wallet, X } from 'lucide-react';
 import { WLogo } from './WLogo';
 
 interface HomeViewProps {
   products: Product[];
   onSelectProduct: (product: Product) => void;
   onAddToCart: (productId: string, quantity: number) => void;
-  onNavigateToTab: (tabId: string, categoryId?: string) => void;
+  onNavigateToTab: (tabId: string) => void;
   cartCount: number;
+  cartTotalPrice: number;
+  cartItems: CartItem[];
+  onUpdateCartQty: (productId: string, qty: number) => void;
+  onRemoveFromCart: (productId: string) => void;
+  onToggleCartCheck: (productId: string) => void;
+  onToggleAllCart: (checked: boolean) => void;
+  onCheckout: (checkedItemIds: string[]) => void;
+  userCreditLimit: number;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -17,415 +25,554 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onAddToCart,
   onNavigateToTab,
   cartCount,
+  cartTotalPrice,
+  cartItems,
+  onUpdateCartQty,
+  onRemoveFromCart,
+  onToggleCartCheck,
+  onToggleAllCart,
+  onCheckout,
+  userCreditLimit,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeLeaderboardQtys, setActiveLeaderboardQtys] = useState<Record<string, number>>({
-    'stout-beer-can-24': 0,
-    'classic-light-aroma-baijiu': 0,
-  });
-  const [scannerOpen, setScannerOpen] = useState(false);
+  const [priceSortOrder, setPriceSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
+  const [stockOnlyFilter, setStockOnlyFilter] = useState(false);
+  const [qtys, setQtys] = useState<Record<string, number>>({});
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-
-  // Filter leaders
-  const leaderboardItems = products.filter(
-    (p) => p.id === 'stout-beer-can-24' || p.id === 'classic-light-aroma-baijiu'
-  );
-
-  // Frequently purchased items
-  const freqItems = products.filter(
-    (p) => p.id === 'changzhou-premium-baijiu' || p.id === 'cabernet-selection-red'
-  );
+  const [showCartSheet, setShowCartSheet] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [paymentDone, setPaymentDone] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
-    setTimeout(() => {
-      setToastMsg(null);
-    }, 2000);
+    setTimeout(() => setToastMsg(null), 2000);
   };
 
-  const handleLeaderboardStepper = (productId: string, delta: number, minMoq: number) => {
-    setActiveLeaderboardQtys((prev) => {
-      const current = prev[productId] || 0;
-      let next = current + delta;
+  const togglePriceSort = () => {
+    setPriceSortOrder((prev) => {
+      if (prev === 'none') return 'asc';
+      if (prev === 'asc') return 'desc';
+      return 'none';
+    });
+    showToast(
+      priceSortOrder === 'none'
+        ? '已按价格从低到高排列'
+        : priceSortOrder === 'asc'
+          ? '已按价格从高到低排列'
+          : '已重置价格排序'
+    );
+  };
+
+  const toggleStockFilter = () => {
+    setStockOnlyFilter((prev) => !prev);
+    showToast(!stockOnlyFilter ? '已过滤显示有现货的商品' : '已显示全部目录');
+  };
+
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
+      );
+    }
+
+    if (stockOnlyFilter) {
+      result = result.filter((p) => p.tags?.includes('现货') || p.tags?.includes('有库存'));
+    }
+
+    if (priceSortOrder === 'asc') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (priceSortOrder === 'desc') {
+      result.sort((a, b) => b.price - a.price);
+    }
+
+    return result;
+  }, [products, searchQuery, stockOnlyFilter, priceSortOrder]);
+
+  const updateQty = (id: string, delta: number, moq: number) => {
+    setQtys((prev) => {
+      const cur = prev[id] || 0;
+      let next = cur + delta;
       if (next < 0) next = 0;
-      // If we increase from 0, snap directly to MOQ
-      if (current === 0 && delta > 0) {
-        next = minMoq;
-        showToast(`已为您自适应重置至最小起订量 ${minMoq} 箱`);
-      } else if (next > 0 && next < minMoq && delta < 0) {
-        // Decreasing below moq resets to 0
+      if (cur === 0 && delta > 0) {
+        next = moq;
+        showToast(`已自适应最小起订量 ${moq} 箱`);
+      } else if (next > 0 && next < moq && delta < 0) {
         next = 0;
       }
-      return { ...prev, [productId]: next };
+      return { ...prev, [id]: next };
     });
   };
 
-  const handleAddLeaderboardToCart = (p: Product) => {
-    const qty = activeLeaderboardQtys[p.id] || 0;
+  const handleAddCart = (p: Product) => {
+    const qty = qtys[p.id] || 0;
     if (qty < p.moq) {
-      showToast(`注意：该商品的最小起订量为 ${p.moq} 箱`);
-      // Snap to MOQ
-      setActiveLeaderboardQtys((prev) => ({ ...prev, [p.id]: p.moq }));
+      showToast(`最小起订量为 ${p.moq} 箱`);
+      setQtys((prev) => ({ ...prev, [p.id]: p.moq }));
       return;
     }
     onAddToCart(p.id, qty);
-    showToast(`成功将 ${qty} 箱 ${p.name} 放入购物车`);
-    // Reset stepper
-    setActiveLeaderboardQtys((prev) => ({ ...prev, [p.id]: 0 }));
+    showToast(`已加 ${qty} 箱 ${p.name}`);
+    setQtys((prev) => ({ ...prev, [p.id]: 0 }));
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onNavigateToTab('category');
-    // We could pass search state optionally but redirecting is fine for a prototype search bar
-  };
+  // Cart sheet computations
+  const cartProductMap = useMemo(() => {
+    return new Map<string, Product>(products.map((p) => [p.id, p]));
+  }, [products]);
 
-  const handleScanMock = () => {
-    setScannerOpen(true);
-  };
+  const checkedItems = useMemo(() => {
+    return cartItems.filter((item) => item.checked);
+  }, [cartItems]);
 
-  const handleConfirmScan = (productId: string) => {
-    setScannerOpen(false);
-    const targetProduct = products.find((p) => p.id === productId);
-    if (targetProduct) {
-      onSelectProduct(targetProduct);
+  const isAllChecked = useMemo(() => {
+    return cartItems.length > 0 && cartItems.every((item) => item.checked);
+  }, [cartItems]);
+
+  const sheetCalculations = useMemo(() => {
+    let subtotal = 0;
+    let totalItemsCount = 0;
+    checkedItems.forEach((item) => {
+      const p = cartProductMap.get(item.productId);
+      if (p) {
+        subtotal += p.price * item.quantity;
+        totalItemsCount += item.quantity;
+      }
+    });
+    const wholesaleDiscount = subtotal * 0.05;
+    const finalAmount = subtotal - wholesaleDiscount;
+    return { subtotal, totalItemsCount, wholesaleDiscount, finalAmount };
+  }, [checkedItems, cartProductMap]);
+
+  const handleQtyStep = (productId: string, delta: number) => {
+    const item = cartItems.find((ci) => ci.productId === productId);
+    if (item) {
+      const nextTarget = Math.max(0, item.quantity + delta);
+      if (nextTarget === 0) {
+        onRemoveFromCart(productId);
+      } else {
+        onUpdateCartQty(productId, nextTarget);
+      }
     }
   };
 
+  const attemptCheckoutFlow = () => {
+    if (checkedItems.length === 0) {
+      setErrorMessage('请至少勾选一个想要结算的大宗分销商品');
+      return;
+    }
+    setErrorMessage(null);
+    setCheckoutOpen(true);
+    setPaymentDone(false);
+  };
+
+  const handleConfirmPayment = () => {
+    if (sheetCalculations.finalAmount > userCreditLimit) {
+      setErrorMessage(`支付失败：本次采购需要 ¥${sheetCalculations.finalAmount.toFixed(2)}，但您的授信可用额度为 ¥${userCreditLimit.toFixed(2)}，额度不足，请拨打常州厂财务部充值。`);
+      return;
+    }
+    setErrorMessage(null);
+    setCheckoutLoading(true);
+    setTimeout(() => {
+      setCheckoutLoading(false);
+      setPaymentDone(true);
+      setTimeout(() => {
+        const processedIds = checkedItems.map((item) => item.productId);
+        onCheckout(processedIds);
+        setCheckoutOpen(false);
+        setPaymentDone(false);
+        setShowCartSheet(false);
+      }, 1500);
+    }, 1200);
+  };
+
   return (
-    <div className="bg-surface-bg min-h-screen text-text-primary pb-32">
-      {/* Search Header */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest">
-        <div className="flex items-center gap-2">
-          <WLogo className="w-6 h-6 text-brand-secondary" />
-          <h1 className="font-sans text-xs font-extrabold text-brand-primary tracking-tight">
-            常州唯一产品订货平台
-          </h1>
-        </div>
-        <div className="relative">
-          <button 
-            onClick={() => onNavigateToTab('cart')}
-            className="flex items-center justify-center p-2 rounded-full hover:bg-surface-low relative"
-            title="购物车"
-          >
-            <div className="w-5 h-5 border border-brand-primary rounded flex items-center justify-center font-mono text-[9px] font-bold">
-              C
+    <div className="bg-surface-bg min-h-screen text-text-primary pb-36">
+      {/* Header */}
+      <header className="fixed top-0 left-0 w-full z-40 bg-surface-lowest border-b border-surface-highest px-4 py-2.5">
+        <div className="max-w-lg mx-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <WLogo className="w-6 h-6 text-brand-secondary" />
+              <h1 className="font-sans text-xs font-extrabold text-brand-primary">
+                常州唯一产品订货平台
+              </h1>
             </div>
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 bg-brand-secondary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </button>
+            <button
+              onClick={() => setShowCartSheet(true)}
+              className="relative p-2 rounded-full hover:bg-surface-low"
+            >
+              <ShoppingCart className="w-5 h-5 text-brand-primary" />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-secondary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <input
+              className="w-full bg-surface-low border border-surface-highest rounded-lg pl-9 pr-8 py-2 font-sans text-xs outline-none focus:border-brand-primary transition-all"
+              type="text"
+              placeholder="搜索产品名称或商品编码(SKU)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="pt-16 px-4 max-w-lg mx-auto space-y-6">
-        {/* Toast Notifier */}
+      <main className="pt-28 px-4 max-w-lg mx-auto">
+        {/* Toast */}
         {toastMsg && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-brand-primary text-white text-xs px-4 py-3 rounded-md shadow-lg transition-all text-center">
+          <div className="fixed top-36 left-1/2 -translate-x-1/2 z-50 bg-brand-primary text-white text-xs px-4 py-2 rounded shadow-lg">
             {toastMsg}
           </div>
         )}
 
-        {/* Floating Scanner Simulation Modal */}
-        {scannerOpen && (
-          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-            <div className="bg-surface-lowest w-full max-w-sm rounded-xl p-6 text-center space-y-4 shadow-xl border border-surface-highest">
-              <div className="w-16 h-16 bg-brand-secondary/10 rounded-full flex items-center justify-center text-brand-secondary mx-auto">
-                <QrCode className="w-8 h-8" />
-              </div>
-              <h3 className="font-sans text-md font-bold text-brand-primary">扫描商品条形码</h3>
-              <p className="text-xs text-text-muted">
-                在仓库现场扫描条码可迅速核验保税库存、Moq 规格并支持极速下单。请选择一瓶商品扫码：
-              </p>
-              
-              <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pt-2">
-                <button 
-                  onClick={() => handleConfirmScan('heritage-reserve-12y')}
-                  className="w-full text-xs text-left p-3 rounded-lg border border-surface-highest hover:bg-surface-low transition-colors font-medium flex justify-between"
-                >
-                  <span>Heritage Reserve 12年威士忌</span>
-                  <span className="font-mono text-[10px] text-text-muted">LS-8842-SPR</span>
-                </button>
-                <button 
-                  onClick={() => handleConfirmScan('changzhou-premium-baijiu')}
-                  className="w-full text-xs text-left p-3 rounded-lg border border-surface-highest hover:bg-surface-low transition-colors font-medium flex justify-between"
-                >
-                  <span>常州窖藏52度白酒</span>
-                  <span className="font-mono text-[10px] text-text-muted">CZ-B-5201</span>
-                </button>
-              </div>
-              
-              <button 
-                onClick={() => setScannerOpen(false)}
-                className="w-full h-11 bg-brand-primary text-white font-bold text-xs rounded-lg mt-2"
-              >
-                取消扫码
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Integrated Search Input Container */}
-        <section className="relative">
-          <form onSubmit={handleSearchSubmit} className="flex gap-2">
-            <div className="flex-grow flex items-center bg-surface-low border border-surface-highest rounded-lg px-3.5 h-12">
-              <Search className="w-5 h-5 text-text-muted mr-2" />
-              <input 
-                onClick={() => onNavigateToTab('category')}
-                className="bg-transparent border-none outline-none w-full font-sans text-sm text-brand-primary placeholder-text-muted/65" 
-                placeholder="搜索常州本土白酒、洋酒 SKU..." 
-                type="text"
-                readOnly
-              />
-            </div>
-            <button 
-              type="button"
-              onClick={handleScanMock}
-              className="px-4 bg-brand-primary text-white rounded-lg flex items-center gap-1.5 h-12 font-sans text-xs font-bold hover:bg-brand-primary/95 transition-colors"
+        {/* Filter Bar */}
+        <section className="sticky top-28 bg-surface-bg/95 backdrop-blur-md z-30 py-2.5 -mx-4 px-4 border-b border-surface-highest/50">
+          <div className="flex items-center gap-3 text-[11px]">
+            <button
+              onClick={togglePriceSort}
+              className={`flex items-center gap-1 py-1 px-2.5 rounded border transition-colors select-none ${
+                priceSortOrder !== 'none'
+                  ? 'border-brand-primary bg-brand-primary/5 text-brand-primary font-bold'
+                  : 'border-surface-highest text-text-muted bg-surface-lowest'
+              }`}
             >
-              <QrCode className="w-4 h-4" />
-              <span>扫码</span>
+              <ArrowUpDown className="w-3.5 h-3.5" />
+              <span>价格{priceSortOrder === 'asc' ? ' ↑' : priceSortOrder === 'desc' ? ' ↓' : ''}</span>
             </button>
-          </form>
-        </section>
 
-        {/* Horizontal Announcements Scrolling Cards */}
-        <section className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h2 className="font-hanken text-xs font-bold text-text-muted uppercase tracking-wider">工厂公告与专题</h2>
-            <span className="text-xs text-text-muted flex items-center hover:text-brand-secondary cursor-pointer">
-              全部公告
-              <ChevronRight className="w-3.5 h-3.5" />
-            </span>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-2 hide-scrollbar snap-x snap-mandatory -mx-4 px-4">
-            {/* Banner 1 */}
-            <div className="relative flex-shrink-0 w-[85%] aspect-[21/10] rounded-xl overflow-hidden bg-[#241318] shadow-sm snap-center">
-              <img 
-                className="absolute inset-0 w-full h-full object-cover opacity-75" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEpZoBAnVF8EmoVrSn5oplCy5ufTFM8qSCrA8wxkMs2lfQbG0zVfgyzKBjvPqdNq-eSXcpUN7w5zJJ7rz6KLlIjebb7gR0DqJ0WGod8PP2uHR9ZKYKpzH4p5bbs_xuisUQrEnJtGXjHbUEUP0AeWN6ezrJsRvCtUf-7lUxsD9Xk-0PTjDaHakA87eYuVql8gFIo8mcSMlXeoTxLIpfi0WbmybLQ3uCAobjvexLOy_9unZqQCzmfbX6b2hH8sjcguTImjZfdZOAmY9M" 
-                alt="2024夏季窖藏"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 flex flex-col justify-end">
-                <span className="text-white/80 font-mono text-[9px] uppercase tracking-wider mb-1">大宗专题订货会</span>
-                <p className="text-white font-sans text-sm font-bold leading-snug">
-                  2024夏季常州窖深藏原酒系列 线上订购配额开放
-                </p>
-              </div>
-            </div>
-
-            {/* Banner 2 */}
-            <div className="relative flex-shrink-0 w-[85%] aspect-[21/10] rounded-xl overflow-hidden bg-[#131d24] shadow-sm snap-center">
-              <img 
-                className="absolute inset-0 w-full h-full object-cover opacity-75" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB37avxPcxQ7hQWeimBbHrAM9sOObZ14VLcdPxCxhlwtzDD2Kv_2vUZU2Fi581d23eVYw5Pzgs0jU_qZFArcWDKakSFd1yZKLkhgFeceBNJUKKaiVrD_SQIijDGVvPjGo0fBSfseS5ei4kDLh0Eo5BvNdi1YWSXeQ6DLqXv_tqcPtgOSXSqYXb0lV9zUmrioCUeWsPJs-N7JqrrSqSB224NbUJW39NpcSoFqw8k_vXtRt2CLncV086Yrb02l848vVH1P2EPRrr39Ipk" 
-                alt="物流全面升级"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 flex flex-col justify-end">
-                <span className="text-white/80 font-mono text-[9px] uppercase tracking-wider mb-1">物流通告</span>
-                <p className="text-white font-sans text-sm font-bold leading-snug">
-                  华东地区物流保税港调拨中心 承兑发车流程全面升级
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Circle quick links category grid */}
-        <section className="bg-surface-lowest rounded-xl p-4 border border-surface-highest grid grid-cols-4 gap-4">
-          <button 
-            onClick={() => onNavigateToTab('category', 'baijiu')}
-            className="flex flex-col items-center gap-1.5 group select-none"
-          >
-            <div className="w-12 h-12 rounded-full bg-surface-low border border-surface-highest flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-200">
-              <span className="font-hanken text-[18px] font-bold">白</span>
-            </div>
-            <span className="text-xs text-text-primary font-medium">白酒专区</span>
-          </button>
-          
-          <button 
-            onClick={() => onNavigateToTab('category', 'wine')}
-            className="flex flex-col items-center gap-1.5 group select-none"
-          >
-            <div className="w-12 h-12 rounded-full bg-surface-low border border-surface-highest flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-200">
-              <span className="font-hanken text-[18px] font-bold">红</span>
-            </div>
-            <span className="text-xs text-text-primary font-medium">红洋酒区</span>
-          </button>
-          
-          <button 
-            onClick={() => onNavigateToTab('category', 'beer')}
-            className="flex flex-col items-center gap-1.5 group select-none"
-          >
-            <div className="w-12 h-12 rounded-full bg-surface-low border border-surface-highest flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-200">
-              <span className="font-hanken text-[18px] font-bold">啤</span>
-            </div>
-            <span className="text-xs text-text-primary font-medium">精酿啤酒</span>
-          </button>
-          
-          <button 
-            onClick={() => onNavigateToTab('category', 'accessories')}
-            className="flex flex-col items-center gap-1.5 group select-none"
-          >
-            <div className="w-12 h-12 rounded-full bg-surface-low border border-surface-highest flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-200">
-              <span className="font-hanken text-[18px] font-bold">配</span>
-            </div>
-            <span className="text-xs text-text-primary font-medium">酒具配件</span>
-          </button>
-        </section>
-
-        {/* Favorite purchase list (Horizontal cards with instant add to cart) */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-sans text-sm font-bold text-brand-primary">常用采购清单</h2>
-            <span 
-              onClick={() => onNavigateToTab('category')}
-              className="text-xs text-brand-secondary font-bold flex items-center cursor-pointer hover:underline"
+            <button
+              onClick={toggleStockFilter}
+              className={`flex items-center gap-1 py-1 px-2.5 rounded border transition-colors select-none ${
+                stockOnlyFilter
+                  ? 'border-brand-primary bg-brand-primary/5 text-brand-primary font-bold'
+                  : 'border-surface-highest text-text-muted bg-surface-lowest'
+              }`}
             >
-              再次订购产品
-              <ChevronRight className="w-3.5 h-3.5" />
-            </span>
-          </div>
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>仅看现货</span>
+            </button>
 
-          <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar -mx-4 px-4">
-            {freqItems.map((item) => (
-              <div 
-                key={item.id}
-                className="flex-shrink-0 w-44 bg-surface-lowest border border-surface-highest p-3 rounded-lg flex flex-col gap-2 group hover:border-brand-primary transition-colors cursor-pointer"
-                onClick={() => onSelectProduct(item)}
+            {(priceSortOrder !== 'none' || stockOnlyFilter || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setPriceSortOrder('none');
+                  setStockOnlyFilter(false);
+                }}
+                className="ml-auto text-[10px] text-brand-secondary underline font-bold shrink-0"
               >
-                <div className="aspect-square bg-surface-low rounded overflow-hidden">
-                  <img 
-                    className="w-full h-full object-contain p-1 mix-blend-multiply group-hover:scale-105 transition-transform" 
-                    src={item.image} 
-                    alt={item.name} 
-                  />
-                </div>
-                <div className="space-y-0.5">
-                  <p className="text-xs font-bold text-brand-primary truncate">{item.name}</p>
-                  <p className="font-mono text-[9px] text-text-muted">SKU: {item.sku}</p>
-                </div>
-                
-                <div className="flex items-center justify-between mt-auto pt-1">
-                  <span className="font-mono text-xs font-bold text-brand-primary">
-                    ¥{item.price.toLocaleString(undefined, { minimumFractionDigits: 0 })}
-                  </span>
-                  
-                  {/* Quick Cart injection */}
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAddToCart(item.id, item.moq);
-                      showToast(`已将起订量 ${item.moq} 箱 ${item.name} 加入购物车`);
-                    }}
-                    className="bg-brand-primary hover:bg-brand-secondary text-white w-7 h-7 rounded-full flex items-center justify-center transition-all shadow active:scale-90"
-                    title="加购起订量"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))}
+                重置筛选
+              </button>
+            )}
           </div>
         </section>
 
-        {/* Hot Sales Rank (Vertical lists with step interactive adjustments) */}
-        <section className="space-y-3 pb-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-sans text-sm font-bold text-brand-primary">月度订货排行</h2>
-            <div className="flex items-center gap-1.5 text-xs text-text-muted">
-              <span>按订货量排序</span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {leaderboardItems.map((item, idx) => {
-              const currentQty = activeLeaderboardQtys[item.id] || 0;
-              return (
-                <div 
-                  key={item.id}
-                  className="flex gap-4 p-3 bg-surface-lowest border border-surface-highest rounded-lg relative overflow-hidden hover:border-brand-primary transition-colors group cursor-pointer"
-                  onClick={() => onSelectProduct(item)}
-                >
-                  {/* Leader Tag badge */}
-                  <div className="absolute top-0 left-0 bg-brand-primary text-white font-mono font-bold px-2 py-0.5 rounded-br-lg text-[9px]">
-                    0{idx + 1}
-                  </div>
-
-                  <div className="w-16 h-16 flex-shrink-0 bg-surface-low rounded overflow-hidden">
-                    <img 
-                      className="w-full h-full object-contain p-1 mix-blend-multiply group-hover:scale-105 transition-transform" 
-                      src={item.image} 
-                      alt={item.name} 
-                    />
-                  </div>
-
-                  <div className="flex-grow flex flex-col justify-between">
-                    <div>
-                      <p className="text-xs font-bold text-brand-primary leading-snug line-clamp-1">{item.name}</p>
-                      <p className="font-mono text-[9px] text-text-muted mt-0.5">月销量 5,000+ 箱</p>
+        {/* Product Grid */}
+        <section className="mt-4">
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+              {filteredProducts.map((product, index) => {
+                const qty = qtys[product.id] || 0;
+                const isRight = index % 2 === 1;
+                return (
+                  <div
+                    key={product.id}
+                    className={`bg-surface-lowest border border-surface-highest rounded-xl overflow-hidden flex flex-col hover:border-brand-primary transition-colors group cursor-pointer ${
+                      isRight ? 'mt-6' : ''
+                    }`}
+                    onClick={() => onSelectProduct(product)}
+                  >
+                    <div className="aspect-[4/3] bg-surface-low overflow-hidden flex items-center justify-center p-3">
+                      <img
+                        className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                        src={product.image}
+                        alt={product.name}
+                      />
                     </div>
 
-                    <div className="flex items-end justify-between pt-1" onClick={(e) => e.stopPropagation()}>
-                      <span className="font-mono text-xs font-bold text-brand-secondary">
-                        ¥{item.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </span>
-                      
-                      {/* Integrated Stepper with instant Add action */}
-                      <div className="flex items-center gap-2">
-                        {currentQty > 0 ? (
-                          <div className="flex items-center border border-surface-highest rounded overflow-hidden h-7 bg-surface-low">
-                            <button 
-                              onClick={() => handleLeaderboardStepper(item.id, -1 * item.moq, item.moq)}
-                              className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold transition-all"
-                              title="减MOQ"
-                            >
-                              -
-                            </button>
-                            <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary bg-transparent text-center bg-transparent">
-                              {currentQty}
-                            </span>
-                            <button 
-                              onClick={() => handleLeaderboardStepper(item.id, item.moq, item.moq)}
-                              className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold transition-all"
-                              title="加MOQ"
-                            >
-                              +
-                            </button>
-                          </div>
-                        ) : null}
+                    <div className="p-3 flex flex-col flex-1 gap-2">
+                      <div className="flex-1 space-y-0.5">
+                        <p className="text-xs font-bold text-brand-primary leading-snug line-clamp-2">
+                          {product.name}
+                        </p>
+                        <p className="font-mono text-[9px] text-text-muted">SKU: {product.sku}</p>
+                      </div>
 
-                        {currentQty > 0 ? (
-                          <button 
-                            onClick={() => handleAddLeaderboardToCart(item)}
-                            className="h-7 bg-brand-secondary text-white text-[10px] font-bold px-2.5 rounded transition-colors"
-                          >
-                            加购
-                          </button>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="font-mono text-xs font-bold text-brand-secondary">
+                          ¥{product.price.toLocaleString()}
+                        </span>
+                        <span className="text-[9px] text-text-muted font-mono">
+                          MOQ {product.moq}箱
+                        </span>
+                      </div>
+
+                      <div
+                        className="flex items-center justify-between gap-1 pt-1 border-t border-surface-low"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {qty > 0 ? (
+                          <>
+                            <div className="flex items-center border border-surface-highest rounded overflow-hidden h-7 bg-surface-low">
+                              <button
+                                onClick={() => updateQty(product.id, -product.moq, product.moq)}
+                                className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary">
+                                {qty}
+                              </span>
+                              <button
+                                onClick={() => updateQty(product.id, product.moq, product.moq)}
+                                className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => handleAddCart(product)}
+                              className="h-7 bg-brand-secondary text-white text-[10px] font-bold px-2.5 rounded transition-colors shrink-0"
+                            >
+                              加购
+                            </button>
+                          </>
                         ) : (
-                          <button 
+                          <button
                             onClick={() => {
-                              setActiveLeaderboardQtys((prev) => ({ ...prev, [item.id]: item.moq }));
-                              showToast(`已开始配置货量。该商品支持最小起订：${item.moq} 箱`);
+                              setQtys((prev) => ({ ...prev, [product.id]: product.moq }));
+                              showToast(`最小起订量 ${product.moq} 箱`);
                             }}
-                            className="h-7 bg-brand-primary text-white text-[10px] font-bold px-2.5 rounded hover:bg-brand-secondary transition-colors"
+                            className="w-full h-7 bg-brand-primary text-white text-[10px] font-bold rounded hover:bg-brand-secondary transition-colors"
                           >
-                            配置量
+                            配置订货量
                           </button>
                         )}
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-20 text-center space-y-2">
+              <RefreshCw className="w-8 h-8 text-text-muted animate-spin mx-auto mb-2" />
+              <p className="text-xs text-text-muted font-mono">未找到匹配筛选条件的产品</p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setPriceSortOrder('none');
+                  setStockOnlyFilter(false);
+                }}
+                className="text-xs text-brand-secondary underline font-bold mt-2"
+              >
+                重置所有筛选器
+              </button>
+            </div>
+          )}
         </section>
       </main>
+
+      {/* Cart Bottom Sheet */}
+      {showCartSheet && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowCartSheet(false)} />
+          <div className="absolute bottom-0 left-0 right-0 bg-surface-lowest rounded-t-2xl flex flex-col max-h-[70vh] shadow-xl">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 bg-surface-highest rounded-full" />
+            </div>
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-surface-highest">
+              <h2 className="text-sm font-bold text-brand-primary">购物车清单</h2>
+              <button onClick={() => setShowCartSheet(false)} className="p-1 rounded-full hover:bg-surface-low">
+                <X className="w-4 h-4 text-text-muted" />
+              </button>
+            </div>
+
+            {/* Error banner */}
+            {errorMessage && (
+              <div className="mx-4 mt-2 bg-brand-error-container text-brand-error border border-brand-error/20 p-2.5 rounded-lg flex items-center gap-2 text-[10px] font-medium">
+                <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+                <p className="flex-grow">{errorMessage}</p>
+                <button onClick={() => setErrorMessage(null)} className="font-bold underline shrink-0">忽略</button>
+              </div>
+            )}
+
+            {/* Cart Items */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => {
+                  const p = cartProductMap.get(item.productId);
+                  if (!p) return null;
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 bg-surface-low rounded-lg p-2.5">
+                      <input
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={() => onToggleCartCheck(item.productId)}
+                        className="w-4 h-4 rounded border-surface-highest text-brand-primary focus:ring-brand-primary cursor-pointer shrink-0"
+                      />
+                      <img src={p.image} alt={p.name} className="w-10 h-10 object-contain mix-blend-multiply bg-white rounded flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-brand-primary truncate">{p.name}</p>
+                        <p className="text-[10px] text-text-muted font-mono">¥{p.price.toLocaleString()}</p>
+                      </div>
+                      <div className="flex items-center border border-surface-highest rounded overflow-hidden h-7 shrink-0">
+                        <button onClick={() => handleQtyStep(item.productId, -1)} className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-xs font-bold text-brand-primary">-</button>
+                        <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary">{item.quantity}</span>
+                        <button onClick={() => handleQtyStep(item.productId, 1)} className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-xs font-bold text-brand-primary">+</button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="py-10 text-center">
+                  <ShoppingCart className="w-8 h-8 text-text-muted mx-auto mb-2" />
+                  <p className="text-xs text-text-muted">购物车空空如也</p>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Checkout Bar */}
+            {cartItems.length > 0 && (
+              <div className="border-t border-surface-highest px-4 py-3 flex items-center justify-between bg-surface-lowest rounded-b-2xl">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isAllChecked}
+                    onChange={(e) => onToggleAllCart(e.target.checked)}
+                    className="w-4 h-4 rounded border-surface-highest text-brand-primary focus:ring-brand-primary cursor-pointer"
+                  />
+                  <span className="text-[11px] text-text-muted font-bold">全选</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="text-[9px] text-text-muted leading-none">合计</p>
+                    <p className="font-hanken text-sm font-extrabold text-brand-secondary leading-none">
+                      ¥{sheetCalculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={attemptCheckoutFlow}
+                    className="bg-brand-secondary text-white text-xs font-bold px-5 py-2.5 rounded-lg active:scale-95 transition-all"
+                  >
+                    结算 ({checkedItems.length})
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Checkout Modal */}
+            {checkoutOpen && (
+              <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div className="bg-surface-lowest w-full max-w-sm rounded-xl p-5 border border-surface-highest space-y-4 shadow-xl">
+                  <div className="flex justify-between items-center border-b border-surface-low pb-2.5">
+                    <h3 className="font-sans text-sm font-bold text-brand-primary">LuxeSpirit 极速大宗结算</h3>
+                    <button onClick={() => setCheckoutOpen(false)} className="text-xs text-text-muted hover:text-brand-primary font-bold px-1">关闭</button>
+                  </div>
+
+                  {paymentDone ? (
+                    <div className="py-8 text-center space-y-3">
+                      <div className="w-12 h-12 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary mx-auto animate-pulse">
+                        <ShieldCheck className="w-7 h-7" />
+                      </div>
+                      <h4 className="font-sans text-sm font-bold text-brand-primary">授信支付处理成功</h4>
+                      <p className="text-xs text-text-muted font-mono leading-relaxed">
+                        已扣除协议授信余额 ¥{sheetCalculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}，订单已进入常州4号保税仓待处理发货流水中。
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="bg-brand-primary text-white p-4 rounded-lg flex flex-col justify-between h-24">
+                        <div className="flex justify-between items-center opacity-85">
+                          <span className="text-[10px] font-mono tracking-wider">MARCUS CHEN (LX-88204-BC)</span>
+                          <Wallet className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[9px] block text-white/70 font-mono">AVAILABLE REBATE CREDIT</span>
+                          <span className="font-sans text-md font-extrabold tracking-tight">
+                            ¥{userCreditLimit.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="bg-surface-low p-3 rounded border text-xs text-text-muted space-y-2">
+                        <div className="flex justify-between">
+                          <span>已选大宗件数</span>
+                          <span className="text-brand-primary font-bold">{sheetCalculations.totalItemsCount} 箱</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>大宗小计金额</span>
+                          <span className="text-brand-primary font-bold">¥{sheetCalculations.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-surface-highest pt-1.5 text-brand-secondary">
+                          <span>合同协议折扣 (5% OFF)</span>
+                          <span>- ¥{sheetCalculations.wholesaleDiscount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-surface-highest pt-1.5 text-brand-primary font-bold">
+                          <span className="font-sans">应付结算总额</span>
+                          <span className="font-hanken text-brand-secondary">¥{sheetCalculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                        </div>
+                      </div>
+
+                      <p className="text-[10px] text-text-muted leading-relaxed">* 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成保税提单。</p>
+
+                      <button
+                        onClick={handleConfirmPayment}
+                        disabled={checkoutLoading}
+                        className="w-full h-11 bg-brand-secondary text-white font-bold text-xs rounded-lg flex items-center justify-center hover:brightness-110 active:scale-95 transition-all"
+                      >
+                        {checkoutLoading ? '支付配额处理中...' : '确认，安全授信扣款'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Cart Bar */}
+      {cartCount > 0 && (
+        <div className="fixed bottom-16 left-0 w-full z-40 px-3 pb-3 pointer-events-none">
+          <div className="max-w-md mx-auto bg-brand-primary text-white shadow-xl rounded-xl p-3.5 flex items-center justify-between pointer-events-auto">
+            <div className="flex items-center gap-3">
+              <div className="relative bg-white/10 p-2.5 rounded-lg">
+                <ShoppingCart className="w-5 h-5 text-white" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-secondary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              </div>
+              <div>
+                <p className="text-[10px] text-white/70 leading-none mb-1">大宗配属合并小计</p>
+                <p className="font-hanken text-sm font-extrabold leading-none">
+                  ¥{cartTotalPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowCartSheet(true)}
+              className="bg-brand-secondary text-white font-sans text-xs font-bold px-6 py-2.5 rounded-lg active:scale-95 transition-all shadow-sm"
+            >
+              查看清单
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

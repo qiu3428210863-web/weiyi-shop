@@ -94,10 +94,10 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'heritage-baijiu-500ml',
-    name: '传承白酒 500ml 尊享装',
+    name: '青梅精酿果酒 500ml 尊享装',
     sku: 'HB-500',
     price: 1280.0,
-    description: '经典大曲浓香型，纯粮固体发酵酿造。醇厚甘爽，回甘悠长。高规格宴请与渠道代理爆款。',
+    description: '精选优质青梅，传统陶缸自然发酵，果香馥郁酸甜均衡。冰镇后口感更佳，餐饮渠道热销爆款。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCqTnLzXFVXTQnX-ppK3o2O9lI9HVFvTvH7wF1yEXPS1mPO9K_qmtfIkLHKq7npR_jYaDgbUVuC4vQ2Td9NxrV2P1KsM_cJfSzUq51h9xQWnWuHNtMRH0npbXC-aMHTSPrDZ7HO7zWF92ltJVazVL2xCtNqZt1dmDUukwyajT2JPlcQAo4tf8s4wvgqbfAsRJ5VolTmYTCb4Z-uRB1FrStlgy2NDCzzRw2MeWtu7cnaX3MoOpkJMnsrLRp3fFOz7TX_riTq5K_cp8Sk',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCqTnLzXFVXTQnX-ppK3o2O9lI9HVFvTvH7wF1yEXPS1mPO9K_qmtfIkLHKq7npR_jYaDgbUVuC4vQ2Td9NxrV2P1KsM_cJfSzUq51h9xQWnWuHNtMRH0npbXC-aMHTSPrDZ7HO7zWF92ltJVazVL2xCtNqZt1dmDUukwyajT2JPlcQAo4tf8s4wvgqbfAsRJ5VolTmYTCb4Z-uRB1FrStlgy2NDCzzRw2MeWtu7cnaX3MoOpkJMnsrLRp3fFOz7TX_riTq5K_cp8Sk'
@@ -105,20 +105,20 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 10,
     quantityPerBox: 6,
     stock: 920,
-    abv: '52% vol',
-    origin: 'Sichuan, CHN',
-    barrelType: 'Mud Pit Cellar',
+    abv: '12% vol',
+    origin: 'Changzhou, CHN',
+    barrelType: 'Ceramic Jar',
     boxWeight: '11.2 kg',
-    category: 'baijiu',
-    tags: ['有库存', '宴请必备'],
-    specs: ['纯粮大曲发酵工艺', '活性微量成分QC监测', '防伪射频芯片瓶口']
+    category: 'fruitwine',
+    tags: ['有库存', '餐饮必备'],
+    specs: ['当季鲜青梅采摘酿造', '无添加色素防腐剂', '低温发酵保留天然果香']
   },
   {
     id: 'fine-grain-base-liquor',
-    name: '精品谷物原浆 大宗桶装',
+    name: '桑葚发酵原液 大宗桶装',
     sku: 'PG-750',
     price: 850.0,
-    description: '三阶段多重物理过滤工艺，去除杂质醇，原汁原味，麦香浓郁纯厚，纯粮酿造调配之基酒。',
+    description: '新鲜桑葚物理压榨取汁，低温发酵工艺保留花青素营养。果香醇厚饱满，适合调配各类果饮。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCbs5CHrI2oeBXw0NQSX8F0IHEw9xWg4x88gSNNLLLEjjeBPXcCJX_OgkZ4cnldzjX0tQw570h6JuMPqO4qBgUY40bhbEnmV4rDaOWU6ZndsV3xsKrnzEp6pWbphCpiCaC_6mv4Q8UgRChRqYAybdzQUTzgwvE6qO4KzR0i9MLoFNivG_j9whuMW4zsy995I4ODc69lYUQeO1_JX4FutoQ_PBgKT_fTSR37y0ChsNvmmcOD8pVm8nhsZtdIyYhkOjN6oDQGZHBsGzMW',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCbs5CHrI2oeBXw0NQSX8F0IHEw9xWg4x88gSNNLLLEjjeBPXcCJX_OgkZ4cnldzjX0tQw570h6JuMPqO4qBgUY40bhbEnmV4rDaOWU6ZndsV3xsKrnzEp6pWbphCpiCaC_6mv4Q8UgRChRqYAybdzQUTzgwvE6qO4KzR0i9MLoFNivG_j9whuMW4zsy995I4ODc69lYUQeO1_JX4FutoQ_PBgKT_fTSR37y0ChsNvmmcOD8pVm8nhsZtdIyYhkOjN6oDQGZHBsGzMW'
@@ -126,20 +126,20 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 5,
     quantityPerBox: 4,
     stock: 120,
-    abv: '60% vol',
-    origin: 'Guizhou, CHN',
-    barrelType: 'Ceramic Jar',
+    abv: '10% vol',
+    origin: 'Changzhou, CHN',
+    barrelType: 'Stainless Tank',
     boxWeight: '18.5 kg',
-    category: 'baijiu',
+    category: 'fruitwine',
     tags: ['库存紧张', '高浓度原浆'],
-    specs: ['三阶段不锈钢过滤系统', '无化学添加纯粮酿造', '支持槽车或吨桶直发']
+    specs: ['新鲜桑葚物理压榨', '无添加纯果发酵', '支持槽车或吨桶直发']
   },
   {
     id: 'royal-aged-10y',
-    name: '御藏十年陈酿 陶坛封藏',
+    name: '蓝莓十年陈酿 陶坛封藏',
     sku: 'IR-10Y',
     price: 3400.0,
-    description: '石缸陈酒封藏10年，酱香扑鼻，老熟香气极佳，幽雅细腻。高端礼赠、定制酒核心白酒酒基。',
+    description: '长白山野生蓝莓十年封藏陈化，花青素含量极高，口感醇厚饱满带有蜜香。高端礼赠、定制果酒首选。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvhuzxnMEeWGBmQABk8kRXUU_sXbk3r1NOYsndMY4EC78LUT5FAXeu0yfSB5ZHytyLF9pifW6R-qrrPQy_iceXJ3w6VfmwluiLrSP_PyumaX5Hs7Vh18HeB8qJWda1HkfzAMVOFJs1gKB9SV5nZ0Nkrsmmki7LQSuA_sFvhDqK2QcWS23kckt6D9jtILGQrumAFQ8aGtPbe9_ISo9g55wf1jP-fB6iAKzzf0Zw1BNLBnpfDKy7To_Fqsgnu8NLWlblbR5azWEjPdsz',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDvhuzxnMEeWGBmQABk8kRXUU_sXbk3r1NOYsndMY4EC78LUT5FAXeu0yfSB5ZHytyLF9pifW6R-qrrPQy_iceXJ3w6VfmwluiLrSP_PyumaX5Hs7Vh18HeB8qJWda1HkfzAMVOFJs1gKB9SV5nZ0Nkrsmmki7LQSuA_sFvhDqK2QcWS23kckt6D9jtILGQrumAFQ8aGtPbe9_ISo9g55wf1jP-fB6iAKzzf0Zw1BNLBnpfDKy7To_Fqsgnu8NLWlblbR5azWEjPdsz'
@@ -147,20 +147,20 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 2,
     quantityPerBox: 4,
     stock: 320,
-    abv: '53% vol',
-    origin: 'Maotai, CHN',
+    abv: '15% vol',
+    origin: 'Changzhou, CHN',
     barrelType: 'Clay Pot Cellar',
     boxWeight: '9.8 kg',
-    category: 'baijiu',
-    tags: ['有库存', '典藏酱香'],
-    specs: ['茅台镇传统坤沙工艺', '10年陶坛物理陈化', '限量供应']
+    category: 'fruitwine',
+    tags: ['有库存', '典藏果酿'],
+    specs: ['长白山野生蓝莓原料', '10年陶坛物理陈化', '限量供应']
   },
   {
     id: 'classic-sorghum-liquor',
-    name: '经典红金高粱酒 1L餐配装',
+    name: '苹果微醺果酒 1L餐配装',
     sku: 'CS-1000',
     price: 450.0,
-    description: '高粱固态老味道，1L大容量家庭聚、餐饮餐中理想之选，支持定制酒标，大宗采购优惠更佳。',
+    description: '新鲜苹果原汁发酵，清爽微气泡，口感清甜怡人。1L大容量家庭聚餐理想之选，支持定制果酒标。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCaxoi0ocwEBpNcd0HjS2fbo9-_HmFzrwjo63i1CUk-b1kwWUhHT4bJ--2qIZHZLqvxzUlVv5YjgFp96RAayZIOPV1urVcO_St3CWi88qhTEjKMeZ8qPI8yq_IntKGRn9LftLaW0rwifAheD1zHv4riDexZcpt6FeAC_R-XjLQlbjaF_Syc_Po0k9DZrsooYA8rQ9n-LQ3IAMuLFzakZIVqI0_DE-WT6bk2IGuarKULR264VL6xftn3iIhQMfXhzkThTaPRWuCVNY5W',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCaxoi0ocwEBpNcd0HjS2fbo9-_HmFzrwjo63i1CUk-b1kwWUhHT4bJ--2qIZHZLqvxzUlVv5YjgFp96RAayZIOPV1urVcO_St3CWi88qhTEjKMeZ8qPI8yq_IntKGRn9LftLaW0rwifAheD1zHv4riDexZcpt6FeAC_R-XjLQlbjaF_Syc_Po0k9DZrsooYA8rQ9n-LQ3IAMuLFzakZIVqI0_DE-WT6bk2IGuarKULR264VL6xftn3iIhQMfXhzkThTaPRWuCVNY5W'
@@ -168,20 +168,20 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 20,
     quantityPerBox: 12,
     stock: 2400,
-    abv: '42% vol',
-    origin: 'Tianjin, CHN',
-    barrelType: 'Stone Jar',
+    abv: '5% vol',
+    origin: 'Changzhou, CHN',
+    barrelType: 'Stainless Tank',
     boxWeight: '22.4 kg',
-    category: 'baijiu',
+    category: 'fruitwine',
     tags: ['有库存', '高性价比'],
-    specs: ['传统清香固态发酵', '1L超高性价比大瓶装', '防破损加固泡沫纸箱']
+    specs: ['鲜果原汁发酵', '微气泡清爽口感', '防破损加固泡沫纸箱']
   },
   {
     id: 'changzhou-premium-baijiu',
-    name: '常州窖藏52度 500ml 官方特供',
+    name: '常州杨梅果酒 500ml 官方特供',
     sku: 'CZ-B-5201',
     price: 1280.0,
-    description: '常州本土白酒厂官方荣誉出品。窖泥陈香持久，绵甜丰满。当地分销商大宗采购热卖常客。',
+    description: '常州本地东魁杨梅鲜果酿造，果香馥郁酸甜适口。冰镇后风味更佳，本地分销商大宗采购热卖常客。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMYocSAFiusZNcEeN6njaZEWesblQ5V_SDsdLS5Bwyr8tvLhBOgqH79UhWHqs4eTPO6OXfTJJuIj17rvyXzPY2KwKr59MZWe521HbA0M97ZSKuvWrIciTVctHxqwsWcFWquaoJRLjtFoC7K9zFut7pIZI4AgMjXjoClON-R08dWwGl8AOuaNj2hp5Z9uMQ5TZkta4FNgrLApb5ZAw0xSOKNIhEg63cQT-1uhFhGz5qvFXO5Lb6J99qAVQsjLEqH-nTU1vmdxLeHRCt',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuAMYocSAFiusZNcEeN6njaZEWesblQ5V_SDsdLS5Bwyr8tvLhBOgqH79UhWHqs4eTPO6OXfTJJuIj17rvyXzPY2KwKr59MZWe521HbA0M97ZSKuvWrIciTVctHxqwsWcFWquaoJRLjtFoC7K9zFut7pIZI4AgMjXjoClON-R08dWwGl8AOuaNj2hp5Z9uMQ5TZkta4FNgrLApb5ZAw0xSOKNIhEg63cQT-1uhFhGz5qvFXO5Lb6J99qAVQsjLEqH-nTU1vmdxLeHRCt'
@@ -189,13 +189,13 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 10,
     quantityPerBox: 6,
     stock: 580,
-    abv: '52% vol',
+    abv: '10% vol',
     origin: 'Changzhou, CHN',
-    barrelType: 'Sichuan Clay Pot',
+    barrelType: 'Stainless Tank',
     boxWeight: '11.8 kg',
-    category: 'baijiu',
-    tags: ['常州特供', '经典大曲'],
-    specs: ['常州酒厂自研双曲并用', '5年老酒基+15年调味酒勾调', '独家追溯防伪防串货镭射']
+    category: 'fruitwine',
+    tags: ['常州特供', '鲜果酿造'],
+    specs: ['常州自研果酒发酵工艺', '东魁杨梅鲜果酿造', '独家追溯防伪防串货镭射']
   },
   {
     id: 'cabernet-selection-red',
@@ -241,10 +241,10 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'classic-light-aroma-baijiu',
-    name: '经典浓香型原白酒 500ml 散装特供',
+    name: '荔枝蜜酿果酒 500ml 散装特供',
     sku: 'CZ-W-500',
     price: 880.0,
-    description: '精选中温大曲，窖池泥发酵，醇甜甘爽。本色无添加，多仓配货支持货到承兑支付。',
+    description: '岭南新鲜荔枝搭配蜂蜜低温共酿，清甜爽口，果香四溢。本色无添加，多仓配货支持货到承兑支付。',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCETgd9u893Ye7mZ7Xtuu9MBf2mTMipYm8sP7ZUx3wd-Rir4OyyOpO3FjV3T610z7haUH56Cng3S0g5oyhDcMt5oNvwUZvTzw4n33-JaWcfqBqSEKPJ1HZCycTErBlp0Ynb4v3PnDRRtIZ5aGeYx3TbnPYyo7svk3RmZI8d58cbCdOcGPIhchleUQdec4LEDjtlzYWuvnjaXcgph_O6Fa7uzOE4ynSVc90pFIIrr0_cR-FH12fv8GMHb0NPO9eLlCEjrdNAAthmTEay',
     galleryImages: [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCETgd9u893Ye7mZ7Xtuu9MBf2mTMipYm8sP7ZUx3wd-Rir4OyyOpO3FjV3T610z7haUH56Cng3S0g5oyhDcMt5oNvwUZvTzw4n33-JaWcfqBqSEKPJ1HZCycTErBlp0Ynb4v3PnDRRtIZ5aGeYx3TbnPYyo7svk3RmZI8d58cbCdOcGPIhchleUQdec4LEDjtlzYWuvnjaXcgph_O6Fa7uzOE4ynSVc90pFIIrr0_cR-FH12fv8GMHb0NPO9eLlCEjrdNAAthmTEay'
@@ -252,13 +252,13 @@ export const INITIAL_PRODUCTS: Product[] = [
     moq: 10,
     quantityPerBox: 6,
     stock: 3200,
-    abv: '53% vol',
-    origin: 'Anhui, CHN',
-    barrelType: 'Underground Cellar',
+    abv: '8% vol',
+    origin: 'Changzhou, CHN',
+    barrelType: 'Stainless Tank',
     boxWeight: '11.0 kg',
-    category: 'baijiu',
-    tags: ['月度爆款', '经典口粮'],
-    specs: ['黄泥古窖原池发酵', '高碳化竹炭过滤', '重力瓦楞纸加固包装']
+    category: 'fruitwine',
+    tags: ['月度爆款', '清甜果香'],
+    specs: ['鲜荔枝与蜂蜜共酵', '低温慢发酵工艺', '重力瓦楞纸加固包装']
   },
   {
     id: 'premium-liquor-decanter',
@@ -368,7 +368,7 @@ export const INITIAL_ADDRESSES: ShippingAddress[] = [
     province: '江苏省',
     city: '常州市',
     district: '新北区',
-    detail: '太湖东路大宗烈酒保税1号库门面',
+    detail: '太湖东路大宗果酒保税1号库门面',
     isDefault: true
   },
   {
@@ -387,7 +387,7 @@ export const MOCK_CHATS_WELCOME = [
   {
     id: 'msg-01',
     sender: 'support' as const,
-    text: '您好，这里是 LuxeSpirit 官方大宗服务客服。请问Marcus先生今天有什么可以帮您的？目前常州3号保税仓由于物流中心全面升级，出库流程优化，一般24小时内可发出。',
+    text: '您好，这里是常州果酒厂官方大宗服务客服。请问Marcus先生今天有什么可以帮您的？目前常州3号保税仓由于物流中心全面升级，出库流程优化，一般24小时内可发出。',
     timestamp: '下午 15:02'
   }
 ];

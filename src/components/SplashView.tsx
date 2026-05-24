@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { WLogo } from './WLogo';
-import { Sparkles, ArrowRight, ShieldCheck, Cpu } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SplashViewProps {
@@ -29,11 +29,7 @@ export const SplashView: React.FC<SplashViewProps> = ({ onEnter }) => {
   return (
     <div className="fixed inset-0 bg-brand-primary text-white flex flex-col justify-between p-6 z-50 overflow-hidden select-none">
       {/* Top micro elements (Aesthetic Pairings) */}
-      <div className="flex justify-between items-center opacity-85 pt-3">
-        <div className="flex items-center gap-1.5 font-mono text-[9px] tracking-widest text-[#d8daff]">
-          <Cpu className="w-3.5 h-3.5 animate-pulse" />
-          <span>PORTAL_ACTIVE // V4.2</span>
-        </div>
+      <div className="flex justify-end items-center opacity-85 pt-3">
         <div className="flex items-center gap-1 font-sans text-[10px] text-[#e0e2ff] font-medium bg-white/10 px-2.5 py-1 rounded-full">
           <ShieldCheck className="w-3.5 h-3.5 text-brand-secondary" />
           <span>常州监管局直连保税网点</span>
@@ -68,7 +64,7 @@ export const SplashView: React.FC<SplashViewProps> = ({ onEnter }) => {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="text-xs text-[#dcdfe6] font-medium leading-relaxed"
           >
-            常州酒厂大宗B2B协议供销枢纽 • 智能仓储核单派单一站式工作舱
+            常州唯一果酒B2B协议供销枢纽 • 智能仓储核单派单一站式工作平台
           </motion.p>
         </div>
       </div>
@@ -78,7 +74,7 @@ export const SplashView: React.FC<SplashViewProps> = ({ onEnter }) => {
         {!loaded ? (
           <div className="space-y-2">
             <div className="flex justify-between text-[10px] font-mono text-[#cbd0ff]">
-              <span>常州保税港双曲窖藏配额校正中...</span>
+              <span>常州保税港果酒配额校正中...</span>
               <span>{progress}%</span>
             </div>
             <div className="w-full h-1.5 bg-white/15 rounded-full overflow-hidden">

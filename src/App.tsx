@@ -7,7 +7,6 @@ import {
   MOCK_CHATS_WELCOME 
 } from './data';
 import { HomeView } from './components/HomeView';
-import { CategoryListView } from './components/CategoryListView';
 import { ProductDetailView } from './components/ProductDetailView';
 import { CartView } from './components/CartView';
 import { OrdersView } from './components/OrdersView';
@@ -17,7 +16,7 @@ import { LoginView } from './components/LoginView';
 import { SupplierView } from './components/SupplierView';
 
 // Standard Lucide icons imports
-import { Home, Grid, ShoppingCart, ClipboardCheck, User as UserIcon } from 'lucide-react';
+import { Home, ShoppingCart, ClipboardCheck, User as UserIcon } from 'lucide-react';
 
 export default function App() {
   // B2B Dynamic Portals & Authentication States
@@ -27,7 +26,6 @@ export default function App() {
 
   // Navigation tabs
   const [activeTab, setActiveTab] = useState<string>('home');
-  const [preSelectedCategory, setPreSelectedCategory] = useState<string | null>(null);
   
   // Single detail screen focus
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -350,13 +348,6 @@ export default function App() {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
-  const handleNavigateToTabWithCategory = (tabId: string, categoryId?: string) => {
-    if (categoryId) {
-      setPreSelectedCategory(categoryId);
-    }
-    setActiveTab(tabId);
-  };
-
   // Render logic under focused state
   const renderActiveView = () => {
     // 1. Splash Page Layer
@@ -405,21 +396,16 @@ export default function App() {
             products={products}
             onSelectProduct={handleSelectProduct}
             onAddToCart={handleAddToCart}
-            onNavigateToTab={handleNavigateToTabWithCategory}
-            cartCount={cart.length}
-          />
-        );
-      case 'category':
-        return (
-          <CategoryListView
-            products={products}
-            onSelectProduct={handleSelectProduct}
-            onAddToCart={handleAddToCart}
             onNavigateToTab={setActiveTab}
-            activePreSelectedCategory={preSelectedCategory}
-            onClearPreSelectedCategory={() => setPreSelectedCategory(null)}
             cartCount={cartStatistics.checkedItemsCount}
             cartTotalPrice={cartStatistics.totalPrice}
+            cartItems={cart}
+            onUpdateCartQty={handleUpdateCartQty}
+            onRemoveFromCart={handleRemoveFromCart}
+            onToggleCartCheck={handleToggleCartCheck}
+            onToggleAllCart={handleToggleAllCart}
+            onCheckout={handleCheckout}
+            userCreditLimit={userCreditLimit}
           />
         );
       case 'cart':
@@ -496,21 +482,7 @@ export default function App() {
             <span className="font-sans text-[10px] tracking-wider">首页</span>
           </button>
 
-          {/* Tab 2: Category Catalog */}
-          <button
-            onClick={() => setActiveTab('category')}
-            className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${
-              activeTab === 'category' 
-                ? 'text-brand-secondary font-bold scale-100' 
-                : 'text-text-muted hover:text-brand-primary scale-90'
-            }`}
-            title="分类"
-          >
-            <Grid className="w-5 h-5 mb-0.5" />
-            <span className="font-sans text-[10px] tracking-wider">分类</span>
-          </button>
-
-          {/* Tab 3: Cart with dynamic notifications badges */}
+          {/* Tab 2: Cart with dynamic notifications badges */}
           <button
             onClick={() => setActiveTab('cart')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer relative ${
@@ -529,7 +501,7 @@ export default function App() {
             )}
           </button>
 
-          {/* Tab 4: Orders records history */}
+          {/* Tab 3: Orders records history */}
           <button
             onClick={() => setActiveTab('orders')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${
@@ -543,7 +515,7 @@ export default function App() {
             <span className="font-sans text-[10px] tracking-wider">订单</span>
           </button>
 
-          {/* Tab 5: Profile personal workspace */}
+          {/* Tab 4: Profile personal workspace */}
           <button
             onClick={() => setActiveTab('profile')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${

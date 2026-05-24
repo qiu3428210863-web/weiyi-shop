@@ -1,4 +1,4 @@
-export type CategoryType = 'all' | 'baijiu' | 'wine' | 'beer' | 'accessories';
+export type CategoryType = 'all' | 'baijiu' | 'fruitwine' | 'wine' | 'beer' | 'accessories';
 
 export interface Product {
   id: string;

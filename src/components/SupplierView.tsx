@@ -75,7 +75,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   // New product editor state (Admin Tab)
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [newProdName, setNewProdName] = useState('');
-  const [newProdCategory, setNewProdCategory] = useState('baijiu');
+  const [newProdCategory, setNewProdCategory] = useState('fruitwine');
   const [newProdSku, setNewProdSku] = useState('CZ-B-99');
   const [newProdPrice, setNewProdPrice] = useState('580');
   const [newProdStock, setNewProdStock] = useState('1000');
@@ -174,7 +174,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
       sku: newProdSku || `CZ-B-${Math.floor(1000 + Math.random() * 9000)}`,
       price: parseFloat(newProdPrice) || 300,
       originalPrice: (parseFloat(newProdPrice) || 300) * 1.25,
-      description: '常州官方自营大宗原装供应链，纯固体发酵，配货极速调配送达。',
+      description: '常州果酒厂自营大宗供应链，鲜果发酵，配货极速调配送达。',
       image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMYocSAFiusZNcEeN6njaZEWesblQ5V_SDsdLS5Bwyr8tvLhBOgqH79UhWHqs4eTPO6OXfTJJuIj17rvyXzPY2KwKr59MZWe521HbA0M97ZSKuvWrIciTVctHxqwsWcFWquaoJRLjtFoC7K9zFut7pIZI4AgMjXjoClON-R08dWwGl8AOuaNj2hp5Z9uMQ5TZkta4FNgrLApb5ZAw0xSOKNIhEg63cQT-1uhFhGz5qvFXO5Lb6J99qAVQsjLEqH-nTU1vmdxLeHRCt',
       galleryImages: [],
       moq: parseInt(newProdMoq, 10) || 12,
@@ -208,6 +208,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
     
     // Category counters
     const categoryTotals = {
+      fruitwine: 0,
       baijiu: 0,
       wine: 0,
       beer: 0,
@@ -239,7 +240,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             <WLogo className="w-6 h-6 text-white" color="white" />
           </div>
           <div>
-            <h1 className="font-sans text-xs font-bold text-brand-primary leading-tight">酒厂专属供货平台</h1>
+            <h1 className="font-sans text-xs font-bold text-brand-primary leading-tight">果酒厂专属供货平台</h1>
             <p className="text-[9px] text-text-muted font-mono">ROLE: {currentRole === 'sales' ? '业务主管' : currentRole === 'warehouse' ? '仓储核单' : '系统管理'}</p>
           </div>
         </div>
@@ -253,7 +254,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
               onChange={(e) => setCurrentRole(e.target.value as any)}
               className="bg-transparent font-sans text-[10px] font-bold text-brand-primary outline-none cursor-pointer"
             >
-              <option value="sales">酒厂业务员</option>
+              <option value="sales">果酒厂业务员</option>
               <option value="warehouse">仓库核单员</option>
               <option value="admin">系统管理员</option>
             </select>
@@ -289,7 +290,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
               您好，{loggedInName}
             </h2>
             <p className="text-[10.5px] text-text-muted leading-relaxed">
-              常州总厂出库状态良好，当前有 <span className="text-brand-secondary font-bold">{statistics.pendingShipmentCount} </span>笔待核配采购单。
+              常州果酒厂出库状态良好，当前有 <span className="text-brand-secondary font-bold">{statistics.pendingShipmentCount} </span>笔待核配采购单。
             </p>
           </div>
           <Building className="w-16 h-16 text-brand-primary/5 absolute right-4 bottom-2" />
@@ -518,7 +519,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                       </div>
                       <p className="text-[10px] text-text-muted mt-0.5">默认履约库：常州新北区太湖东路大宗保税1号库</p>
                       <p className="text-[10px] font-mono text-[#5c62b5] font-bold mt-1">
-                        历史总合购额：¥194,500 | 累签大曲白酒 2,400 箱
+                        历史总合购额：¥194,500 | 累签果酒 2,400 箱
                       </p>
                     </div>
                   </div>
@@ -875,7 +876,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                           <h4 className="text-xs font-bold text-brand-primary line-clamp-1 pr-6">{p.name}</h4>
                           <span className="text-[9.5px] text-text-muted font-mono bg-surface-low px-1.5 rounded">{p.sku}</span>
                         </div>
-                        <p className="text-[10px] text-text-muted font-mono leading-none">类目：{p.category === 'baijiu' ? '白酒' : p.category === 'wine' ? '红洋酒' : p.category === 'beer' ? '啤酒' : '配件'}</p>
+                        <p className="text-[10px] text-text-muted font-mono leading-none">类目：{p.category === 'fruitwine' ? '果酒' : p.category === 'baijiu' ? '白酒' : p.category === 'wine' ? '红洋酒' : p.category === 'beer' ? '啤酒' : '配件'}</p>
                         <div className="flex justify-between items-center pt-1.5 border-t border-dashed">
                           <span className="font-mono text-xs font-bold text-brand-secondary">B2B价: ¥{p.price}</span>
                           <span className="font-mono text-[10.5px] text-text-muted">提货库存: <strong className="text-brand-primary">{p.stock}箱</strong></span>
@@ -1025,7 +1026,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                       />
                       <button 
                         onClick={() => {
-                          showToast(`常州总厂：已对默认新签约客户重新校正基础授信：¥${creditLimitDefault.toLocaleString()}`);
+                          showToast(`常州果酒厂：已对默认新签约客户重新校正基础授信：¥${creditLimitDefault.toLocaleString()}`);
                         }}
                         className="bg-brand-primary hover:bg-brand-secondary text-white px-3 font-bold rounded"
                       >
@@ -1042,7 +1043,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             {adminSubTab === 'metrics' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州酒厂经营大宗GMV实况</h3>
+                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州果酒厂经营大宗GMV实况</h3>
                   <span className="text-[9.5px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">
                     实时汇总(D3核载)
                   </span>
@@ -1068,7 +1069,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                 {/* Highly elegant customized SVG Bar Chart representing product sales categories */}
                 <div className="bg-surface-lowest p-4 rounded-xl border border-surface-highest space-y-4 shadow-sm text-center">
                   <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-bold text-brand-primary">酒厂各香型仓储备货流（库存占比）</h4>
+                    <h4 className="text-xs font-bold text-brand-primary">果酒厂各品类仓储备货流（库存占比）</h4>
                     <span className="text-[9px] font-mono text-text-muted">单位: 箱</span>
                   </div>
 
@@ -1081,65 +1082,65 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                       <line x1="40" y1="50" x2="380" y2="50" stroke="#f0f0f5" strokeWidth="1" />
                       <line x1="40" y1="10" x2="380" y2="10" stroke="#f3f3f8" strokeWidth="1" />
 
-                      {/* Bar 1 (Baijiu): Stock Value */}
-                      <rect 
-                        x="70" 
-                        y={150 - Math.min(130, statistics.categoryTotals.baijiu / 45)} 
-                        width="30" 
-                        height={Math.min(130, statistics.categoryTotals.baijiu / 45)} 
-                        fill="#5c62b5" 
-                        rx="3" 
+                      {/* Bar 1 (fruitwine): Stock Value */}
+                      <rect
+                        x="70"
+                        y={150 - Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)}
+                        width="30"
+                        height={Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)}
+                        fill="#5c62b5"
+                        rx="3"
                         className="transition-all duration-1000"
                       />
-                      <text x="85" y={140 - Math.min(130, statistics.categoryTotals.baijiu / 45)} textAnchor="middle" fill="#5c62b5" className="font-mono text-[9px] font-bold">
-                        {statistics.categoryTotals.baijiu}
+                      <text x="85" y={140 - Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)} textAnchor="middle" fill="#5c62b5" className="font-mono text-[9px] font-bold">
+                        {statistics.categoryTotals.fruitwine || 0}
                       </text>
                       <text x="85" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        大曲白酒
+                        果酒
                       </text>
 
                       {/* Bar 2 (Wine): Stock Value */}
-                      <rect 
-                        x="150" 
-                        y={150 - Math.min(130, statistics.categoryTotals.wine / 45)} 
-                        width="30" 
-                        height={Math.min(130, statistics.categoryTotals.wine / 45)} 
-                        fill="#e23337" 
-                        rx="3" 
+                      <rect
+                        x="150"
+                        y={150 - Math.min(130, statistics.categoryTotals.wine / 45)}
+                        width="30"
+                        height={Math.min(130, statistics.categoryTotals.wine / 45)}
+                        fill="#e23337"
+                        rx="3"
                         className="transition-all duration-1000"
                       />
                       <text x="165" y={140 - Math.min(130, statistics.categoryTotals.wine / 45)} textAnchor="middle" fill="#e23337" className="font-mono text-[9px] font-bold">
                         {statistics.categoryTotals.wine}
                       </text>
                       <text x="165" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        单一麦/红酒
+                        红洋酒
                       </text>
 
                       {/* Bar 3 (Beer): Stock Value */}
-                      <rect 
-                        x="230" 
-                        y={150 - Math.min(130, statistics.categoryTotals.beer / 45)} 
-                        width="30" 
-                        height={Math.min(130, statistics.categoryTotals.beer / 45)} 
-                        fill="#ff9900" 
-                        rx="3" 
+                      <rect
+                        x="230"
+                        y={150 - Math.min(130, statistics.categoryTotals.beer / 45)}
+                        width="30"
+                        height={Math.min(130, statistics.categoryTotals.beer / 45)}
+                        fill="#ff9900"
+                        rx="3"
                         className="transition-all duration-1000"
                       />
                       <text x="245" y={140 - Math.min(130, statistics.categoryTotals.beer / 45)} textAnchor="middle" fill="#ff9900" className="font-mono text-[9px] font-bold">
                         {statistics.categoryTotals.beer}
                       </text>
                       <text x="245" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        德国黑啤
+                        精酿啤酒
                       </text>
 
                       {/* Bar 4 (Accessories): Stock Value */}
-                      <rect 
-                        x="310" 
-                        y={150 - Math.min(130, statistics.categoryTotals.accessories / 45)} 
-                        width="30" 
-                        height={Math.min(130, statistics.categoryTotals.accessories / 45)} 
-                        fill="#67c23a" 
-                        rx="3" 
+                      <rect
+                        x="310"
+                        y={150 - Math.min(130, statistics.categoryTotals.accessories / 45)}
+                        width="30"
+                        height={Math.min(130, statistics.categoryTotals.accessories / 45)}
+                        fill="#67c23a"
+                        rx="3"
                         className="transition-all duration-1000"
                       />
                       <text x="325" y={140 - Math.min(130, statistics.categoryTotals.accessories / 45)} textAnchor="middle" fill="#67c23a" className="font-mono text-[9px] font-bold">
@@ -1158,7 +1159,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     <Info className="w-3.5 h-3.5" /> 2026年第二季度常州港宏观统计分析：
                   </span>
                   <p className="text-[10.5px] leading-relaxed text-text-primary">
-                    常州大曲白酒（52度窖藏特供）依然在华东地区企业定制礼赠与宴请出货中占据 **43.5%** 的强主控优势。德国大麦黑啤夜场代理拿货MOQ累积上升9%，总体仓库流转提速12.5小时。
+                    常州本地果酒（杨梅/青梅系列）在华东地区餐饮商超出货中占据 **58%** 的强主控优势。精酿啤酒夜场代理拿货MOQ累积上升9%，总体仓库流转提速12.5小时。
                   </p>
                 </div>
               </div>
@@ -1354,7 +1355,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                 <input 
                   type="text" 
                   required
-                  placeholder="如: 常州官方酒厂迎宾特推 15年单麦"
+                  placeholder="如: 常州果酒厂特推 青梅精酿"
                   className="w-full p-2 border rounded bg-surface-low"
                   value={newProdName}
                   onChange={(e) => setNewProdName(e.target.value)}
@@ -1369,6 +1370,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     value={newProdCategory}
                     onChange={(e) => setNewProdCategory(e.target.value)}
                   >
+                    <option value="fruitwine">果酒专区</option>
                     <option value="baijiu">白酒专区</option>
                     <option value="wine">红洋酒区</option>
                     <option value="beer">精酿啤酒</option>

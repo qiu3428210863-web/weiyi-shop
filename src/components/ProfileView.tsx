@@ -123,7 +123,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 }`}
               >
                 <div className="text-[10px] opacity-75 font-mono mb-1">
-                  {msg.sender === 'user' ? '企业主 Marcus' : '常州总厂专属客服'} • {msg.timestamp}
+                  {msg.sender === 'user' ? '企业主 Marcus' : '常州果酒厂专属客服'} • {msg.timestamp}
                 </div>
                 <p className="text-xs leading-relaxed font-sans">{msg.text}</p>
               </div>
@@ -134,7 +134,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <input 
               type="text" 
               className="flex-grow bg-surface-low border border-surface-highest rounded-lg px-4.5 py-2 font-sans text-xs outline-none focus:border-brand-primary focus:bg-surface-lowest transition-all"
-              placeholder="编写您想向常州酒厂财务或物流反应的问题..."
+              placeholder="编写您想向常州果酒厂财务或物流反应的问题..."
               value={typedMessage}
               onChange={(e) => setTypedMessage(e.target.value)}
             />
@@ -238,7 +238,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   <label className="text-[10px] text-text-muted font-bold block">门牌详情与保税货位 *</label>
                   <textarea 
                     className="w-full text-xs font-sans p-2 border border-surface-highest rounded bg-surface-low h-16 resize-none"
-                    placeholder="请尽量描写仓库号、货架网位，例太湖东路大宗烈酒保税1号库门面"
+                    placeholder="请尽量描写仓库号、货架网位，例太湖东路大宗果酒保税1号库门面"
                     value={addressDetail}
                     onChange={(e) => setAddressDetail(e.target.value)}
                   />
@@ -410,9 +410,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </div>
             </div>
 
-            <div className="bg-surface-lowest p-4 rounded-xl border border-surface-highest text-center text-xs font-mono text-text-muted">
-              LUXESPIRIT 批发 V4.2.0 (Build 2026.0523)
-            </div>
           </main>
         </div>
       )}
@@ -560,7 +557,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     <div className="w-10 h-10 rounded-full bg-surface-low flex items-center justify-center text-brand-primary border border-surface-highest/60">
                       <Headphones className="w-4.5 h-4.5" />
                     </div>
-                    <span className="text-xs font-bold text-brand-primary">联系总厂客服</span>
+                    <span className="text-xs font-bold text-brand-primary">联系果酒厂客服</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -590,10 +587,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <LogOut className="w-4.5 h-4.5" />
                 <span>退出登录</span>
               </button>
-              
-              <p className="text-center font-mono text-[9px] text-text-muted/60 tracking-widest mt-6 uppercase">
-                LUXESPIRIT WHOLESALE mall V4.2.0
-              </p>
+
             </div>
           </main>
         </>

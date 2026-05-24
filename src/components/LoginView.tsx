@@ -76,7 +76,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
           <div>
             <h2 className="font-sans text-base font-extrabold text-brand-primary tracking-tight">常州唯一产品订货平台</h2>
-            <p className="text-[11px] text-text-muted mt-1 font-medium">常州白酒厂及特约大宗保税直供供应链系统</p>
+            <p className="text-[11px] text-text-muted mt-1 font-medium">常州果酒厂及特约大宗保税直供供应链系统</p>
           </div>
         </div>
 
@@ -143,7 +143,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                   }`}
                 >
                   <UserCheck className="w-3.5 h-3.5" />
-                  <span>酒厂业务员</span>
+                  <span>果酒厂业务员</span>
                 </button>
                 <button
                   type="button"
@@ -271,7 +271,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             >
               <span className="font-bold flex items-center gap-0.5">
                 <CornerDownRight className="w-3 h-3 text-brand-secondary" />
-                2. 供应方-酒厂业务员
+                2. 供应方-果酒厂业务员
               </span>
               <span className="text-[9px] text-text-muted font-mono leading-none">处理大账、确认及退改款订单</span>
             </button>
