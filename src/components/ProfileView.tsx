@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ShippingAddress, SupportMessage } from '../types';
 import { 
-  Building, MapPin, Mail, Headphones, 
-  Settings, LogOut, ChevronRight, HelpCircle, 
+  Building, MapPin, Mail,
+  Settings, LogOut, ChevronRight, HelpCircle,
   Send, User, ShieldCheck, Check, Plus, Trash2, Wallet
 } from 'lucide-react';
 import { WLogo } from './WLogo';
@@ -123,7 +123,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 }`}
               >
                 <div className="text-[10px] opacity-75 font-mono mb-1">
-                  {msg.sender === 'user' ? '企业主 Marcus' : '常州果酒厂专属客服'} • {msg.timestamp}
+                  {msg.sender === 'user' ? '企业主 李远' : '常州果酒厂专属客服'} • {msg.timestamp}
                 </div>
                 <p className="text-xs leading-relaxed font-sans">{msg.text}</p>
               </div>
@@ -235,10 +235,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] text-text-muted font-bold block">门牌详情与保税货位 *</label>
+                  <label className="text-[10px] text-text-muted font-bold block">门牌详情与仓位 *</label>
                   <textarea 
                     className="w-full text-xs font-sans p-2 border border-surface-highest rounded bg-surface-low h-16 resize-none"
-                    placeholder="请尽量描写仓库号、货架网位，例太湖东路大宗果酒保税1号库门面"
+                    placeholder="请尽量描写仓库号、货架网位，例太湖东路大宗果酒1号仓库门面"
                     value={addressDetail}
                     onChange={(e) => setAddressDetail(e.target.value)}
                   />
@@ -315,60 +315,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       )}
 
-      {/* 3. Enterprise details certifications Subpage */}
-      {activeSubPage === 'enterprise' && (
-        <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
-          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0">
-            <button 
-              onClick={() => setActiveSubPage('profile')} 
-              className="text-xs text-brand-secondary font-bold"
-            >
-              返回个人中心
-            </button>
-            <h2 className="text-sm font-bold font-sans">企业认证资质资质</h2>
-            <ShieldCheck className="w-5 h-5 text-brand-secondary" />
-          </header>
-
-          <main className="p-4 max-w-sm mx-auto space-y-4">
-            <div className="bg-surface-lowest p-5 rounded-xl border border-surface-highest space-y-4 shadow-sm">
-              <div className="flex items-center gap-2 border-b pb-3">
-                <Building className="w-6 h-6 text-brand-secondary" />
-                <div>
-                  <h3 className="text-xs font-extrabold text-brand-primary">全球烈酒分销有限公司</h3>
-                  <p className="text-[10px] text-text-muted font-mono leading-none mt-1">LOGISTICS ID: LX-88204-BC</p>
-                </div>
-              </div>
-
-              <div className="space-y-3.5 text-xs text-text-muted font-mono">
-                <div>
-                  <p className="text-[9px] text-text-muted uppercase tracking-wider mb-0.5">企业法人</p>
-                  <p className="text-brand-primary font-bold font-sans">Marcus Chen (陈先生)</p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-text-muted uppercase tracking-wider mb-0.5">大宗进出口统一信用代码</p>
-                  <p className="text-brand-primary font-bold">91320400MA1T9Y4A5Y</p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-text-muted uppercase tracking-wider mb-0.5">特许食品经营许可证等级</p>
-                  <p className="text-brand-primary font-bold font-sans flex items-center gap-1 text-xs">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                    B2B 超高品类经营许可
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-text-muted uppercase tracking-wider mb-0.5">常州保税仓专属泊位号</p>
-                  <p className="text-brand-primary font-bold">CZ-B-DOCK-19</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-surface-low border p-4 rounded-lg text-[11px] text-text-muted leading-relaxed">
-              * 本平台的资质审核由常州市场监督管理局和保税监督委进行，支持全国多口岸一键通关，您的付款受 B2B 合同保障。
-            </div>
-          </main>
-        </div>
-      )}
-
       {/* 4. Settings Dashboard Settings panel */}
       {activeSubPage === 'settings' && (
         <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
@@ -404,7 +350,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               <div className="flex justify-between items-center border-t pt-3">
                 <div>
                   <h3 className="font-bold text-brand-primary">出入库消息同步 (DOCK-19)</h3>
-                  <p className="text-[10.5px] text-text-muted mt-0.5">订单从保税港发货时将提单PDF发送给物流部</p>
+                  <p className="text-[10.5px] text-text-muted mt-0.5">订单从仓库发货时将提单PDF发送给物流部</p>
                 </div>
                 <input type="checkbox" defaultChecked className="w-4.5 h-4.5 rounded text-brand-primary cursor-pointer border-surface-highest" />
               </div>
@@ -443,10 +389,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       MC
                     </div>
                   </div>
-                  <div>
-                    <h2 className="font-hanken text-md font-bold text-brand-primary">个人中心</h2>
-                    <p className="text-xs text-text-muted">管理账户与偏好 (Marcus先生)</p>
-                  </div>
                 </div>
 
                 {/* Highly structured Business Card matching layout exactly */}
@@ -458,7 +400,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   <div className="flex justify-between items-start z-10">
                     <div>
                       <p className="font-mono text-[9px] text-white/70 uppercase tracking-widest mb-0.5">企业名称</p>
-                      <p className="font-sans text-sm font-bold">全球烈酒分销有限公司</p>
+                      <p className="font-sans text-sm font-bold">高鑫零售有限公司</p>
                     </div>
                     <span className="text-brand-secondary fill-brand-secondary text-white">
                       <ShieldCheck className="w-5 h-5 fill-brand-secondary text-brand-primary" />
@@ -468,7 +410,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   <div className="flex gap-12 mt-1 z-10 text-xs">
                     <div>
                       <p className="font-mono text-[9px] text-white/70 uppercase tracking-widest mb-0.5">联系人</p>
-                      <p className="font-sans font-bold text-xs">Marcus Chen</p>
+                      <p className="font-sans font-bold text-xs">李远</p>
                     </div>
                     <div>
                       <p className="font-mono text-[9px] text-white/70 uppercase tracking-widest mb-0.5">客户ID</p>
@@ -505,20 +447,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             {/* Options list exactly matching outline design layout */}
             <section className="px-4 mt-1.5">
               <div className="bg-surface-lowest rounded-xl border border-surface-highest overflow-hidden divide-y divide-surface-low">
-                {/* Enterprise Info */}
-                <button 
-                  onClick={() => setActiveSubPage('enterprise')}
-                  className="w-full flex items-center justify-between px-4.5 py-4 hover:bg-surface-low transition-colors group active:bg-surface-container"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-surface-low flex items-center justify-center text-brand-primary border border-surface-highest/60">
-                      <Building className="w-4.5 h-4.5" />
-                    </div>
-                    <span className="text-xs font-bold text-brand-primary">企业信息认证</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
-                </button>
-
                 {/* Shipping Addresses */}
                 <button 
                   onClick={() => setActiveSubPage('addresses')}
@@ -544,20 +472,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       <span className="absolute top-2 right-2.5 w-2.5 h-2.5 bg-brand-secondary rounded-full border border-surface-lowest"></span>
                     </div>
                     <span className="text-xs font-bold text-brand-primary">平台消息中心</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                {/* Contact support */}
-                <button 
-                  onClick={() => setActiveSubPage('chats')}
-                  className="w-full flex items-center justify-between px-4.5 py-4 hover:bg-surface-low transition-colors group active:bg-surface-container"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-surface-low flex items-center justify-center text-brand-primary border border-surface-highest/60">
-                      <Headphones className="w-4.5 h-4.5" />
-                    </div>
-                    <span className="text-xs font-bold text-brand-primary">联系果酒厂客服</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
                 </button>

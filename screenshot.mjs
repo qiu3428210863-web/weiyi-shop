@@ -1,0 +1,7 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(3000);
+await page.screenshot({ path: 'debug-cards.png', fullPage: true });
+await browser.close();

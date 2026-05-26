@@ -32,7 +32,7 @@ export const SplashView: React.FC<SplashViewProps> = ({ onEnter }) => {
       <div className="flex justify-end items-center opacity-85 pt-3">
         <div className="flex items-center gap-1 font-sans text-[10px] text-[#e0e2ff] font-medium bg-white/10 px-2.5 py-1 rounded-full">
           <ShieldCheck className="w-3.5 h-3.5 text-brand-secondary" />
-          <span>常州监管局直连保税网点</span>
+          <span>常州监管局直连仓储网点</span>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export const SplashView: React.FC<SplashViewProps> = ({ onEnter }) => {
         {!loaded ? (
           <div className="space-y-2">
             <div className="flex justify-between text-[10px] font-mono text-[#cbd0ff]">
-              <span>常州保税港果酒配额校正中...</span>
+              <span>常州仓库果酒库存校准中...</span>
               <span>{progress}%</span>
             </div>
             <div className="w-full h-1.5 bg-white/15 rounded-full overflow-hidden">

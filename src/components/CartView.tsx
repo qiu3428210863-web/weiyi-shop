@@ -188,7 +188,7 @@ export const CartView: React.FC<CartViewProps> = ({
                   </div>
                   <h4 className="font-sans text-sm font-bold text-brand-primary">授信支付处理成功</h4>
                   <p className="text-xs text-text-muted font-mono leading-relaxed">
-                    已扣除协议授信余额 ¥{calculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}，订单已进入常州4号保税仓待处理发货流水中。
+                    已扣除协议授信余额 ¥{calculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}，订单已进入常州4号仓库待处理发货流水中。
                   </p>
                 </div>
               ) : (
@@ -231,7 +231,7 @@ export const CartView: React.FC<CartViewProps> = ({
                   </div>
 
                   <p className="text-[10px] text-text-muted leading-relaxed">
-                    * 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成保税提单。
+                    * 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成提货单。
                   </p>
 
                   <button 
@@ -306,12 +306,14 @@ export const CartView: React.FC<CartViewProps> = ({
                           >
                             -
                           </button>
-                          <input 
-                            type="number" 
+                          <input
+                            type="number"
+                            min={0}
                             className="w-8 h-full text-center font-mono text-xs font-bold leading-none border-none p-0 outline-none focus:ring-0 bg-transparent"
                             value={item.quantity}
                             onChange={(e) => {
-                              const val = parseInt(e.target.value) || 0;
+                              const raw = parseInt(e.target.value);
+                              const val = isNaN(raw) || raw < 0 ? 0 : raw;
                               onUpdateCartQty(item.productId, val);
                             }}
                           />

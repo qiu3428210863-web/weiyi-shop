@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LuxeSpirit 组件库规范</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ============================
+   Design Tokens (CSS Variables)
+   ============================ */
+:root {
+  /* Surface Colors */
+  --surface-bg: #fbf9f8;
+  --surface-dim: #dbdad9;
+  --surface-lowest: #ffffff;
+  --surface-low: #f5f3f3;
+  --surface-container: #efeded;
+  --surface-high: #e9e8e7;
+  --surface-highest: #e4e2e2;
+
+  /* Text Colors */
+  --text-primary: #1b1c1c;
+  --text-muted: #4c4546;
+
+  /* Brand Colors */
+  --brand-primary: #000000;
+  --brand-secondary: #a2375f;
+
+  /* Error Colors */
+  --brand-error: #ba1a1a;
+  --brand-error-container: #ffdad6;
+
+  /* Typography */
+  --font-sans: 'Inter', 'OPPO Sans', system-ui, sans-serif;
+  --font-hanken: 'Hanken Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ============================
+   Reset & Base
+   ============================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 0;
+}
+
+/* ============================
+   Layout
+   ============================ */
+.spec-header {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 48px 40px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.spec-header h1 {
+  font-family: var(--font-hanken);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.spec-header .subtitle {
+  font-size: 13px;
+  opacity: 0.65;
+  margin-top: 6px;
+  font-weight: 400;
+}
+.spec-header .meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.5;
+  font-family: var(--font-mono);
+}
+.spec-nav {
+  background: #fff;
+  border-bottom: 1px solid var(--surface-highest);
+  padding: 0 40px;
+  position: sticky;
+  top: 140px;
+  z-index: 99;
+  overflow-x: auto;
+  display: flex;
+  gap: 0;
+}
+.spec-nav a {
+  display: block;
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.spec-nav a:hover,
+.spec-nav a.active {
+  color: var(--brand-primary);
+  border-bottom-color: var(--brand-secondary);
+}
+
+.spec-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
+}
+
+/* ============================
+   Section
+   ============================ */
+.spec-section {
+  margin-bottom: 56px;
+}
+.spec-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--brand-primary);
+}
+.spec-section-header h2 {
+  font-family: var(--font-hanken);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--brand-primary);
+}
+.spec-section-header .sec-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-low);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.component-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.component-grid.col-1 { grid-template-columns: 1fr; }
+.component-grid.col-2 { grid-template-columns: repeat(2, 1fr); }
+.component-grid.col-3 { grid-template-columns: repeat(3, 1fr); }
+
+.component-card {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.component-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.component-preview {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+  background: var(--surface-bg);
+  border-bottom: 1px solid var(--surface-highest);
+}
+.component-preview.bg-white { background: #fff; }
+.component-preview.bg-dark { background: var(--brand-primary); }
+.component-preview.bg-accent { background: var(--brand-secondary); }
+
+.component-info {
+  padding: 12px 16px;
+}
+.component-info h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+.component-info .spec {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.component-info .tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-top: 6px;
+  margin-right: 4px;
+  background: var(--surface-low);
+  color: var(--text-muted);
+}
+.component-info .tag.token { background: #e8e0f0; color: #5c4696; }
+.component-info .tag.state { background: var(--brand-error-container); color: var(--brand-error); }
+.component-info .tag.usage { background: #e0f0e8; color: #1a7a4a; }
+
+/* ============================
+   Component-Specific Styles
+   ============================ */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 10px 24px;
+  font-size: 12px;
+}
+.btn-primary:hover { background: #2a2a2a; }
+.btn-secondary {
+  background: var(--brand-secondary);
+  color: #fff;
+  padding: 10px 24px;
+  font-size: 12px;
+}
+.btn-secondary:hover { filter: brightness(1.1); }
+.btn-outline {
+  background: transparent;
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
+  padding: 9px 24px;
+  font-size: 12px;
+}
+.btn-outline:hover { background: var(--surface-low); }
+.btn-ghost {
+  background: transparent;
+  color: var(--brand-secondary);
+  padding: 6px 12px;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.btn-sm { padding: 6px 14px; font-size: 10px; height: 28px; border-radius: 6px; }
+.btn-lg { padding: 14px 32px; font-size: 14px; border-radius: 12px; }
+.btn-block { width: 100%; }
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icon:hover { background: var(--surface-low); }
+.btn-icon svg { width: 18px; height: 18px; stroke: var(--text-primary); }
+
+/* Inputs */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+.input-group .icon-prefix {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-muted);
+}
+.input-field {
+  width: 100%;
+  height: 44px;
+  background: var(--surface-low);
+  border: 1px solid var(--surface-highest);
+  border-radius: 8px;
+  padding: 0 12px 0 36px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  outline: none;
+  color: var(--text-primary);
+  transition: all 0.2s;
+}
+.input-field:focus {
+  border-color: var(--brand-primary);
+  background: var(--surface-lowest);
+}
+
+/* Card */
+.card {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.card-accent {
+  border-color: var(--brand-primary);
+}
+
+/* Product Card */
+.prod-card {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.prod-card:hover { border-color: var(--brand-primary); }
+.prod-img-wrap {
+  aspect-ratio: 4/3;
+  background: var(--surface-low);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+.prod-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.3s;
+}
+.prod-card:hover .prod-img-wrap img { transform: scale(1.05); }
+.prod-body { padding: 12px; display: flex; flex-direction: column; flex: 1; gap: 8px; }
+.prod-name { font-size: 12px; font-weight: 700; color: var(--brand-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.prod-price { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--brand-secondary); }
+.prod-moq { font-size: 9px; color: var(--text-muted); }
+
+/* Stepper */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--surface-highest);
+  border-radius: 6px;
+  overflow: hidden;
+  height: 28px;
+}
+.stepper button {
+  width: 28px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--brand-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stepper button:hover { background: var(--surface-highest); }
+.stepper span {
+  width: 32px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-notification {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  background: var(--brand-secondary);
+  color: #fff;
+  font-size: 8px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+}
+.badge-status {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.badge-pending { background: rgba(162,55,95,0.15); color: var(--brand-secondary); }
+.badge-shipping { background: var(--surface-container); color: var(--text-muted); }
+.badge-completed { background: var(--surface-low); border: 1px solid var(--surface-highest); color: var(--text-primary); }
+.badge-default {
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: 8px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tags */
+.tag-label {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--surface-low);
+  color: var(--text-muted);
+}
+.tag-spot { background: var(--brand-secondary); color: #fff; }
+.tag-hot { background: #fff0e0; color: #c07000; }
+.tag-stock { background: #e0f0e8; color: #1a8a4a; }
+.tag-low { background: var(--brand-error-container); color: var(--brand-error); }
+
+/* Toast */
+.toast {
+  background: var(--brand-primary);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bottom Tab Bar */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 16px;
+  background: var(--surface-lowest);
+  border-top: 1px solid var(--surface-highest);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+}
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  position: relative;
+}
+.tab-item.active { color: var(--brand-secondary); font-weight: 700; }
+.tab-item svg { width: 20px; height: 20px; }
+.tab-item span { font-size: 10px; letter-spacing: 0.5px; }
+
+/* Top App Bar */
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--surface-lowest);
+  border-bottom: 1px solid var(--surface-highest);
+  height: 56px;
+}
+
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-error-container);
+  color: var(--brand-error);
+  border: 1px solid rgba(186,26,26,0.2);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* Cart Summary */
+.summary-card {
+  background: var(--surface-low);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--surface-highest);
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+.summary-row.total {
+  border-top: 1px solid var(--surface-highest);
+  margin-top: 6px;
+  padding-top: 8px;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+.summary-row.discount { color: var(--brand-secondary); }
+.summary-amount {
+  font-family: var(--font-hanken);
+  font-weight: 800;
+  color: var(--brand-secondary);
+}
+
+/* Modal / Bottom Sheet */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 50;
+}
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface-lowest);
+  border-radius: 16px 16px 0 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 51;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.1);
+}
+.sheet-handle {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+}
+.sheet-handle::after {
+  content: '';
+  width: 40px;
+  height: 4px;
+  background: var(--surface-highest);
+  border-radius: 4px;
+}
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--surface-highest);
+}
+.sheet-header h2 { font-size: 14px; font-weight: 700; color: var(--brand-primary); }
+.sheet-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 60;
+  backdrop-filter: blur(4px);
+}
+.modal {
+  background: var(--surface-lowest);
+  width: 100%;
+  max-width: 360px;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--surface-highest);
+}
+
+/* Credit Card */
+.credit-card {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.credit-card .card-label {
+  font-size: 9px;
+  opacity: 0.7;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.credit-card .card-amount {
+  font-family: var(--font-hanken);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* Order Card */
+.order-card {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  padding: 16px;
+}
+.order-code { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+.order-date { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* Thumbnail Strip */
+.thumb-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0;
+  margin: 12px 0;
+}
+.thumb-strip::-webkit-scrollbar { display: none; }
+.thumb-item {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background: var(--surface-low);
+  border: 1px solid var(--surface-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  position: relative;
+  flex-shrink: 0;
+}
+.thumb-item img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.thumb-qty {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 4px 0 0 0;
+}
+
+/* Address Card */
+.addr-card {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  padding: 16px;
+}
+.addr-card.default { border-color: var(--brand-primary); }
+
+/* Chat */
+.chat-bubble-user {
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: 12px 12px 2px 12px;
+  padding: 10px 14px;
+  max-width: 85%;
+  margin-left: auto;
+}
+.chat-bubble-support {
+  background: var(--surface-lowest);
+  color: var(--brand-primary);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px 12px 12px 2px;
+  padding: 10px 14px;
+  max-width: 85%;
+}
+
+/* Menu List */
+.menu-list {
+  background: var(--surface-lowest);
+  border: 1px solid var(--surface-highest);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--surface-low);
+  transition: background 0.15s;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: var(--surface-low); }
+.menu-item-left { display: flex; align-items: center; gap: 16px; }
+.menu-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-low);
+  border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-item-label { font-size: 12px; font-weight: 700; color: var(--brand-primary); }
+
+/* Floating Bar */
+.floating-bar {
+  position: fixed;
+  bottom: 80px;
+  left: 12px;
+  right: 12px;
+  max-width: 448px;
+  margin: 0 auto;
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Checkout Bar */
+.checkout-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surface-lowest);
+  border-top: 1px solid var(--surface-highest);
+}
+
+/* Sub Tabs */
+.sub-tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--surface-high);
+}
+.sub-tab {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.sub-tab.active { color: var(--brand-primary); border-bottom-color: var(--brand-primary); }
+
+/* Profile Business Card */
+.biz-card {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Stats Card */
+.stat-card {
+  background: var(--surface-low);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--surface-highest);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 112px;
+}
+.stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(162,55,95,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spec Grid */
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+.spec-label { font-size: 12px; color: var(--text-muted); }
+.spec-value { font-size: 14px; font-weight: 700; color: var(--brand-primary); }
+
+/* Stock Bar */
+.stock-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--surface-highest);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.stock-bar-fill {
+  height: 100%;
+  background: var(--brand-secondary);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+/* Toggle */
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+.toggle-row .info h3 { font-size: 12px; font-weight: 700; color: var(--brand-primary); }
+.toggle-row .info p { font-size: 10.5px; color: var(--text-muted); margin-top: 2px; }
+.toggle-switch {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--brand-secondary);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ============================
+   Typography Showcase
+   ============================ */
+.type-showcase { display: flex; flex-direction: column; gap: 6px; }
+.type-h1 { font-family: var(--font-hanken); font-size: 22px; font-weight: 800; }
+.type-h2 { font-family: var(--font-hanken); font-size: 18px; font-weight: 800; }
+.type-h3 { font-family: var(--font-sans); font-size: 16px; font-weight: 700; }
+.type-body { font-family: var(--font-sans); font-size: 12px; }
+.type-body-sm { font-family: var(--font-sans); font-size: 10px; }
+.type-mono { font-family: var(--font-mono); font-size: 12px; }
+.type-mono-sm { font-family: var(--font-mono); font-size: 10px; }
+.type-caption { font-family: var(--font-sans); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.type-price { font-family: var(--font-hanken); font-size: 28px; font-weight: 800; color: var(--brand-secondary); }
+.type-label { font-family: var(--font-sans); font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ============================
+   Icon system (inline SVG helper)
+   ============================ */
+.icon-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+.icon-demo svg { width: 20px; height: 20px; stroke: var(--text-primary); stroke-width: 1.5; fill: none; }
+
+/* ============================
+   Color swatches
+   ============================ */
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.color-swatch { border-radius: 8px; overflow: hidden; border: 1px solid var(--surface-highest); }
+.swatch-visual { height: 60px; }
+.swatch-info { padding: 6px 10px; background: var(--surface-lowest); }
+.swatch-name { font-size: 11px; font-weight: 700; }
+.swatch-hex { font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); }
+
+/* ============================
+   Divider / Spacing
+   ============================ */
+.divider { border: none; border-top: 1px solid var(--surface-highest); margin: 8px 0; }
+.spacer-4 { height: 4px; } .spacer-8 { height: 8px; } .spacer-12 { height: 12px; } .spacer-16 { height: 16px; } .spacer-24 { height: 24px; }
+
+/* ============================
+   Responsive
+   ============================ */
+@media (max-width: 768px) {
+  .spec-main { padding: 16px; }
+  .spec-header { padding: 24px 16px; }
+  .spec-nav { padding: 0 16px; }
+  .component-grid { grid-template-columns: 1fr; }
+  .component-grid.col-2 { grid-template-columns: 1fr; }
+  .component-grid.col-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================
+     HEADER
+     ============================ -->
+<header class="spec-header">
+  <h1>LuxeSpirit 组件库规范</h1>
+  <div class="subtitle">常州唯一产品订货平台 — B2B移动端小程序组件体系</div>
+  <div class="meta">
+    <span>v1.0</span>
+    <span>2026.05.25</span>
+    <span>基于 React 19 + Tailwind CSS v4</span>
+    <span>字体: OPPO Sans / Hanken Grotesk / JetBrains Mono</span>
+  </div>
+</header>
+
+<!-- ============================
+     NAV
+     ============================ -->
+<nav class="spec-nav" id="specNav">
+  <a href="#tokens">📐 设计Token</a>
+  <a href="#typography">🔤 字体系统</a>
+  <a href="#buttons">🔘 按钮</a>
+  <a href="#inputs">⌨️ 输入框</a>
+  <a href="#cards">🃏 卡片</a>
+  <a href="#navigation">🧭 导航</a>
+  <a href="#overlays">💬 浮层/弹窗</a>
+  <a href="#badges">🏷️ 标签/徽章</a>
+  <a href="#status">📊 状态指示</a>
+  <a href="#commerce">🛒 交易组件</a>
+  <a href="#profile">👤 个人/企业</a>
+  <a href="#feedback">📢 反馈组件</a>
+</nav>
+
+<!-- ============================
+     MAIN
+     ============================ -->
+<main class="spec-main">
+
+  <!-- ============================
+       1. DESIGN TOKENS
+       ============================ -->
+  <section class="spec-section" id="tokens">
+    <div class="spec-section-header">
+      <h2>📐 设计Token</h2>
+      <span class="sec-code">index.css @theme</span>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">色彩系统</h3>
+    <div class="color-grid" style="margin-bottom:24px;">
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#fbf9f8;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-bg</div><div class="swatch-hex">#fbf9f8</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#ffffff;border-bottom:1px solid #e4e2e2;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-lowest</div><div class="swatch-hex">#ffffff</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#f5f3f3;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-low</div><div class="swatch-hex">#f5f3f3</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#efeded;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-container</div><div class="swatch-hex">#efeded</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#e9e8e7;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-high</div><div class="swatch-hex">#e9e8e7</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#e4e2e2;"></div>
+        <div class="swatch-info"><div class="swatch-name">surface-highest</div><div class="swatch-hex">#e4e2e2</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#1b1c1c;"></div>
+        <div class="swatch-info"><div class="swatch-name">text-primary</div><div class="swatch-hex">#1b1c1c</div><div class="swatch-hex">文字色</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#4c4546;"></div>
+        <div class="swatch-info"><div class="swatch-name">text-muted</div><div class="swatch-hex">#4c4546</div><div class="swatch-hex">次要文字</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#000000;"></div>
+        <div class="swatch-info"><div class="swatch-name">brand-primary</div><div class="swatch-hex">#000000</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#a2375f;"></div>
+        <div class="swatch-info"><div class="swatch-name">brand-secondary</div><div class="swatch-hex">#a2375f</div><div class="swatch-hex">强调色</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#ba1a1a;"></div>
+        <div class="swatch-info"><div class="swatch-name">brand-error</div><div class="swatch-hex">#ba1a1a</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-visual" style="background:#ffdad6;"></div>
+        <div class="swatch-info"><div class="swatch-name">brand-error-container</div><div class="swatch-hex">#ffdad6</div></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">间距与圆角</h3>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:4px;height:4px;border-radius:2px;background:#000;"></div><span style="font-size:11px;">圆角 xs: 4px (tag)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:4px;background:#000;"></div><span style="font-size:11px;">圆角 sm: 6px (stepper, btn-sm)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;border-radius:8px;background:#000;"></div><span style="font-size:11px;">圆角 md: 8px (input, btn, card inner)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border-radius:12px;background:#000;"></div><span style="font-size:11px;">圆角 lg: 12px (card, sheet, modal)</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:32px;border-radius:16px;background:#000;"></div><span style="font-size:11px;">圆角 xl: 16px (sheet top)</span></div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#e4e2e2;"></div><span style="font-size:11px;">padding-sm: 8px 12px</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:32px;height:24px;background:#e4e2e2;"></div><span style="font-size:11px;">padding-md: 12px 16px</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:48px;height:32px;background:#e4e2e2;"></div><span style="font-size:11px;">padding-lg: 16px 20px</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:80px;height:4px;background:#e4e2e2;"></div><span style="font-size:11px;">grid-gap: 16px (col), 24px (row)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       2. TYPOGRAPHY
+       ============================ -->
+  <section class="spec-section" id="typography">
+    <div class="spec-section-header">
+      <h2>🔤 字体系统</h2>
+      <span class="sec-code">--font-sans / --font-hanken / --font-mono</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Hanken Grotesk — Display/金额</h3></div>
+        <div style="padding:16px 20px;background:var(--surface-bg);">
+          <div class="type-showcase">
+            <div class="type-h1">Hanken 22px 800 标题</div>
+            <div class="type-h2">Hanken 18px 800 产品名</div>
+            <div class="type-price">¥45,280.00</div>
+            <div class="type-price" style="font-size:18px;">¥428.00</div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">用在：金额数字、大标题、品牌展示</div>
+          <span class="tag token">font-hanken</span>
+          <span class="tag usage">font-extrabold</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Inter / OPPO Sans — 正文</h3></div>
+        <div style="padding:16px 20px;background:var(--surface-bg);">
+          <div class="type-showcase">
+            <div class="type-body">正文 12px 常规 — 妖怪物语小果酒 368mlx12瓶</div>
+            <div class="type-body" style="font-weight:700;">正文加粗 12px — 商品名称/导航文字</div>
+            <div class="type-body-sm">辅助文字 10px — 常州果酒厂专属客服</div>
+            <div class="type-caption">标签文字 10px uppercase</div>
+            <div class="type-label">表单标签 10.5px uppercase</div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">字重：400 常规 / 500 中 / 600 中粗 / 700 粗</div>
+          <span class="tag token">font-sans</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>JetBrains Mono — 代码/数据</h3></div>
+        <div style="padding:16px 20px;background:var(--surface-bg);">
+          <div class="type-showcase">
+            <div class="type-mono">SKU: WH-12-0042</div>
+            <div class="type-mono" style="font-size:10px;">#LX-89241</div>
+            <div class="type-mono-sm">¥12,450.00</div>
+            <div class="type-mono-sm">12 箱</div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">用在：SKU编号、订单号、金额、数量、编码</div>
+          <span class="tag token">font-mono</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       3. BUTTONS
+       ============================ -->
+  <section class="spec-section" id="buttons">
+    <div class="spec-section-header">
+      <h2>🔘 按钮</h2>
+      <span class="sec-code">.btn / .btn-primary / .btn-secondary / .btn-outline</span>
+    </div>
+    <div class="component-grid col-3">
+      <div class="component-card">
+        <div class="component-info"><h3>Primary 主按钮</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <button class="btn btn-primary btn-block">安全验签并授权登录</button>
+          <button class="btn btn-primary btn-block" style="width:auto;">确认，安全授信扣款</button>
+          <button class="btn btn-primary btn-sm">浏览商品目录</button>
+        </div>
+        <div class="component-info">
+          <div class="spec">背景 #000 / 白色文字 / 圆角 8px / h-11(44px)</div>
+          <span class="tag usage">CTA</span>
+          <span class="tag usage">确认操作</span>
+          <span class="tag state">default</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Secondary 强调按钮</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <button class="btn btn-secondary btn-block">开启订货新时代</button>
+          <button class="btn btn-secondary btn-block" style="width:auto;">结算 (3)</button>
+          <button class="btn btn-secondary btn-sm">一键全部加购</button>
+        </div>
+        <div class="component-info">
+          <div class="spec">背景 #a2375f / 白色文字 / 用于结算/加购/关键操作</div>
+          <span class="tag usage">结算</span>
+          <span class="tag usage">加购</span>
+          <span class="tag usage">下单</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Outline 描边按钮</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <button class="btn btn-outline" style="width:auto;">加入购物车</button>
+          <button class="btn btn-outline" style="width:auto;">再次购买</button>
+          <button class="btn btn-outline" style="font-size:10px;padding:6px 16px;">退出登录</button>
+        </div>
+        <div class="component-info">
+          <div class="spec">透明背景 / 黑色描边+文字 / 110% brightness hover</div>
+          <span class="tag usage">次要操作</span>
+          <span class="tag usage">复购</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Ghost / Link 文字按钮</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <button class="btn btn-ghost">重置筛选</button>
+          <button class="btn btn-ghost" style="color:var(--brand-error);background:transparent;">忽略</button>
+          <button style="font-size:10px;font-weight:700;color:var(--brand-secondary);text-decoration:underline;background:none;border:none;cursor:pointer;">设为默认</button>
+        </div>
+        <div class="component-info">
+          <div class="spec">用于次要操作/重置/跳转链接</div>
+          <span class="tag usage">重置</span>
+          <span class="tag usage">链接</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Icon 图标按钮</h3></div>
+        <div class="component-preview">
+          <div style="display:flex;gap:4px;">
+            <button class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <button class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <button class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">36x36 / 圆角50% / hover bg surface-low</div>
+          <span class="tag usage">导航</span>
+          <span class="tag usage">分享</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Confiramtion 确认按钮（红色）</h3></div>
+        <div class="component-preview">
+          <button style="width:100%;padding:14px;border-radius:8px;border:1px solid var(--brand-error);background:transparent;color:var(--brand-error);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>退出登录</span>
+          </button>
+        </div>
+        <div class="component-info">
+          <div class="spec">红色描边 + hover bg tint / 用于退出/危险操作</div>
+          <span class="tag state">危险</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       4. INPUTS
+       ============================ -->
+  <section class="spec-section" id="inputs">
+    <div class="spec-section-header">
+      <h2>⌨️ 输入框</h2>
+      <span class="sec-code">.input-field / .stepper</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Text Input 文字输入</h3></div>
+        <div class="component-preview" style="gap:12px;">
+          <div class="input-group">
+            <svg class="icon-prefix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="input-field" type="text" placeholder="输入您的订货注册人手机号..." value="" />
+          </div>
+          <div class="input-group">
+            <svg class="icon-prefix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <input class="input-field" type="text" placeholder="搜索产品名称或商品编码(SKU)..." value="" />
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">高度44px / 左侧图标20px / 背景surface-low</div>
+          <span class="tag state">default</span>
+          <span class="tag state">focus: border brand-primary</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Password 密码输入</h3></div>
+        <div class="component-preview">
+          <div class="input-group">
+            <svg class="icon-prefix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <input class="input-field" type="password" placeholder="******" value="" />
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">type="password" / 支持切换明文/密文</div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Stepper 数值步进器</h3></div>
+        <div class="component-preview" style="gap:8px;align-items:flex-start;">
+          <div class="stepper">
+            <button>-</button>
+            <span>12</span>
+            <button>+</button>
+          </div>
+          <div class="stepper">
+            <button>-</button>
+            <span>2</span>
+            <button>+</button>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);">B2B场景：+/- 步长为MOQ值（非1）</div>
+        </div>
+        <div class="component-info">
+          <div class="spec">高28px / 按钮28x28 / 数字32px / 圆角6px</div>
+          <span class="tag token">MOQ步长</span>
+          <span class="tag usage">商品列表/购物车</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Checkbox 勾选框</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;">
+            <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand-primary);border-radius:4px;" />
+            <span>全选</span>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:10.5px;color:var(--text-muted);cursor:pointer;">
+            <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand-primary);margin-top:1px;" />
+            <span>我已阅读并自愿签署《常州大宗提货合规契约》</span>
+          </label>
+        </div>
+        <div class="component-info">
+          <div class="spec">原生checkbox / accent-color brand-primary / 圆角4px</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-8"></div>
+    <div class="component-grid col-1">
+      <div class="component-card">
+        <div class="component-info"><h3>Select Switch 角色切换器</h3></div>
+        <div class="component-preview">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--surface-low);padding:4px;border-radius:12px;border:1px solid var(--surface-highest);">
+            <div style="background:#fff;padding:8px;border-radius:8px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              批发采购商
+            </div>
+            <div style="padding:8px;border-radius:8px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--text-muted);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14M5 8a2 2 0 1 1 0-4h14a2 2 0 1 1 0 4M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"/></svg>
+              供应方/工厂端
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">active: white card + shadow; inactive: muted + transparent</div>
+          <span class="tag usage">登录页</span>
+          <span class="tag usage">角色选择</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       5. CARDS
+       ============================ -->
+  <section class="spec-section" id="cards">
+    <div class="spec-section-header">
+      <h2>🃏 卡片</h2>
+      <span class="sec-code">.card / .prod-card / .order-card / .addr-card</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Product Card 商品卡片</h3></div>
+        <div style="padding:16px;background:var(--surface-bg);">
+          <div class="prod-card" style="max-width:180px;">
+            <div class="prod-img-wrap" style="background:#f5f3f3;">
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;opacity:0.3;">🍷</div>
+            </div>
+            <div class="prod-body">
+              <div class="prod-name">妖怪物语小果酒 368mlx12瓶 批发装</div>
+              <div class="prod-price">¥428</div>
+              <div class="prod-moq">最小起订 12箱</div>
+              <hr class="divider" />
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="stepper">
+                  <button>-</button>
+                  <span>12</span>
+                  <button>+</button>
+                </div>
+                <button class="btn btn-secondary btn-sm">加购</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">4:3 图片区 / 12px padding / flex-column h-full / hover border brand-primary</div>
+          <span class="tag token">两列网格 gap-x-4 gap-y-6</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Order Card 订单卡片</h3></div>
+        <div style="padding:16px;background:var(--surface-bg);">
+          <div class="order-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div class="order-code">订单编号 #LX-89241</div>
+                <div class="order-date">2025年10月24日 • 14:30</div>
+              </div>
+              <span class="badge badge-status badge-pending">待处理</span>
+            </div>
+            <div class="thumb-strip">
+              <div class="thumb-item">
+                <div style="font-size:20px;opacity:0.3;">🍾</div>
+                <span class="thumb-qty">x8</span>
+              </div>
+              <div class="thumb-item">
+                <div style="font-size:20px;opacity:0.3;">🔧</div>
+                <span class="thumb-qty">x20</span>
+              </div>
+              <div class="thumb-item">
+                <div style="font-size:10px;font-weight:700;color:var(--text-muted);">+1</div>
+              </div>
+            </div>
+            <hr class="divider" />
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:10px;color:var(--text-muted);">2 件商品合同总计</div>
+                <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;">¥12,450.00</div>
+              </div>
+              <button class="btn btn-outline" style="padding:6px 16px;font-size:11px;">再次购买 →</button>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">12px padding / 顶部 order# + status badge / 缩略图廊 + 底部金额+复购</div>
+          <span class="tag token">订单中心使用</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Address Card 地址卡片</h3></div>
+        <div style="padding:16px;background:var(--surface-bg);">
+          <div class="addr-card default">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--brand-primary);">李远</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">13816928842</div>
+              </div>
+              <span class="badge badge-default">默认提货点</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--surface-low);border-radius:8px;border:1px solid var(--surface-low);">
+              江苏省常州市武进区太湖村东路xxxxx
+            </div>
+            <hr class="divider" />
+            <div style="display:flex;justify-content:space-between;font-size:10px;">
+              <button style="font-weight:700;color:var(--brand-secondary);text-decoration:underline;background:none;border:none;cursor:pointer;">设为默认</button>
+              <button style="color:var(--text-muted);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                删除
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">default state: border brand-primary / 可设为默认+删除</div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Stats Card 统计卡片</h3></div>
+        <div style="padding:16px;background:var(--surface-bg);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--brand-secondary);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div style="font-family:var(--font-hanken);font-size:22px;font-weight:800;">12</div>
+                <div style="font-size:10.5px;color:var(--text-muted);">进行中订单</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--brand-secondary);"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              </div>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:14px;font-weight:700;">¥45,280.00</div>
+                <div style="font-size:10.5px;color:var(--text-muted);">信用额度</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">2列网格 / 圆角12px / 高112px / 图标+数字+标签</div>
+          <span class="tag usage">个人中心</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       6. NAVIGATION
+       ============================ -->
+  <section class="spec-section" id="navigation">
+    <div class="spec-section-header">
+      <h2>🧭 导航</h2>
+      <span class="sec-code">.tab-bar / .app-bar / .sub-tabs</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Bottom Tab Bar 底部导航栏</h3></div>
+        <div class="component-preview">
+          <div class="tab-bar" style="max-width:400px;">
+            <div class="tab-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <span>首页</span>
+            </div>
+            <div class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              <span style="position:absolute;top:4px;right:2px;width:16px;height:16px;font-size:8px;background:var(--brand-secondary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid #fff;">3</span>
+              <span>购物车</span>
+            </div>
+            <div class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              <span>订单</span>
+            </div>
+            <div class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>我的</span>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">固定底部 / 圆角12px top / 4Tab: 首页 购物车 订单 我的 / 购物车有未读数量角标</div>
+          <span class="tag token">active: brand-secondary + bold</span>
+          <span class="tag token">inactive: text-muted scale-90</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Top App Bar 顶栏</h3></div>
+        <div class="component-preview">
+          <div class="app-bar" style="max-width:400px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:24px;height:24px;background:var(--brand-secondary);border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <span style="font-size:12px;font-weight:800;color:var(--brand-primary);">常州唯一产品订货平台</span>
+            </div>
+            <button style="position:relative;border:none;background:none;padding:8px;border-radius:50%;cursor:pointer;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              <span style="position:absolute;top:2px;right:2px;width:16px;height:16px;font-size:8px;background:var(--brand-secondary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid #fff;">1</span>
+            </button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">固定顶部 / h-14(56px) / 左侧logo+标题 / 右侧操作区</div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Sub Tabs 子导航Tab</h3></div>
+        <div class="component-preview">
+          <div class="sub-tabs" style="max-width:400px;">
+            <button class="sub-tab active">全部</button>
+            <button class="sub-tab">待处理</button>
+            <button class="sub-tab">发货中</button>
+            <button class="sub-tab">已完成</button>
+          </div>
+          <div style="margin-top:12px;">
+            <div class="sub-tabs" style="max-width:400px;">
+              <button class="sub-tab active">订单列表</button>
+              <button class="sub-tab">异常协控</button>
+              <button class="sub-tab">企业客户</button>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">用于订单筛选/供应端子页 / active: border-bottom brand-primary + bold</div>
+          <span class="tag usage">订单中心</span>
+          <span class="tag usage">供应端</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Filter Bar 筛选栏</h3></div>
+        <div class="component-preview">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button style="display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:1px solid var(--brand-primary);background:rgba(0,0,0,0.03);font-size:11px;font-weight:700;cursor:pointer;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 19 19 12"/></svg>
+              价格 ↑
+            </button>
+            <button style="display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:1px solid var(--surface-highest);font-size:11px;cursor:pointer;color:var(--text-muted);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+              仅看现货
+            </button>
+            <button style="margin-left:auto;font-size:10px;color:var(--brand-secondary);text-decoration:underline;font-weight:700;border:none;background:none;cursor:pointer;">重置筛选</button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">Sticky贴在header下 / 价格排序+现货过滤 / active border brand-primary</div>
+          <span class="tag usage">首页</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       7. OVERLAYS
+       ============================ -->
+  <section class="spec-section" id="overlays">
+    <div class="spec-section-header">
+      <h2>💬 浮层/弹窗</h2>
+      <span class="sec-code">.sheet / .modal</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Bottom Sheet 底部抽屉</h3></div>
+        <div class="component-preview" style="min-height:200px;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;"></div>
+          <div class="sheet" style="position:absolute;z-index:2;max-height:60%;">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <h2>购物车清单</h2>
+              <button style="border:none;background:none;cursor:pointer;padding:4px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="sheet-body">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--surface-low);border-radius:8px;margin-bottom:6px;">
+                <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--brand-primary);" />
+                <div style="width:40px;height:40px;background:var(--surface-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;opacity:0.3;">🍷</div>
+                <div style="flex:1;font-size:11px;font-weight:700;">Highland Reserve 12Y</div>
+                <div class="stepper" style="height:24px;">
+                  <button style="width:24px;">-</button>
+                  <span style="width:28px;font-size:11px;">12</span>
+                  <button style="width:24px;">+</button>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--brand-error-container);border-radius:8px;border:1px solid rgba(186,26,26,0.2);">
+                <input type="checkbox" style="width:16px;height:16px;" />
+                <div style="width:40px;height:40px;background:var(--surface-bg);border-radius:6px;display:flex;align-items:center;justify-content:center;opacity:0.3;filter:grayscale(1);">🍸</div>
+                <div style="flex:1;font-size:11px;font-weight:700;">Botanist Dry Gin</div>
+                <div class="stepper" style="height:24px;border-color:var(--brand-error);">
+                  <button style="width:24px;">-</button>
+                  <span style="width:28px;font-size:11px;color:var(--brand-error);">2</span>
+                  <button style="width:24px;">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">从底部升起 / max-h-70vh / 圆角16px top / 带指示条 / 滚动内容</div>
+          <span class="tag usage">购物车</span>
+          <span class="tag usage">地址选择</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Modal Dialog 支付弹窗</h3></div>
+        <div class="component-preview" style="min-height:280px;position:relative;">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(2px);z-index:1;"></div>
+          <div class="modal" style="position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--surface-low);padding-bottom:10px;">
+              <div style="font-size:14px;font-weight:700;">LuxeSpirit 极速大宗结算</div>
+              <button style="border:none;background:none;font-size:12px;cursor:pointer;">关闭</button>
+            </div>
+            <div class="credit-card" style="margin-top:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="card-label">常州厂 李远 (LX-88204-BC)</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              </div>
+              <div>
+                <div class="card-label">AVAILABLE REBATE CREDIT</div>
+                <div class="card-amount">¥45,280.00</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;">
+              <div class="summary-row"><span>商品小计</span><span>¥12,450.00</span></div>
+              <div class="summary-row discount"><span>大宗折扣 (5% OFF)</span><span>- ¥622.50</span></div>
+              <div class="summary-row total">
+                <span>应付结算总额</span>
+                <span class="summary-amount">¥11,827.50</span>
+              </div>
+            </div>
+            <p style="font-size:10px;color:var(--text-muted);margin:12px 0;">* 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成保税提单。</p>
+            <button class="btn btn-secondary btn-block" style="padding:14px;">确认，安全授信扣款</button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">背景遮罩80%黑+blur / max-w-360px / 授信额度卡片+费用明细+法律声明</div>
+          <span class="tag usage">结算确认</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       8. BADGES & TAGS
+       ============================ -->
+  <section class="spec-section" id="badges">
+    <div class="spec-section-header">
+      <h2>🏷️ 标签/徽章</h2>
+      <span class="sec-code">.badge / .tag-label</span>
+    </div>
+    <div class="component-grid col-3">
+      <div class="component-card">
+        <div class="component-info"><h3>Status Badge 状态标签</h3></div>
+        <div class="component-preview" style="gap:6px;flex-direction:row;flex-wrap:wrap;">
+          <span class="badge badge-status badge-pending">待处理</span>
+          <span class="badge badge-status badge-shipping">发货中</span>
+          <span class="badge badge-status badge-completed">已完成</span>
+        </div>
+        <div class="component-info">
+          <div class="spec">白底圆角 / pending: brand-secondary tint / shipping: neutral / completed: border</div>
+          <span class="tag usage">订单卡片</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Product Tag 商品标签</h3></div>
+        <div class="component-preview" style="gap:6px;flex-direction:row;flex-wrap:wrap;">
+          <span class="tag-label tag-spot">现货</span>
+          <span class="tag-label tag-hot">人气商品</span>
+          <span class="tag-label">大宗直供</span>
+          <span class="tag-label tag-low">库存紧张</span>
+          <span class="tag-label tag-stock">有库存</span>
+          <span class="tag-label">小起降</span>
+          <span class="tag-label" style="background:var(--brand-primary);color:#fff;">协议折扣价</span>
+        </div>
+        <div class="component-info">
+          <div class="spec">9px / 2px 8px padding / 圆角4px / Product.tags数组驱动</div>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Notification Badge 通知角标</h3></div>
+        <div class="component-preview" style="gap:16px;flex-direction:row;">
+          <div style="position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            <span class="badge badge-notification">3</span>
+          </div>
+          <div style="position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge badge-notification" style="width:8px;height:8px;font-size:0;right:4px;"> </span>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">16x16 / brand-secondary bg / 白边 / absolute定位 / 红点用于消息</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       9. STATUS INDICATORS
+       ============================ -->
+  <section class="spec-section" id="status">
+    <div class="spec-section-header">
+      <h2>📊 状态指示</h2>
+      <span class="sec-code">.stock-bar / .error-banner / .badge-status</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>MOQ Warning 起订量警告</h3></div>
+        <div class="component-preview">
+          <div class="error-banner" style="background:var(--brand-error-container);color:var(--brand-error);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>起订量不足: 需满 12 箱 (差 10 箱)</span>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">红色背景 tint / 只在购物车MOQ不足时显示 / 红框+灰色商品图</div>
+          <span class="tag state">警告</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Stock Bar 库存进度条</h3></div>
+        <div class="component-preview" style="gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:10px;color:var(--text-muted);">可用库存</span>
+            <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;">842 件</span>
+          </div>
+          <div class="stock-bar">
+            <div class="stock-bar-fill" style="width:34%;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:10px;color:var(--text-muted);">可用库存</span>
+            <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;">2,180 件</span>
+          </div>
+          <div class="stock-bar">
+            <div class="stock-bar-fill" style="width:87%;"></div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">高度4px / 高容量绿色 / 低容量红色 / 默认brand-secondary</div>
+          <span class="tag usage">商品详情</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Error Banner 错误横幅</h3></div>
+        <div class="component-preview">
+          <div class="error-banner">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span style="flex:1;">已选商品中存在起订量不足的红框警告项</span>
+            <button style="font-weight:700;text-decoration:underline;background:none;border:none;color:var(--brand-error);cursor:pointer;font-size:10px;">忽略</button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">bg brand-error-container / 10px / 可关闭 + 忽略按钮</div>
+          <span class="tag state">错误</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Empty State 空状态</h3></div>
+        <div class="component-preview" style="align-items:center;text-align:center;padding:32px;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);margin-bottom:8px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <div style="font-size:12px;color:var(--text-muted);">购物车空空如也</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px;">浏览商品大宗目录</button>
+        </div>
+        <div class="component-info">
+          <div class="spec">居中图标+文字+CTA按钮 / 用于cart/orders空列表</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       10. COMMERCE COMPONENTS
+       ============================ -->
+  <section class="spec-section" id="commerce">
+    <div class="spec-section-header">
+      <h2>🛒 交易组件</h2>
+      <span class="sec-code">.credit-card / .summary-card / .checkout-bar</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Credit Limit Card 授信额度卡</h3></div>
+        <div class="component-preview">
+          <div class="credit-card" style="max-width:320px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="card-label">MARCUS CHEN (LX-88204-BC)</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="card-label">AVAILABLE REBATE CREDIT</div>
+              <div class="card-amount">¥45,280.00</div>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">黑色背景 / 白色文字 / 96px高 / 品牌强记忆 / 用在支付弹窗和个人中心</div>
+          <span class="tag usage">结算弹窗</span>
+          <span class="tag usage">个人中心</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Payment Summary 结算汇总</h3></div>
+        <div class="component-preview">
+          <div class="summary-card" style="max-width:320px;">
+            <div class="summary-row">
+              <span>商品小计 (24 箱)</span>
+              <span class="type-mono">¥12,450.00</span>
+            </div>
+            <div class="summary-row discount">
+              <span>大宗采购协议折扣 (5% OFF)</span>
+              <span class="type-mono">- ¥622.50</span>
+            </div>
+            <div class="summary-row total">
+              <span>应付金额 (批价折让后)</span>
+              <span class="summary-amount type-mono">¥11,827.50</span>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">灰底 / 行间距6px / 折扣行绿色 / 总计行加粗 / 用于购物车+结算弹窗</div>
+          <span class="tag usage">购物车底部</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Checkout Bar 结算操作栏</h3></div>
+        <div class="component-preview">
+          <div class="checkout-bar" style="max-width:400px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" checked style="width:18px;height:18px;accent-color:var(--brand-primary);" />
+              <label style="font-size:12px;font-weight:700;color:var(--text-muted);">全选</label>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="text-align:right;">
+                <div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">合计金额</div>
+                <div class="type-price" style="font-size:14px;">¥11,827.50</div>
+              </div>
+              <button class="btn btn-secondary" style="padding:12px 24px;">结算 (2)</button>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">固定底部 / 全选+合计+结算按钮 / 灰色描边上边线</div>
+          <span class="tag usage">购物车</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Floating Bar 浮动操作栏</h3></div>
+        <div class="component-preview" style="min-height:100px;">
+          <div class="floating-bar" style="position:relative;bottom:auto;left:auto;right:auto;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="position:relative;background:rgba(255,255,255,0.1);padding:8px;border-radius:8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                <span style="position:absolute;top:-4px;right:-4px;width:18px;height:18px;font-size:9px;background:var(--brand-secondary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;">3</span>
+              </div>
+              <div>
+                <div style="font-size:10px;opacity:0.7;">已配置订货量</div>
+                <div style="font-family:var(--font-hanken);font-size:14px;font-weight:800;">¥12,450.00</div>
+              </div>
+            </div>
+            <button class="btn btn-secondary" style="padding:10px 20px;font-size:11px;">一键全部加购</button>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">浮动在底部导航栏上方 / 黑色背景 / 购物车icon+金额+CTA按钮</div>
+          <span class="tag usage">首页购物车浮层</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       11. PROFILE / ENTERPRISE
+       ============================ -->
+  <section class="spec-section" id="profile">
+    <div class="spec-section-header">
+      <h2>👤 个人/企业</h2>
+      <span class="sec-code">.biz-card / .menu-list / .addr-card</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Enterprise Business Card 企业名片</h3></div>
+        <div class="component-preview">
+          <div class="biz-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="font-size:9px;font-family:var(--font-mono);opacity:0.7;text-transform:uppercase;letter-spacing:1px;">企业名称</div>
+                <div style="font-size:14px;font-weight:700;">高鑫零售有限公司</div>
+              </div>
+              <div style="background:var(--brand-secondary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+            </div>
+            <div style="display:flex;gap:48px;margin-top:16px;">
+              <div>
+                <div style="font-size:9px;font-family:var(--font-mono);opacity:0.7;text-transform:uppercase;">联系人</div>
+                <div style="font-size:12px;font-weight:700;">李远</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-family:var(--font-mono);opacity:0.7;text-transform:uppercase;">客户ID</div>
+                <div style="font-size:12px;font-weight:700;font-family:var(--font-mono);">LX-88204-BC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">黑色背景 / 白色文字 / 右上方品牌水印(半透明+abs) / 企业信息+联系人+ID</div>
+          <span class="tag usage">个人中心</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Menu List 菜单列表</h3></div>
+        <div class="component-preview">
+          <div class="menu-list" style="max-width:320px;">
+            <div class="menu-item">
+              <div class="menu-item-left">
+                <div class="menu-item-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <span class="menu-item-label">收货网点地址</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-left">
+                <div class="menu-item-icon" style="position:relative;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <span style="position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--brand-secondary);border-radius:50%;border:2px solid var(--surface-low);"></span>
+                </div>
+                <span class="menu-item-label">平台消息中心</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+            <div class="menu-item" style="border-bottom:none;">
+              <div class="menu-item-left">
+                <div class="menu-item-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <span class="menu-item-label">通用参数设置</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">白底圆角12px / 每项40px icon+label+chevron / 消息中心有小红点</div>
+          <span class="tag usage">个人中心</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       12. FEEDBACK COMPONENTS
+       ============================ -->
+  <section class="spec-section" id="feedback">
+    <div class="spec-section-header">
+      <h2>📢 反馈组件</h2>
+      <span class="sec-code">.toast / .chat-bubble / .toggle-switch</span>
+    </div>
+    <div class="component-grid col-2">
+      <div class="component-card">
+        <div class="component-info"><h3>Toast 轻提示</h3></div>
+        <div class="component-preview" style="min-height:70px;">
+          <div style="display:flex;justify-content:center;">
+            <div class="toast">
+              <span>✓ 已加 12 箱 妖怪物语小果酒</span>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">黑色背景 / 白色文字 / 12px / 圆角6px / 自动2秒消失 / 居中fixed</div>
+          <span class="tag usage">全站</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Chat Bubble 消息气泡</h3></div>
+        <div class="component-preview" style="gap:12px;">
+          <div class="chat-bubble-user">
+            <div style="font-size:10px;opacity:0.75;margin-bottom:4px;">企业主 李远 • 下午 15:05</div>
+            <div style="font-size:12px;">我的货现在发了吗？</div>
+          </div>
+          <div class="chat-bubble-support">
+            <div style="font-size:10px;opacity:0.75;margin-bottom:4px;">常州果酒厂专属客服 • 下午 15:06</div>
+            <div style="font-size:12px;">【物流专项答复】您好，保税1号库DOCK-19出货车次已配属，预计2小时内离口岸。</div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">user: 黑色bg 右下圆角 / support: 白色bg+border 左下圆角 / 带时间戳+角色名</div>
+          <span class="tag usage">消息中心</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Toggle Setting 设置开关</h3></div>
+        <div class="component-preview">
+          <div style="max-width:360px;">
+            <div class="toggle-row" style="border-bottom:1px solid var(--surface-low);">
+              <div class="info">
+                <h3>极速离线数据缓存</h3>
+                <p>提早缓存大片图片以在地下室信号差时正常运作</p>
+              </div>
+              <button class="toggle-switch"></button>
+            </div>
+            <div class="toggle-row">
+              <div class="info">
+                <h3>价格降价专属推送</h3>
+                <p>当关注的常州系列产品大单出现优惠时下发短信</p>
+              </div>
+              <button class="toggle-switch"></button>
+            </div>
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">flex justify-between / 左侧标题+描述 / 右侧toggle 36x20</div>
+          <span class="tag usage">设置页面</span>
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-info"><h3>Success State 成功状态</h3></div>
+        <div class="component-preview" style="align-items:center;text-align:center;padding:24px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(162,55,95,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-secondary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div style="font-size:14px;font-weight:700;">授信支付处理成功</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">
+            已扣除协议授信余额 ¥11,827.50
+          </div>
+        </div>
+        <div class="component-info">
+          <div class="spec">居中展示 / 圆icon + 标题 + 详情 / 用于结算成功后的确认页</div>
+          <span class="tag usage">结算弹窗</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       CARDINAL RULES
+       ============================ -->
+  <section class="spec-section">
+    <div class="spec-section-header">
+      <h2>📋 核心设计规范</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+      <div style="background:var(--surface-lowest);border:1px solid var(--surface-highest);border-radius:12px;padding:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-primary);margin-bottom:8px;">文案例</div>
+        <ul style="font-size:11px;color:var(--text-muted);line-height:1.8;padding-left:16px;">
+          <li><strong>避免C端用语</strong>：不写"加入收藏"、"关注店铺"、"领优惠券"</li>
+          <li><strong>使用B端术语</strong>：授信额度、大宗协议、起订量(MOQ)、保税单、配属</li>
+          <li><strong>金额格式</strong>：统一 ¥xxx.xx（两位小数、货币符号在前）</li>
+          <li><strong>数量单位</strong>：统一用"箱"（而非"瓶"或"件"）</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface-lowest);border:1px solid var(--surface-highest);border-radius:12px;padding:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-primary);margin-bottom:8px;">交互规则</div>
+        <ul style="font-size:11px;color:var(--text-muted);line-height:1.8;padding-left:16px;">
+          <li><strong>MOQ强约束</strong>：步进器以MOQ为步长，低于MOQ自动归零或跳到MOQ</li>
+          <li><strong>授信额度阻断</strong>：额度不足时明确提示并给出联系财务的指引</li>
+          <li><strong>角色视图隔离</strong>：批发商看不到供应端Tab，反之亦然</li>
+          <li><strong>所有操作有toast</strong>：2秒轻提示，不打断操作流</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface-lowest);border:1px solid var(--surface-highest);border-radius:12px;padding:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand-primary);margin-bottom:8px;">动效规范</div>
+        <ul style="font-size:11px;color:var(--text-muted);line-height:1.8;padding-left:16px;">
+          <li><strong>过渡</strong>：默认 0.2s ease（hover/active）</li>
+          <li><strong>弹窗</strong>：Backdrop blur 4px + 80% 黑色遮罩</li>
+          <li><strong>底部Sheet</strong>：从底部滑入（translateY）</li>
+          <li><strong>Splash进度条</strong>：60ms/步，约1.5秒完成</li>
+          <li><strong>素材缩放</strong>：product card hover 1.05 scale</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================
+     Nav highlight on scroll
+     ============================ -->
+<script>
+(function(){
+  const navLinks = document.querySelectorAll('.spec-nav a');
+  const sections = document.querySelectorAll('.spec-section');
+  window.addEventListener('scroll', function(){
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 180;
+      if (window.scrollY >= top) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

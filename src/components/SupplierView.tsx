@@ -5,7 +5,7 @@ import {
   Building, ClipboardCheck, Eye, CheckCircle, PackageOpen, AlertTriangle, 
   Users, BarChart3, Truck, Edit3, DollarSign, Database, Sliders, Play, 
   Camera, Barcode, HelpCircle, Check, LogOut, RefreshCw, Plus, Trash2, 
-  Search, Info, ChevronRight, ShieldAlert, BadgeHelp 
+  Search, ShieldAlert, BadgeHelp 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -57,7 +57,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   
   // Abnormality modal trigger
   const [abnormalModalOrder, setAbnormalModalOrder] = useState<Order | null>(null);
-  const [abnormalReasonInput, setAbnormalReasonInput] = useState('常州分拨中心雨雪天气，保税一号仓货运驳运车辆通行受限，预计延迟12小时发货。');
+  const [abnormalReasonInput, setAbnormalReasonInput] = useState('常州分拨中心雨雪天气，一号仓库货运驳运车辆通行受限，预计延迟12小时发货。');
 
   // Warehouse Tab Selector / States
   const [warehouseSubTab, setWarehouseSubTab] = useState<'pending' | 'scanning'>('pending');
@@ -137,13 +137,13 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   const handleFinishScanWorkflow = () => {
     if (!activeBarcodeScannerOrder) return;
     setScanStep('verified');
-    showToast('保税1号库：所有SKU托盘配载全部对齐，核单无误！');
+    showToast('1号仓库：所有SKU托盘配载全部对齐，核单无误！');
   };
 
   const handleDispatchScannedOrder = () => {
     if (!activeBarcodeScannerOrder) return;
     onUpdateOrderStatus(activeBarcodeScannerOrder.id, 'shipping', {
-      carrier: '常州本土保税专配车队',
+      carrier: '常州本土专配车队',
       trackingNo: `SU-D-${Math.floor(10000 + Math.random() * 90000)}P`
     });
     showToast(`订单已更新为已出库，配运车牌已打标：${activeBarcodeScannerOrder.code}`);
@@ -207,27 +207,11 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
     const totalProductCount = products.length;
     
     // Category counters
-    const categoryTotals = {
-      fruitwine: 0,
-      baijiu: 0,
-      wine: 0,
-      beer: 0,
-      accessories: 0,
-    };
-    products.forEach(p => {
-      const cat = p.category as keyof typeof categoryTotals;
-      if (cat in categoryTotals) {
-        // use mock share or inventory share
-        categoryTotals[cat] += p.stock;
-      }
-    });
-
     return {
       totalGmv,
       completedGmv,
       pendingShipmentCount,
       totalProductCount,
-      categoryTotals
     };
   }, [orders, products]);
 
@@ -470,7 +454,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     <div className="bg-surface-lowest p-8 rounded-xl border border-surface-highest text-center space-y-2">
                       <CheckCircle className="w-8 h-8 text-green-500 mx-auto" />
                       <p className="text-xs font-bold text-brand-primary">赞！当前无受阻或异常合同订单</p>
-                      <p className="text-[10px] text-text-muted">保税港区提车、海关清运状态全线绿灯正常</p>
+                      <p className="text-[10px] text-text-muted">仓库区提货、配送状态全线绿灯正常</p>
                     </div>
                   ) : (
                     orders.filter(o => 'isAbnormal' in o && (o as any).isAbnormal).map(o => (
@@ -512,12 +496,12 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     </div>
                     <div className="flex-grow">
                       <div className="flex justify-between w-full">
-                        <p className="text-xs font-bold text-brand-primary">陈明 (Marcus）- 尊贵企业</p>
+                        <p className="text-xs font-bold text-brand-primary">李远 - 尊贵企业</p>
                         <span className="text-[9px] bg-green-100 text-green-600 font-bold px-1.5 rounded">
                           协议账期授信良好
                         </span>
                       </div>
-                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：常州新北区太湖东路大宗保税1号库</p>
+                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：常州新北区太湖东路大宗1号仓库</p>
                       <p className="text-[10px] font-mono text-[#5c62b5] font-bold mt-1">
                         历史总合购额：¥194,500 | 累签果酒 2,400 箱
                       </p>
@@ -531,14 +515,14 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     </div>
                     <div className="flex-grow">
                       <div className="flex justify-between w-full">
-                        <p className="text-xs font-bold text-brand-primary">全球烈酒华东代理公司</p>
+                        <p className="text-xs font-bold text-brand-primary">高鑫零售有限公司</p>
                         <span className="text-[9px] bg-yellow-100 text-yellow-600 font-bold px-1.5 rounded">
                           授信待归还校准
                         </span>
                       </div>
-                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：上海浦东新区外高桥保税区</p>
+                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：上海浦东新区外高桥物流中心</p>
                       <p className="text-[10px] font-mono text-[#5c62b5] font-bold mt-1">
-                        历史总合购额：¥82,100 | 累购干红/洋酒 890 箱
+                        历史总合购额：¥82,100 | 累购果酒 890 箱
                       </p>
                     </div>
                   </div>
@@ -586,7 +570,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             {warehouseSubTab === 'pending' && (
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">待备货配送订单 (保税仓拣货流程)</h3>
+                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">待备货配送订单 (仓库拣货流程)</h3>
                   <span className="text-[9.5px] font-mono font-bold bg-[#5c62b5]/10 text-brand-primary px-2 py-0.5 rounded-full">
                     DOCK-19 DOCKING STATION
                   </span>
@@ -854,7 +838,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             {adminSubTab === 'catalog' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州保税直营类目总汇</h3>
+                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州直营类目总汇</h3>
                   <button 
                     onClick={() => setShowAddProductModal(true)}
                     className="bg-brand-secondary text-white hover:bg-brand-primary px-3 py-1.5 text-[10.5px] font-bold rounded-lg flex items-center gap-1 cursor-pointer transition-colors"
@@ -980,7 +964,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                         showToast(`已全局微调大宗采购MOQ最低门槛为：${e.target.value}倍`);
                       }}
                     />
-                    <p className="text-[10px] text-text-muted">当保税仓运力极度紧张时，可适度拉升MOQ多箱整合运送以提防配载损耗。</p>
+                    <p className="text-[10px] text-text-muted">当仓库运力极度紧张时，可适度拉升MOQ多箱整合运送以提防配载损耗。</p>
                   </div>
 
                   {/* Pricing discounts default percentage */}
@@ -1026,7 +1010,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                       />
                       <button 
                         onClick={() => {
-                          showToast(`常州果酒厂：已对默认新签约客户重新校正基础授信：¥${creditLimitDefault.toLocaleString()}`);
+                          showToast(`常州唯一果酒厂：已对默认新签约客户重新校正基础授信：¥${creditLimitDefault.toLocaleString()}`);
                         }}
                         className="bg-brand-primary hover:bg-brand-secondary text-white px-3 font-bold rounded"
                       >
@@ -1043,7 +1027,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             {adminSubTab === 'metrics' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州果酒厂经营大宗GMV实况</h3>
+                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州唯一果酒厂经营大宗GMV实况</h3>
                   <span className="text-[9.5px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">
                     实时汇总(D3核载)
                   </span>
@@ -1066,102 +1050,72 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                   </div>
                 </div>
 
-                {/* Highly elegant customized SVG Bar Chart representing product sales categories */}
+                {/* Dynamic SVG Bar Chart representing each product's stock data */}
                 <div className="bg-surface-lowest p-4 rounded-xl border border-surface-highest space-y-4 shadow-sm text-center">
                   <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-bold text-brand-primary">果酒厂各品类仓储备货流（库存占比）</h4>
+                    <h4 className="text-xs font-bold text-brand-primary">果酒厂各单品库存数据</h4>
                     <span className="text-[9px] font-mono text-text-muted">单位: 箱</span>
                   </div>
 
-                  {/* Fully responsive SVG Bar graph designed purely to look high end, avoiding any react 19 peer bugs */}
-                  <div className="relative pt-2">
-                    <svg viewBox="0 0 400 210" className="w-full overflow-visible">
+                  {/* Horizontally scrollable bar chart */}
+                  <div className="relative pt-2 overflow-x-auto">
+                    <svg
+                      viewBox={`0 0 ${Math.max(400, products.length * 70 + 60)} 390`}
+                      className="h-80"
+                      style={{ width: Math.max(400, products.length * 70 + 60) }}
+                    >
                       {/* Grid lines */}
-                      <line x1="40" y1="150" x2="380" y2="150" stroke="#f0f0f5" strokeWidth="1" />
-                      <line x1="40" y1="100" x2="380" y2="100" stroke="#f0f0f5" strokeWidth="1" />
-                      <line x1="40" y1="50" x2="380" y2="50" stroke="#f0f0f5" strokeWidth="1" />
-                      <line x1="40" y1="10" x2="380" y2="10" stroke="#f3f3f8" strokeWidth="1" />
+                      {[160, 110, 60, 20].map(y => (
+                        <line key={y} x1="40" y1={y} x2={Math.max(380, products.length * 70 + 40)} y2={y} stroke={y === 20 ? '#f3f3f8' : '#f0f0f5'} strokeWidth="1" />
+                      ))}
 
-                      {/* Bar 1 (fruitwine): Stock Value */}
-                      <rect
-                        x="70"
-                        y={150 - Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)}
-                        width="30"
-                        height={Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)}
-                        fill="#5c62b5"
-                        rx="3"
-                        className="transition-all duration-1000"
-                      />
-                      <text x="85" y={140 - Math.min(130, (statistics.categoryTotals.fruitwine || 0) / 45)} textAnchor="middle" fill="#5c62b5" className="font-mono text-[9px] font-bold">
-                        {statistics.categoryTotals.fruitwine || 0}
-                      </text>
-                      <text x="85" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        果酒
-                      </text>
+                      {/* Dynamic per-product bars */}
+                      {(() => {
+                        const barColors = ['#5c62b5', '#e23337', '#ff9900', '#67c23a', '#409eff', '#fa8c16', '#722ed1', '#13c2c2', '#eb2f96', '#f5222d'];
+                        const maxStock = Math.max(...products.map(p => p.stock), 1);
+                        const scaleFactor = 140 / maxStock;
+                        const slotWidth = 70;
+                        const barWidth = 32;
 
-                      {/* Bar 2 (Wine): Stock Value */}
-                      <rect
-                        x="150"
-                        y={150 - Math.min(130, statistics.categoryTotals.wine / 45)}
-                        width="30"
-                        height={Math.min(130, statistics.categoryTotals.wine / 45)}
-                        fill="#e23337"
-                        rx="3"
-                        className="transition-all duration-1000"
-                      />
-                      <text x="165" y={140 - Math.min(130, statistics.categoryTotals.wine / 45)} textAnchor="middle" fill="#e23337" className="font-mono text-[9px] font-bold">
-                        {statistics.categoryTotals.wine}
-                      </text>
-                      <text x="165" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        红洋酒
-                      </text>
+                        return products.map((p, i) => {
+                          const barHeight = Math.min(140, p.stock * scaleFactor);
+                          const centerX = 40 + slotWidth * (i + 0.5);
+                          const x = centerX - barWidth / 2;
+                          const color = barColors[i % barColors.length];
 
-                      {/* Bar 3 (Beer): Stock Value */}
-                      <rect
-                        x="230"
-                        y={150 - Math.min(130, statistics.categoryTotals.beer / 45)}
-                        width="30"
-                        height={Math.min(130, statistics.categoryTotals.beer / 45)}
-                        fill="#ff9900"
-                        rx="3"
-                        className="transition-all duration-1000"
-                      />
-                      <text x="245" y={140 - Math.min(130, statistics.categoryTotals.beer / 45)} textAnchor="middle" fill="#ff9900" className="font-mono text-[9px] font-bold">
-                        {statistics.categoryTotals.beer}
-                      </text>
-                      <text x="245" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        精酿啤酒
-                      </text>
-
-                      {/* Bar 4 (Accessories): Stock Value */}
-                      <rect
-                        x="310"
-                        y={150 - Math.min(130, statistics.categoryTotals.accessories / 45)}
-                        width="30"
-                        height={Math.min(130, statistics.categoryTotals.accessories / 45)}
-                        fill="#67c23a"
-                        rx="3"
-                        className="transition-all duration-1000"
-                      />
-                      <text x="325" y={140 - Math.min(130, statistics.categoryTotals.accessories / 45)} textAnchor="middle" fill="#67c23a" className="font-mono text-[9px] font-bold">
-                        {statistics.categoryTotals.accessories}
-                      </text>
-                      <text x="325" y="170" textAnchor="middle" fill="#606266" className="text-[10px] font-sans">
-                        酒杯配件
-                      </text>
+                          return (
+                            <React.Fragment key={p.id}>
+                              <rect
+                                x={x}
+                                y={160 - barHeight}
+                                width={barWidth}
+                                height={barHeight}
+                                fill={color}
+                                rx="3"
+                                className="transition-all duration-1000"
+                              />
+                              <text x={centerX} y={148 - barHeight} textAnchor="middle" fill={color} className="font-mono text-[9px] font-bold">
+                                {p.stock}
+                              </text>
+                              {/* Vertical text via absolute-positioned tspan for each character */}
+                              <text textAnchor="middle" fill="#606266" className="text-[11px] font-sans" dominantBaseline="auto">
+                                {(() => {
+                                  const chars = p.name.replace(/\s+\d+ml.*$/, '');
+                                  const startY = 210;
+                                  const lineHeight = 16;
+                                  return chars.split('').map((char, ci) => (
+                                    <tspan key={ci} x={centerX} y={startY + ci * lineHeight}>{char}</tspan>
+                                  ));
+                                })()}
+                              </text>
+                            </React.Fragment>
+                          );
+                        });
+                      })()}
                     </svg>
                   </div>
                 </div>
 
-                {/* Additional Business Fun Facts details card */}
-                <div className="bg-[#409eff]/5 border border-[#409eff]/15 p-4 rounded-xl text-xs space-y-1">
-                  <span className="font-sans font-extrabold text-[#409eff] flex items-center gap-1">
-                    <Info className="w-3.5 h-3.5" /> 2026年第二季度常州港宏观统计分析：
-                  </span>
-                  <p className="text-[10.5px] leading-relaxed text-text-primary">
-                    常州本地果酒（杨梅/青梅系列）在华东地区餐饮商超出货中占据 **58%** 的强主控优势。精酿啤酒夜场代理拿货MOQ累积上升9%，总体仓库流转提速12.5小时。
-                  </p>
-                </div>
               </div>
             )}
           </div>
@@ -1228,7 +1182,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             </h3>
 
             <div className="text-xs text-text-muted space-y-2">
-              <p>请为已经到款的企业订单 <strong>{selectedOrder.code}</strong> 签发仓储配装调拔单。并默认推送到保税一号仓库：</p>
+              <p>请为已经到款的企业订单 <strong>{selectedOrder.code}</strong> 签发仓储配装调拔单。并默认推送到1号仓库：</p>
               
               <div className="space-y-3.5 pt-2">
                 <div className="space-y-1">
@@ -1298,7 +1252,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] text-text-primary font-bold block">工厂保税港备用安全储备 (箱) *</label>
+                <label className="text-[10px] text-text-primary font-bold block">工厂仓库备用安全储备 (箱) *</label>
                 <input 
                   type="number" 
                   className="w-full text-xs font-mono p-2 border border-surface-highest rounded bg-surface-low font-bold"

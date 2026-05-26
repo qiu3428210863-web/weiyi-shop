@@ -1,9 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: "OPPO Sans";
+  src: url('/fonts/OPPOSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "OPPO Sans";
+  src: url('/fonts/OPPOSans-Regular.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "OPPO Sans";
+  src: url('/fonts/OPPOSans-Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "OPPO Sans";
+  src: url('/fonts/OPPOSans-Regular.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
 @theme {
-  --font-hanken: "Hanken Grotesk", sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-hanken: "OPPO Sans", "Hanken Grotesk", sans-serif;
+  --font-sans: "OPPO Sans", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
   /* Theme colors defined in the Heritage Modernist system */

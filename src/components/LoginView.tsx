@@ -42,7 +42,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms) {
-      setErrorMsg('请勾选并阅读大宗协议交易与保税合规申明');
+      setErrorMsg('请勾选并阅读大宗协议交易合规申明');
       return;
     }
 
@@ -51,7 +51,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     let finalName = '';
     
     if (finalRole === 'wholesaler') {
-      finalName = 'Marcus Chen (陈明)';
+      finalName = '李远';
     } else if (finalRole === 'sales') {
       finalName = '王晓东 (业务经理)';
     } else if (finalRole === 'warehouse') {
@@ -76,7 +76,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
           <div>
             <h2 className="font-sans text-base font-extrabold text-brand-primary tracking-tight">常州唯一产品订货平台</h2>
-            <p className="text-[11px] text-text-muted mt-1 font-medium">常州果酒厂及特约大宗保税直供供应链系统</p>
+            <p className="text-[11px] text-text-muted mt-1 font-medium">常州果酒厂及特约大宗直供供应链系统</p>
           </div>
         </div>
 
@@ -307,7 +307,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </div>
 
       <div className="text-center text-[10px] text-text-muted mt-5">
-        常州保税仓调货系统已由国家互联网交易保障中心进行了SSL端到端物理签名校验。
+        常州仓调货系统已经过SSL端到端加密签名校验。
       </div>
     </div>
   );

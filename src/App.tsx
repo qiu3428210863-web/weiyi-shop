@@ -16,11 +16,13 @@ import { LoginView } from './components/LoginView';
 import { SupplierView } from './components/SupplierView';
 
 // Standard Lucide icons imports
-import { Home, ShoppingCart, ClipboardCheck, User as UserIcon } from 'lucide-react';
+import { Home, ClipboardCheck, User as UserIcon } from 'lucide-react';
 
 export default function App() {
   // B2B Dynamic Portals & Authentication States
-  const [appState, setAppState] = useState<'splash' | 'login' | 'authenticated'>('splash');
+  const [appState, setAppState] = useState<'splash' | 'login' | 'authenticated'>(
+    localStorage.getItem('lx_hasSeenSplash') ? 'login' : 'splash'
+  );
   const [userRole, setUserRole] = useState<'wholesaler' | 'sales' | 'warehouse' | 'admin'>('wholesaler');
   const [loggedInName, setLoggedInName] = useState<string>('');
 
@@ -142,9 +144,10 @@ export default function App() {
   };
 
   const handleUpdateCartQty = (productId: string, qty: number) => {
+    const clamped = Math.max(0, qty);
     setCart((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, quantity: qty } : item
+        item.productId === productId ? { ...item, quantity: clamped } : item
       )
     );
   };
@@ -352,7 +355,10 @@ export default function App() {
   const renderActiveView = () => {
     // 1. Splash Page Layer
     if (appState === 'splash') {
-      return <SplashView onEnter={() => setAppState('login')} />;
+      return <SplashView onEnter={() => {
+            localStorage.setItem('lx_hasSeenSplash', '1');
+            setAppState('login');
+          }} />;
     }
 
     // 2. Login Page Layer
@@ -443,8 +449,8 @@ export default function App() {
               handleAddSupportMessage(txt);
               // Hook dynamic matching questions
               setTimeout(() => {
-                if (txt.includes('保税') || txt.includes('出库') || txt.includes('发货')) {
-                  handleAddSupportAutoReply('【物流专项答复】陈总，系统查询到您的保税1号库（DOCK-19）出货车次已经配属。提货单已分发车队，常发车预计在2小时内离口岸，感谢您对常州厂的支持！');
+                if (txt.includes('仓库') || txt.includes('出库') || txt.includes('发货')) {
+                  handleAddSupportAutoReply('【物流专项答复】陈总，系统查询到您的1号仓库（DOCK-19）出货车次已经配属。提货单已分发车队，常发车预计在2小时内离库，感谢您对常州厂的支持！');
                 } else if (txt.includes('额度') || txt.includes('汇款') || txt.includes('扣款')) {
                   handleAddSupportAutoReply('【财务部自动答复】收到您的授信扣款账款核验。如大宗协议汇款在24小时内到账常州厂，系统配额信用额度将实时清算并返回您的大额授信额度。');
                 }
@@ -467,13 +473,13 @@ export default function App() {
       {/* Global Navigation Bottom Bar (hidden inside separate detail focus or supplier/splash/login states) */}
       {!selectedProduct && appState === 'authenticated' && userRole === 'wholesaler' && (
         <nav className="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 py-2 bg-surface-lowest border-t border-surface-highest rounded-t-xl shadow-[0px_-4px_12px_rgba(0,0,0,0.05)]">
-          
+
           {/* Tab 1: Home */}
           <button
             onClick={() => setActiveTab('home')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${
-              activeTab === 'home' 
-                ? 'text-brand-secondary font-bold scale-100' 
+              activeTab === 'home'
+                ? 'text-brand-secondary font-bold scale-100'
                 : 'text-text-muted hover:text-brand-primary scale-90'
             }`}
             title="首页"
@@ -482,31 +488,12 @@ export default function App() {
             <span className="font-sans text-[10px] tracking-wider">首页</span>
           </button>
 
-          {/* Tab 2: Cart with dynamic notifications badges */}
-          <button
-            onClick={() => setActiveTab('cart')}
-            className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer relative ${
-              activeTab === 'cart' 
-                ? 'text-brand-secondary font-bold scale-100' 
-                : 'text-text-muted hover:text-brand-primary scale-90'
-            }`}
-            title="购物车"
-          >
-            <ShoppingCart className="w-5 h-5 mb-0.5" />
-            <span className="font-sans text-[10px] tracking-wider">购物车</span>
-            {cart.length > 0 && (
-              <span className="absolute top-1 right-2.5 bg-brand-secondary text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white">
-                {cart.length}
-              </span>
-            )}
-          </button>
-
-          {/* Tab 3: Orders records history */}
+          {/* Tab 2: Orders records history */}
           <button
             onClick={() => setActiveTab('orders')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${
-              activeTab === 'orders' 
-                ? 'text-brand-secondary font-bold scale-100' 
+              activeTab === 'orders'
+                ? 'text-brand-secondary font-bold scale-100'
                 : 'text-text-muted hover:text-brand-primary scale-90'
             }`}
             title="订单"
@@ -515,12 +502,12 @@ export default function App() {
             <span className="font-sans text-[10px] tracking-wider">订单</span>
           </button>
 
-          {/* Tab 4: Profile personal workspace */}
+          {/* Tab 3: Profile personal workspace */}
           <button
             onClick={() => setActiveTab('profile')}
             className={`flex flex-col items-center justify-center transition-all duration-200 select-none cursor-pointer ${
-              activeTab === 'profile' 
-                ? 'text-brand-secondary font-bold scale-100' 
+              activeTab === 'profile'
+                ? 'text-brand-secondary font-bold scale-100'
                 : 'text-text-muted hover:text-brand-primary scale-90'
             }`}
             title="我的"

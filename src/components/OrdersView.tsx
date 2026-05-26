@@ -216,7 +216,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
           ) : (
             <div className="py-20 text-center space-y-2">
               <ClipboardCheck className="w-8 h-8 text-text-muted mx-auto" />
-              <p className="text-xs text-text-muted font-mono">您的 {activeTab !== 'all' ? `"${activeTab}"` : ''} 专属保税单历史为空</p>
+              <p className="text-xs text-text-muted font-mono">您的 {activeTab !== 'all' ? `"${activeTab}"` : ''} 专属发货单历史为空</p>
             </div>
           )}
         </section>

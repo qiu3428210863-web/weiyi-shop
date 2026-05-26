@@ -141,9 +141,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <section className="p-4 bg-surface-lowest">
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
-              <span className="bg-surface-container text-text-muted px-2.5 py-0.5 rounded text-xs font-mono">
-                SKU: {product.sku}
-              </span>
               <span className="text-brand-secondary font-bold text-xs flex items-center gap-1">
                 <ShieldCheck className="w-4 h-4 fill-brand-secondary text-white" />
                 现货
@@ -174,14 +171,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         <section className="mt-2 p-4 bg-surface-lowest border-y border-surface-highest">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col p-3 bg-surface-low rounded border border-surface-highest">
-              <span className="font-mono text-[10px] text-text-muted uppercase mb-1">最小起订量</span>
+              <span className="text-[10px] text-text-muted uppercase mb-1">最小起订量</span>
               <span className="font-hanken text-md font-bold text-brand-primary">{product.moq} 箱</span>
               <span className="text-xs text-text-muted">({product.moq * product.quantityPerBox} 瓶)</span>
             </div>
             
             <div className="flex flex-col p-3 bg-surface-low rounded border border-surface-highest justify-between">
               <div>
-                <span className="font-mono text-[10px] text-text-muted uppercase mb-1">可用库存</span>
+                <span className="text-[10px] text-text-muted uppercase mb-1">可用库存</span>
                 <span className="font-hanken text-md font-bold text-brand-primary flex items-baseline gap-1">
                   {product.stock} 件
                 </span>
@@ -198,7 +195,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
         {/* Technical Specs Accordion Grid */}
         <section className="mt-2 p-4 bg-surface-lowest">
-          <h3 className="font-mono text-xs text-text-muted mb-4 uppercase flex items-center gap-1.5 tracking-wider font-semibold">
+          <h3 className="text-xs text-text-muted mb-4 uppercase flex items-center gap-1.5 tracking-wider font-semibold">
             <span className="w-1.5 h-3 bg-brand-primary rounded" />
             技术参数
           </h3>
@@ -212,8 +209,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <p className="text-sm font-bold text-brand-primary">{product.origin || '四川, 中国'}</p>
             </div>
             <div>
-              <p className="text-xs text-text-muted">橡木桶 / 容器</p>
-              <p className="text-sm font-bold text-brand-primary">{product.barrelType || '陶坛'}</p>
+              <p className="text-xs text-text-muted">容器材质</p>
+              <p className="text-sm font-bold text-brand-primary">玻璃瓶</p>
             </div>
             <div>
               <p className="text-xs text-text-muted">包装整装重量</p>
@@ -222,27 +219,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </section>
 
-        {/* Detailed Description with lists */}
-        <section className="mt-2 p-4 bg-surface-lowest mb-12">
-          <h3 className="font-mono text-xs text-text-muted mb-3 uppercase tracking-wider font-semibold">产品概览</h3>
-          <div className="text-sm text-text-muted leading-relaxed space-y-4">
-            <p>{product.description}</p>
-            
-            {product.overviewNotes && (
-              <div className="bg-surface-low p-4 rounded-lg border-l-4 border-brand-primary italic text-xs text-text-primary leading-normal">
-                {product.overviewNotes}
-              </div>
-            )}
-
-            {product.specs && product.specs.length > 0 && (
-              <ul className="list-disc pl-5 space-y-2 text-xs">
-                {product.specs.map((spec, i) => (
-                  <li key={i}>{spec}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </section>
       </main>
 
       {/* Sticky Bottom Order Bar */}
@@ -257,9 +233,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             >
               -
             </button>
-            <input 
-              className="w-10 sm:w-12 text-center font-bold text-xs sm:text-sm bg-transparent border-none outline-none focus:ring-0 p-0" 
-              type="number" 
+            <input
+              className="w-10 sm:w-12 text-center font-bold text-xs sm:text-sm bg-transparent border-none outline-none focus:ring-0 p-0"
+              type="number"
+              min={0}
               value={quantity}
               onChange={handleQtyChange}
             />

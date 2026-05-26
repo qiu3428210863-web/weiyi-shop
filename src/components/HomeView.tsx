@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Product, CartItem } from '../types';
-import { Search, ShoppingCart, SlidersHorizontal, ArrowUpDown, RefreshCw, AlertTriangle, ShieldCheck, Wallet, X } from 'lucide-react';
+import { Search, ShoppingCart, SlidersHorizontal, ArrowUpDown, RefreshCw, AlertTriangle, ShieldCheck, Wallet, X, Trash2 } from 'lucide-react';
 import { WLogo } from './WLogo';
 
 interface HomeViewProps {
@@ -101,7 +101,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
       if (cur === 0 && delta > 0) {
         next = moq;
         showToast(`已自适应最小起订量 ${moq} 箱`);
-      } else if (next > 0 && next < moq && delta < 0) {
+      }
+      if (next > 0 && next < moq && delta < 0) {
         next = 0;
       }
       return { ...prev, [id]: next };
@@ -125,6 +126,37 @@ export const HomeView: React.FC<HomeViewProps> = ({
     return new Map<string, Product>(products.map((p) => [p.id, p]));
   }, [products]);
 
+  // Pending configured quantities (before adding to cart)
+  const pendingQtysTotal = useMemo(() => {
+    let count = 0;
+    let total = 0;
+    Object.entries(qtys).forEach(([productId, qty]) => {
+      if (qty > 0) {
+        const p = cartProductMap.get(productId);
+        if (p) {
+          count += qty;
+          total += p.price * qty;
+        }
+      }
+    });
+    return { count, total };
+  }, [qtys, cartProductMap]);
+
+  const hasPendingQtys = pendingQtysTotal.count > 0;
+
+  const handleAddAllPendingToCart = () => {
+    Object.entries(qtys).forEach(([productId, qty]) => {
+      if (qty > 0) {
+        const p = cartProductMap.get(productId);
+        if (p) {
+          onAddToCart(productId, qty);
+        }
+      }
+    });
+    setQtys({});
+    showToast(`已将 ${pendingQtysTotal.count} 箱全部加入购物车`);
+  };
+
   const checkedItems = useMemo(() => {
     return cartItems.filter((item) => item.checked);
   }, [cartItems]);
@@ -132,6 +164,25 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const isAllChecked = useMemo(() => {
     return cartItems.length > 0 && cartItems.every((item) => item.checked);
   }, [cartItems]);
+
+  // MOQ validity for each cart item
+  const moqViolationsInCart = useMemo(() => {
+    const result: { productId: string; name: string; required: number; current: number }[] = [];
+    cartItems.forEach((item) => {
+      const p = cartProductMap.get(item.productId);
+      if (p && item.quantity < p.moq) {
+        result.push({ productId: item.productId, name: p.name, required: p.moq, current: item.quantity });
+      }
+    });
+    return result;
+  }, [cartItems, cartProductMap]);
+
+  const hasSelectedMoqViolation = useMemo(() => {
+    return checkedItems.some((item) => {
+      const p = cartProductMap.get(item.productId);
+      return p ? item.quantity < p.moq : false;
+    });
+  }, [checkedItems, cartProductMap]);
 
   const sheetCalculations = useMemo(() => {
     let subtotal = 0;
@@ -163,6 +214,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const attemptCheckoutFlow = () => {
     if (checkedItems.length === 0) {
       setErrorMessage('请至少勾选一个想要结算的大宗分销商品');
+      return;
+    }
+    if (hasSelectedMoqViolation) {
+      setErrorMessage('已选商品中存在起订量不足的商品，请补充箱数后再结算。');
       return;
     }
     setErrorMessage(null);
@@ -282,19 +337,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
         {/* Product Grid */}
         <section className="mt-4">
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
-              {filteredProducts.map((product, index) => {
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6 items-stretch">
+              {filteredProducts.map((product) => {
                 const qty = qtys[product.id] || 0;
-                const isRight = index % 2 === 1;
                 return (
                   <div
                     key={product.id}
-                    className={`bg-surface-lowest border border-surface-highest rounded-xl overflow-hidden flex flex-col hover:border-brand-primary transition-colors group cursor-pointer ${
-                      isRight ? 'mt-6' : ''
-                    }`}
+                    className="bg-surface-lowest border border-surface-highest rounded-xl flex flex-col h-full hover:border-brand-primary transition-colors group cursor-pointer"
                     onClick={() => onSelectProduct(product)}
                   >
-                    <div className="aspect-[4/3] bg-surface-low overflow-hidden flex items-center justify-center p-3">
+                    <div className="aspect-[4/3] bg-surface-low overflow-hidden rounded-t-xl flex items-center justify-center p-3">
                       <img
                         className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
                         src={product.image}
@@ -307,59 +359,60 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         <p className="text-xs font-bold text-brand-primary leading-snug line-clamp-2">
                           {product.name}
                         </p>
-                        <p className="font-mono text-[9px] text-text-muted">SKU: {product.sku}</p>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1">
-                        <span className="font-mono text-xs font-bold text-brand-secondary">
-                          ¥{product.price.toLocaleString()}
-                        </span>
-                        <span className="text-[9px] text-text-muted font-mono">
-                          MOQ {product.moq}箱
-                        </span>
-                      </div>
+                      <div className="pt-1 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-xs font-bold text-brand-secondary">
+                            ¥{product.price.toLocaleString()}
+                          </span>
+                          <span className="text-[9px] text-text-muted">
+                            最小起订 {product.moq}箱
+                          </span>
+                        </div>
 
-                      <div
-                        className="flex items-center justify-between gap-1 pt-1 border-t border-surface-low"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {qty > 0 ? (
-                          <>
-                            <div className="flex items-center border border-surface-highest rounded overflow-hidden h-7 bg-surface-low">
+                        <div
+                          className="flex items-center justify-between gap-1 pt-2 border-t border-surface-low"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {qty > 0 ? (
+                            <>
+                              <div className="flex items-center border border-surface-highest rounded overflow-hidden h-7 bg-surface-low">
+                                <button
+                                  onClick={() => updateQty(product.id, -1, product.moq)}
+                                  className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
+                                >
+                                  -
+                                </button>
+                                <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary">
+                                  {qty}
+                                </span>
+                                <button
+                                  onClick={() => updateQty(product.id, 1, product.moq)}
+                                  className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
+                                >
+                                  +
+                                </button>
+                              </div>
                               <button
-                                onClick={() => updateQty(product.id, -product.moq, product.moq)}
-                                className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
+                                onClick={() => handleAddCart(product)}
+                                className="h-7 bg-brand-secondary text-white text-[10px] font-bold px-2.5 rounded transition-colors shrink-0"
                               >
-                                -
+                                加购
                               </button>
-                              <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary">
-                                {qty}
-                              </span>
-                              <button
-                                onClick={() => updateQty(product.id, product.moq, product.moq)}
-                                className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-brand-primary font-bold"
-                              >
-                                +
-                              </button>
-                            </div>
+                            </>
+                          ) : (
                             <button
-                              onClick={() => handleAddCart(product)}
-                              className="h-7 bg-brand-secondary text-white text-[10px] font-bold px-2.5 rounded transition-colors shrink-0"
+                              onClick={() => {
+                                setQtys((prev) => ({ ...prev, [product.id]: product.moq }));
+                                showToast(`最小起订量 ${product.moq} 箱`);
+                              }}
+                              className="w-full h-7 bg-brand-primary text-white text-[10px] font-bold rounded hover:bg-brand-secondary transition-colors"
                             >
-                              加购
+                              配置订货量
                             </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => {
-                              setQtys((prev) => ({ ...prev, [product.id]: product.moq }));
-                              showToast(`最小起订量 ${product.moq} 箱`);
-                            }}
-                            className="w-full h-7 bg-brand-primary text-white text-[10px] font-bold rounded hover:bg-brand-secondary transition-colors"
-                          >
-                            配置订货量
-                          </button>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -402,6 +455,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
             </div>
 
+            {/* MOQ warning banner (always shown when violations exist) */}
+            {moqViolationsInCart.length > 0 && (
+              <div className="mx-4 mt-2 bg-brand-error-container text-brand-error border border-brand-error/20 p-2.5 rounded-lg flex items-center gap-2 text-[10px] font-medium">
+                <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+                <p className="flex-grow">{moqViolationsInCart.length} 件商品未达最小起订量，请调整箱数后再结算</p>
+              </div>
+            )}
+
             {/* Error banner */}
             {errorMessage && (
               <div className="mx-4 mt-2 bg-brand-error-container text-brand-error border border-brand-error/20 p-2.5 rounded-lg flex items-center gap-2 text-[10px] font-medium">
@@ -435,6 +496,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         <span className="w-8 text-center font-mono text-xs font-bold text-brand-primary">{item.quantity}</span>
                         <button onClick={() => handleQtyStep(item.productId, 1)} className="w-7 h-full flex items-center justify-center hover:bg-surface-highest text-xs font-bold text-brand-primary">+</button>
                       </div>
+                      <button
+                        onClick={() => onRemoveFromCart(item.productId)}
+                        className="p-1.5 rounded-full hover:bg-surface-highest text-text-muted hover:text-brand-error transition-colors shrink-0"
+                        title="删除"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   );
                 })
@@ -491,14 +559,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
                       </div>
                       <h4 className="font-sans text-sm font-bold text-brand-primary">授信支付处理成功</h4>
                       <p className="text-xs text-text-muted font-mono leading-relaxed">
-                        已扣除协议授信余额 ¥{sheetCalculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}，订单已进入常州4号保税仓待处理发货流水中。
+                        已扣除协议授信余额 ¥{sheetCalculations.finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}，订单已进入常州4号仓库待处理发货流水中。
                       </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="bg-brand-primary text-white p-4 rounded-lg flex flex-col justify-between h-24">
                         <div className="flex justify-between items-center opacity-85">
-                          <span className="text-[10px] font-mono tracking-wider">MARCUS CHEN (LX-88204-BC)</span>
+                          <span className="text-[10px] font-mono tracking-wider">李远 (LX-88204-BC)</span>
                           <Wallet className="w-4 h-4" />
                         </div>
                         <div>
@@ -528,7 +596,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         </div>
                       </div>
 
-                      <p className="text-[10px] text-text-muted leading-relaxed">* 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成保税提单。</p>
+                      <p className="text-[10px] text-text-muted leading-relaxed">* 确认即表示您代表企业授权以此账号下的授信额度支付本次合同。系统将自动生成提货单。</p>
 
                       <button
                         onClick={handleConfirmPayment}
@@ -546,8 +614,36 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       )}
 
-      {/* Floating Cart Bar */}
-      {cartCount > 0 && (
+      {/* --- Pending Configured Quantities Floating Bar --- */}
+      {hasPendingQtys && !showCartSheet && (
+        <div className="fixed bottom-16 left-0 w-full z-40 px-3 pb-3 pointer-events-none">
+          <div className="max-w-md mx-auto bg-black text-white shadow-xl rounded-xl p-3.5 flex items-center justify-between pointer-events-auto">
+            <div className="flex items-center gap-3">
+              <div className="relative bg-white/10 p-2.5 rounded-lg">
+                <ShoppingCart className="w-5 h-5 text-white" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-secondary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {pendingQtysTotal.count}
+                </span>
+              </div>
+              <div>
+                <p className="text-[10px] text-white/70 leading-none mb-1">已配置订货量</p>
+                <p className="font-hanken text-sm font-extrabold leading-none">
+                  ¥{pendingQtysTotal.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleAddAllPendingToCart}
+              className="bg-brand-secondary text-white font-sans text-xs font-bold px-5 py-2.5 rounded-lg active:scale-95 transition-all shadow-sm"
+            >
+              一键全部加购
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Cart Bar (hidden when pending config bar is showing to avoid overlap) */}
+      {cartCount > 0 && !hasPendingQtys && (
         <div className="fixed bottom-16 left-0 w-full z-40 px-3 pb-3 pointer-events-none">
           <div className="max-w-md mx-auto bg-brand-primary text-white shadow-xl rounded-xl p-3.5 flex items-center justify-between pointer-events-auto">
             <div className="flex items-center gap-3">
