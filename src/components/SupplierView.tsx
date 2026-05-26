@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Product, Order, CartItem, ShippingAddress } from '../types';
 import { WLogo } from './WLogo';
 import { 
-  Building, ClipboardCheck, Eye, CheckCircle, PackageOpen, AlertTriangle, 
-  Users, BarChart3, Truck, Edit3, DollarSign, Database, Sliders, Play, 
-  Camera, Barcode, HelpCircle, Check, LogOut, RefreshCw, Plus, Trash2, 
-  Search, ShieldAlert, BadgeHelp 
+  Building, ClipboardCheck, Eye, CheckCircle, PackageOpen, AlertTriangle,
+  Users, BarChart3, Truck, Edit3, Database, Sliders, Play,
+  Camera, Barcode, HelpCircle, Check, LogOut, RefreshCw, Plus, Trash2,
+  Search, ShieldAlert, BadgeHelp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -66,7 +66,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   const [scannedItemsCheck, setScannedItemsCheck] = useState<Record<string, boolean>>({});
 
   // Admin Configuration States
-  const [adminSubTab, setAdminSubTab] = useState<'catalog' | 'pricing' | 'rules' | 'metrics'>('catalog');
+  const [adminSubTab, setAdminSubTab] = useState<'catalog' | 'rules' | 'metrics'>('catalog');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editPriceVal, setEditPriceVal] = useState<string>('');
   const [editStockVal, setEditStockVal] = useState<string>('');
@@ -791,7 +791,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
           <div className="space-y-4">
             
             {/* Admin Mini Menu Tabs */}
-            <div className="grid grid-cols-4 gap-1 bg-surface-low border p-1 rounded-xl">
+            <div className="grid grid-cols-3 gap-1 bg-surface-low border p-1 rounded-xl">
               <button
                 onClick={() => setAdminSubTab('catalog')}
                 className={`py-1.5 text-[10.5px] font-bold rounded flex flex-col items-center justify-center leading-normal transition-all ${
@@ -800,16 +800,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
               >
                 <Database className="w-3.5 h-3.5 mb-0.5" />
                 <span>商品管理 </span>
-              </button>
-              
-              <button
-                onClick={() => setAdminSubTab('pricing')}
-                className={`py-1.5 text-[10.5px] font-bold rounded flex flex-col items-center justify-center leading-normal transition-all ${
-                  adminSubTab === 'pricing' ? 'bg-white text-brand-primary shadow-sm' : 'text-text-muted'
-                }`}
-              >
-                <DollarSign className="w-3.5 h-3.5 mb-0.5" />
-                <span>价格微调 </span>
               </button>
 
               <button
@@ -901,46 +891,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             )}
 
 
-            {/* Admin SubTab Content 2: Price Maintenance Panel */}
-            {adminSubTab === 'pricing' && (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center pb-1">
-                  <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">B2B大宗协议价格 & 起订量校准面板</h3>
-                  <span className="text-[9.5px] text-[#5c62b5] font-bold">实时同步采购商端</span>
-                </div>
-
-                <div className="bg-surface-lowest rounded-xl border border-surface-highest divide-y">
-                  {products.map((p) => (
-                    <div key={p.id} className="p-4 flex justify-between items-center gap-4 hover:bg-surface-low/10 transition-colors">
-                      <div className="flex-grow space-y-1">
-                        <h4 className="text-xs font-bold text-brand-primary line-clamp-1">{p.name}</h4>
-                        <div className="flex gap-4 font-mono text-[10.5px] text-text-muted">
-                          <span>当前价 / 箱: <strong className="text-brand-secondary">¥{p.price}</strong></span>
-                          <span>最小起订(MOQ): <strong className="text-brand-primary">{p.moq} 箱</strong></span>
-                        </div>
-                      </div>
-
-                      <div className="flex-shrink-0 flex gap-2">
-                        <button
-                          onClick={() => {
-                            setEditingProduct(p);
-                            setEditPriceVal(p.price.toString());
-                            setEditStockVal(p.stock.toString());
-                            setEditMoqVal(p.moq.toString());
-                          }}
-                          className="px-3 py-1.5 bg-brand-primary/10 hover:bg-brand-primary hover:text-white text-brand-primary text-[10.5px] font-bold rounded-lg transition-all cursor-pointer"
-                        >
-                          快速价格微调
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-            {/* Admin SubTab Content 3: Business rules configurations */}
+            {/* Admin SubTab Content 2: Business rules configurations */}
             {adminSubTab === 'rules' && (
               <div className="space-y-4">
                 <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">全局协议供销基础规则配置（沙箱级别）</h3>
@@ -1023,7 +974,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             )}
 
 
-            {/* Admin SubTab Content 4: Fully custom SVG charts dashboards */}
+            {/* Admin SubTab Content 3: Fully custom SVG charts dashboards */}
             {adminSubTab === 'metrics' && (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
