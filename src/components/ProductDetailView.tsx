@@ -18,6 +18,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [quantity, setQuantity] = useState(product.moq);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [showImageViewer, setShowImageViewer] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -108,12 +109,20 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
         {/* Gallery Section */}
         <section className="relative bg-surface-lowest overflow-hidden border-b border-surface-highest">
-          <div className="flex relative aspect-square overflow-hidden bg-[#fafafa]">
-            <img 
-              className="w-full h-full object-contain transition-all duration-300" 
-              src={product.galleryImages[activeImageIdx] || product.image} 
+          <div
+            className="flex relative aspect-square overflow-hidden bg-[#fafafa] cursor-pointer group"
+            onClick={() => setShowImageViewer(true)}
+          >
+            <img
+              className="w-full h-full object-contain transition-all duration-300"
+              src={product.galleryImages[activeImageIdx] || product.image}
               alt={product.name}
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+              <span className="opacity-0 group-hover:opacity-100 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full transition-opacity">
+                点击查看大图
+              </span>
+            </div>
             
             {/* Gallery Image Selector Controls */}
             {product.galleryImages.length > 1 && (
@@ -219,6 +228,38 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
         </section>
 
+        {/* Image Viewer Modal - click image to see full size */}
+        {showImageViewer && (
+          <div
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setShowImageViewer(false)}
+          >
+            <button
+              onClick={() => setShowImageViewer(false)}
+              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white text-xl hover:bg-white/20 transition-colors z-10"
+            >
+              ✕
+            </button>
+            <div className="max-w-full max-h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+              <a
+                href={product.galleryImages[activeImageIdx] || product.image}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+                title="在新标签页中打开图片"
+              >
+                <img
+                  className="max-w-full max-h-[85vh] object-contain rounded shadow-2xl"
+                  src={product.galleryImages[activeImageIdx] || product.image}
+                  alt={product.name}
+                />
+              </a>
+            </div>
+            <p className="absolute bottom-6 left-0 right-0 text-center text-white/60 text-xs">
+              点击图片外部关闭 · 点击图片在新标签页中打开
+            </p>
+          </div>
+        )}
       </main>
 
       {/* Sticky Bottom Order Bar */}

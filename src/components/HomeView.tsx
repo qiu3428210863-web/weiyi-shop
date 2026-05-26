@@ -348,7 +348,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   >
                     <div className="aspect-[4/3] bg-surface-low overflow-hidden rounded-t-xl flex items-center justify-center p-3">
                       <img
-                        className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         src={product.image}
                         alt={product.name}
                       />
@@ -486,7 +486,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         onChange={() => onToggleCartCheck(item.productId)}
                         className="w-4 h-4 rounded border-surface-highest text-brand-primary focus:ring-brand-primary cursor-pointer shrink-0"
                       />
-                      <img src={p.image} alt={p.name} className="w-10 h-10 object-contain mix-blend-multiply bg-white rounded flex-shrink-0" />
+                      <img src={p.image} alt={p.name} className="w-10 h-10 object-contain bg-white bg-white rounded flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-brand-primary truncate">{p.name}</p>
                         <p className="text-[10px] text-text-muted font-mono">¥{p.price.toLocaleString()}</p>

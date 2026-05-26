@@ -852,7 +852,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                   {products.map((p) => (
                     <div key={p.id} className="bg-surface-lowest p-3 rounded-xl border border-surface-highest flex gap-3 hover:border-brand-primary transition-all relative overflow-hidden">
                       <div className="w-14 h-14 bg-surface-low rounded overflow-hidden flex-shrink-0">
-                        <img src={p.image} className="w-full h-full object-contain p-1 mix-blend-multiply" alt="" />
+                        <img src={p.image} className="w-full h-full object-contain p-1 bg-white" alt="" />
                       </div>
                       
                       <div className="flex-grow space-y-1">

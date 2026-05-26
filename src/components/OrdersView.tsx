@@ -176,7 +176,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                           <img 
                             src={p.image} 
                             alt={p.name} 
-                            className="w-full h-full object-contain mix-blend-multiply" 
+                            className="w-full h-full object-contain bg-white" 
                           />
                           <span className="absolute bottom-0 right-0 bg-brand-primary/80 text-white font-mono text-[8px] font-bold px-1 rounded-tl">
                             x{item.quantity}

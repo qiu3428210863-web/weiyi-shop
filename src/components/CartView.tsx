@@ -282,7 +282,7 @@ export const CartView: React.FC<CartViewProps> = ({
                       <img 
                         src={p.image} 
                         alt={p.name} 
-                        className={`w-full h-full object-contain mix-blend-multiply ${tooLow ? 'grayscale opacity-75' : ''}`}
+                        className={`w-full h-full object-contain bg-white ${tooLow ? 'grayscale opacity-75' : ''}`}
                       />
                     </div>
 
