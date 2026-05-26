@@ -8,10 +8,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 360.0,
     originalPrice: 450.0,
     description: 'Heritage Reserve 系列为高标准工业蒸馏原酒，采用 12 年陈酿工艺，专专为大宗批发渠道优化包装与物流损耗控制。',
-    image: './images/heritage-reserve-12y.png',
+    image: './images/heritage-reserve-12y.webp',
     galleryImages: [
-      './images/heritage-reserve-12y.png',
-      './images/heritage-reserve-12y.png'
+      './images/heritage-reserve-12y.webp',
+      './images/heritage-reserve-12y.webp'
     ],
     moq: 12,
     quantityPerBox: 12,
@@ -35,9 +35,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'WH-12-0042',
     price: 428.0,
     description: 'Highland Reserve 12年经典，口感顺滑细腻，带有熟透梨香与太妃糖的甘甜。大宗B2B原产地直供。',
-    image: './images/highland-reserve-12y.png',
+    image: './images/highland-reserve-12y.webp',
     galleryImages: [
-      './images/highland-reserve-12y.png'
+      './images/highland-reserve-12y.webp'
     ],
     moq: 12,
     quantityPerBox: 12,
@@ -56,9 +56,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'GN-BT-9910',
     price: 330.0,
     description: '由植物学家特调配方复合草本金酒，清新脱俗。高频酒吧、宴会渠道首选供应原料酒。',
-    image: './images/botanist-dry-gin.png',
+    image: './images/botanist-dry-gin.webp',
     galleryImages: [
-      './images/botanist-dry-gin.png'
+      './images/botanist-dry-gin.webp'
     ],
     moq: 12,
     quantityPerBox: 12,
@@ -77,9 +77,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'VK-IM-7721',
     price: 380.0,
     description: '采用高纯度谷物原液历经数十次高精活性炭过滤，纯净剔透如水晶。支持全国托盘运输。',
-    image: './images/imperial-crystal-vodka.png',
+    image: './images/imperial-crystal-vodka.webp',
     galleryImages: [
-      './images/imperial-crystal-vodka.png'
+      './images/imperial-crystal-vodka.webp'
     ],
     moq: 12,
     quantityPerBox: 12,
@@ -98,9 +98,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'HB-500',
     price: 400.0,
     description: '精选优质青梅，传统陶缸自然发酵，果香馥郁酸甜均衡。冰镇后口感更佳，餐饮渠道热销爆款。',
-    image: './images/heritage-baijiu-500ml.png',
+    image: './images/heritage-baijiu-500ml.webp',
     galleryImages: [
-      './images/heritage-baijiu-500ml.png'
+      './images/heritage-baijiu-500ml.webp'
     ],
     moq: 12,
     quantityPerBox: 6,
@@ -119,9 +119,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'PG-750',
     price: 850.0,
     description: '新鲜桑葚物理压榨取汁，低温发酵工艺保留花青素营养。果香醇厚饱满，适合调配各类果饮。',
-    image: './images/fine-grain-base-liquor.png',
+    image: './images/fine-grain-base-liquor.webp',
     galleryImages: [
-      './images/fine-grain-base-liquor.png'
+      './images/fine-grain-base-liquor.webp'
     ],
     moq: 12,
     quantityPerBox: 4,
@@ -140,9 +140,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'IR-10Y',
     price: 3400.0,
     description: '长白山野生蓝莓十年封藏陈化，花青素含量极高，口感醇厚饱满带有蜜香。高端礼赠、定制果酒首选。',
-    image: './images/royal-aged-10y.png',
+    image: './images/royal-aged-10y.webp',
     galleryImages: [
-      './images/royal-aged-10y.png'
+      './images/royal-aged-10y.webp'
     ],
     moq: 12,
     quantityPerBox: 4,
@@ -161,9 +161,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'CS-1000',
     price: 450.0,
     description: '新鲜苹果原汁发酵，清爽微气泡，口感清甜怡人。1L大容量家庭聚餐理想之选，支持定制果酒标。',
-    image: './images/classic-sorghum-liquor.png',
+    image: './images/classic-sorghum-liquor.webp',
     galleryImages: [
-      './images/classic-sorghum-liquor.png'
+      './images/classic-sorghum-liquor.webp'
     ],
     moq: 12,
     quantityPerBox: 12,
@@ -182,9 +182,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'CZ-B-5201',
     price: 260.0,
     description: '常州本地东魁杨梅鲜果酿造，果香馥郁酸甜适口。冰镇后风味更佳，本地分销商大宗采购热卖常客。',
-    image: './images/changzhou-premium-baijiu.png',
+    image: './images/changzhou-premium-baijiu.webp',
     galleryImages: [
-      './images/changzhou-premium-baijiu.png'
+      './images/changzhou-premium-baijiu.webp'
     ],
     moq: 12,
     quantityPerBox: 6,
@@ -203,9 +203,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'CZ-RW-120',
     price: 128.0,
     description: '精选智利中央山谷赤霞珠葡萄酿制。饱含黑莓、橡木及辛香料气息。极高商超与婚宴回购率。',
-    image: './images/cabernet-selection-red.png',
+    image: './images/cabernet-selection-red.webp',
     galleryImages: [
-      './images/cabernet-selection-red.png'
+      './images/cabernet-selection-red.webp'
     ],
     moq: 12,
     quantityPerBox: 6,
@@ -224,9 +224,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'CZ-BP-001',
     price: 218.0,
     description: '焦香麦芽重度烘焙，泡沫极为丰富细腻持久。浓郁可可与咖啡余韵，大宗酒吧夜场热销款。',
-    image: './images/stout-beer-can-24.png',
+    image: './images/stout-beer-can-24.webp',
     galleryImages: [
-      './images/stout-beer-can-24.png'
+      './images/stout-beer-can-24.webp'
     ],
     moq: 12,
     quantityPerBox: 24,
@@ -245,9 +245,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'CZ-W-500',
     price: 280.0,
     description: '岭南新鲜荔枝搭配蜂蜜低温共酿，清甜爽口，果香四溢。本色无添加，多仓配货支持货到承兑支付。',
-    image: './images/classic-light-aroma-baijiu.png',
+    image: './images/classic-light-aroma-baijiu.webp',
     galleryImages: [
-      './images/classic-light-aroma-baijiu.png'
+      './images/classic-light-aroma-baijiu.webp'
     ],
     moq: 12,
     quantityPerBox: 6,
@@ -266,9 +266,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'AC-CRY-12',
     price: 360.0,
     description: '纯手工吹制高端无铅水晶醒酒器。专利多层空气对流接触器，让沉寂的酒香快速绽放。',
-    image: './images/premium-liquor-decanter.png',
+    image: './images/premium-liquor-decanter.webp',
     galleryImages: [
-      './images/premium-liquor-decanter.png'
+      './images/premium-liquor-decanter.webp'
     ],
     moq: 12,
     quantityPerBox: 1,
@@ -287,9 +287,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'AC-CAP-03',
     price: 280.0,
     description: '专业烈酒、金酒开塞二次密封盖。食品级硅胶吸附体，防漏耐氧化，最大保留原桶香。',
-    image: './images/matte-black-bottle-caps.png',
+    image: './images/matte-black-bottle-caps.webp',
     galleryImages: [
-      './images/matte-black-bottle-caps.png'
+      './images/matte-black-bottle-caps.webp'
     ],
     moq: 12,
     quantityPerBox: 3,
@@ -308,9 +308,9 @@ export const INITIAL_PRODUCTS: Product[] = [
     sku: 'AC-SHK-01',
     price: 290.0,
     description: '加厚多段过滤一体抛光304不锈钢手摇壶。双重细滤网，高精度隔冰，手感极佳。',
-    image: './images/cocktail-shaker-stainless.png',
+    image: './images/cocktail-shaker-stainless.webp',
     galleryImages: [
-      './images/cocktail-shaker-stainless.png'
+      './images/cocktail-shaker-stainless.webp'
     ],
     moq: 12,
     quantityPerBox: 1,
