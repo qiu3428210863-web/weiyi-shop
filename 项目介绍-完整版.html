@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>常州唯一数字化订货平台 — 项目介绍</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* ===== Reset & Base ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:#fbf9f8;color:#1b1c1c;font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* ===== Tokens ===== */
+:root{
+  --black:#1b1c1c;
+  --brand:#a2375f;
+  --brand-light:#c45a7a;
+  --brand-glow:rgba(162,55,95,0.12);
+  --brand-bg:rgba(162,55,95,0.06);
+  --text:#4c4546;
+  --text-light:#8a8283;
+  --text-lighter:#b0aaab;
+  --bg:#fbf9f8;
+  --white:#ffffff;
+  --border:#e4e2e2;
+  --border-light:#efeded;
+  --radius:12px;
+  --radius-sm:8px;
+  --radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg:0 12px 48px rgba(0,0,0,0.08);
+  --font-sans:'Inter',system-ui,sans-serif;
+  --font-display:'Hanken Grotesk',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+/* ===== Container ===== */
+.container{max-width:1120px;margin:0 auto;padding:0 40px}
+@media(max-width:768px){.container{padding:0 20px}}
+
+/* ===== Typography ===== */
+h1,h2,h3{font-family:var(--font-display);font-weight:800;line-height:1.15;color:var(--black)}
+h1{font-size:clamp(36px,5vw,68px);letter-spacing:-1.8px}
+h2{font-size:clamp(26px,3.2vw,42px);letter-spacing:-0.8px}
+h3{font-size:clamp(20px,1.8vw,26px);letter-spacing:-0.3px}
+p{color:var(--text);margin-bottom:1em}
+.section-label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--brand);background:var(--brand-bg);padding:4px 12px;border-radius:4px;margin-bottom:16px}
+.section-intro{font-size:18px;color:var(--text-light);max-width:680px;line-height:1.7;margin-bottom:0}
+
+/* ===== Navigation ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(251,249,248,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border-light);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav-logo{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--black);text-decoration:none;letter-spacing:-0.3px}
+.nav-logo span{color:var(--brand)}
+.nav-links{display:flex;gap:6px;list-style:none}
+.nav-links a{font-size:12px;font-weight:500;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:6px;transition:all 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--black);background:var(--border-light)}
+@media(max-width:768px){.nav-links{display:none}}
+
+/* ===== Hero ===== */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:56px;position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;top:-30%;right:-15%;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(162,55,95,0.08) 0%,transparent 70%);pointer-events:none}
+#hero::after{content:'';position:absolute;bottom:-20%;left:-10%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,0,0,0.03) 0%,transparent 70%);pointer-events:none}
+.hero-content{position:relative;z-index:1;padding:80px 0}
+.hero-version{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:20px;background:var(--brand-bg);color:var(--brand);font-size:11px;font-weight:600;margin-bottom:24px;border:1px solid var(--brand-glow)}
+.hero-version .dot{width:6px;height:6px;border-radius:50%;background:var(--brand);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero-sub{font-size:clamp(17px,1.8vw,22px);color:var(--text-light);margin:16px 0 12px;max-width:600px;line-height:1.6}
+.hero-client{font-size:14px;color:var(--text-lighter);margin-bottom:32px}
+.hero-client strong{color:var(--text)}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px}
+.hero-tags span{padding:4px 14px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;font-family:var(--font-mono);background:var(--white);border:1px solid var(--border);color:var(--text-light)}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-lighter);font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;animation:float 2.4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+.scroll-hint .arrow{width:16px;height:16px;border-right:2px solid var(--text-lighter);border-bottom:2px solid var(--text-lighter);transform:rotate(45deg)}
+
+/* ===== Section Shared ===== */
+section{padding:100px 0;position:relative}
+section.alt{background:var(--white)}
+.section-header{margin-bottom:48px}
+.section-header h2{margin-bottom:12px}
+.section-sub{font-size:15px;color:var(--text-light);max-width:600px;line-height:1.7;margin-bottom:0}
+
+/* ===== Divider ===== */
+.divider{width:40px;height:3px;background:var(--brand);border-radius:2px;margin:0 0 32px}
+
+/* ===== Problem Causal Map ===== */
+.causal-map{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+@media(max-width:900px){.causal-map{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.causal-map{grid-template-columns:1fr}}
+.causal-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;overflow:hidden}
+.causal-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.causal-card:nth-child(1)::after{background:#7c5cbf}
+.causal-card:nth-child(2)::after{background:#3a7abd}
+.causal-card:nth-child(3)::after{background:#d97706}
+.causal-card:nth-child(4)::after{background:#ba1a1a}
+.causal-card .emoji{font-size:24px;margin-bottom:10px}
+.causal-card h4{font-size:14px;margin-bottom:6px}
+.causal-card .pain{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:8px}
+.causal-card .impact{font-size:12px;color:#ba1a1a;padding:8px 10px;background:#ffdad6;border-radius:6px;font-weight:500;line-height:1.5}
+.causal-card .impact::before{content:'→ ';font-weight:700}
+
+/* ===== Comparison ===== */
+.transform-row{display:grid;grid-template-columns:1fr 48px 1fr;gap:16px;align-items:center;margin-top:24px}
+@media(max-width:640px){.transform-row{grid-template-columns:1fr;gap:12px}.transform-row .arrow-wrap{transform:rotate(90deg)}}
+.transform-card{padding:24px 28px;border-radius:var(--radius-lg);font-size:14px;line-height:1.8}
+.transform-card.before{background:var(--border-light);color:var(--text)}
+.transform-card.after{background:var(--black);color:#fff}
+.transform-card strong{display:block;font-size:15px;margin-bottom:8px;font-family:var(--font-display)}
+.transform-card .step{opacity:0.7}
+.transform-card.after .step{opacity:0.6}
+.arrow-wrap{font-size:22px;color:var(--brand);text-align:center;font-weight:700}
+.transform-note{font-size:13px;color:var(--text-light);margin-top:12px;text-align:center}
+
+/* ===== Stakeholder ===== */
+.stakeholder-grid{display:grid;gap:12px;margin-bottom:28px}
+.stakeholder-row{display:grid;grid-template-columns:100px 1fr 1fr;gap:20px;align-items:start;padding:16px 20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);transition:box-shadow 0.2s}
+.stakeholder-row:hover{box-shadow:var(--shadow-sm)}
+.stakeholder-row .role{font-weight:700;font-size:14px;color:var(--black)}
+.stakeholder-row .role span{display:block;font-weight:400;font-size:11px;color:var(--text-lighter);margin-top:2px}
+.stakeholder-row .need{font-size:13px;color:var(--text);line-height:1.6}
+.stakeholder-row .pain-point{font-size:12px;color:var(--text-light);line-height:1.5}
+.decision-chain{display:flex;gap:0;margin-top:16px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.decision-chain .chain-item{flex:1;padding:16px 20px;text-align:center;font-size:13px;min-width:120px;position:relative}
+.decision-chain .chain-item:not(:last-child)::after{content:'→';position:absolute;right:-4px;top:50%;transform:translateY(-50%);color:var(--text-lighter);font-weight:700}
+.decision-chain .chain-item .chain-label{color:var(--text-light);font-size:11px;margin-bottom:4px}
+.decision-chain .chain-item .chain-name{font-weight:700;color:var(--black)}
+.decision-chain .chain-item.decide{background:var(--brand-bg)}
+.decision-chain .chain-item.decide .chain-name{color:var(--brand)}
+@media(max-width:640px){.stakeholder-row{grid-template-columns:1fr;gap:8px}.decision-chain .chain-item:not(:last-child)::after{display:none}}
+
+/* ===== Persona Cards ===== */
+.persona-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.persona-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.persona-grid{grid-template-columns:1fr}}
+.persona-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:box-shadow 0.2s}
+.persona-card:hover{box-shadow:var(--shadow-md)}
+.persona-card .persona-head{padding:20px 20px 14px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:12px}
+.persona-card .persona-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;font-family:var(--font-display);flex-shrink:0}
+.persona-card .persona-meta h4{font-size:14px;margin-bottom:1px}
+.persona-card .persona-meta .persona-title{font-size:11px;color:var(--text-light)}
+.persona-card .persona-device{font-size:11px;color:var(--text-lighter);margin-top:4px;display:flex;align-items:center;gap:4px}
+.persona-card .persona-body{padding:16px 20px 20px}
+.persona-card .persona-flow{font-size:12px;color:var(--text);line-height:1.7;padding:10px 12px;background:var(--brand-bg);border-radius:6px;margin-bottom:10px}
+.persona-card .persona-flow .flow-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--brand);letter-spacing:0.05em;margin-bottom:4px}
+.persona-card .persona-need{font-size:12px;color:var(--text-light);line-height:1.6}
+
+/* ===== Evidence / Insight Cards ===== */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:800px){.insight-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.insight-grid{grid-template-columns:1fr}}
+.insight-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative}
+.insight-card .insight-num{font-family:var(--font-mono);font-size:32px;font-weight:600;color:var(--border);line-height:1;margin-bottom:8px}
+.insight-card h4{font-size:14px;margin-bottom:8px}
+.insight-card p{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px}
+.insight-card .insight-impact{font-size:12px;color:var(--brand);padding:8px 10px;background:var(--brand-bg);border-radius:6px;font-weight:500;line-height:1.5;border-left:3px solid var(--brand)}
+.insight-card .insight-source{font-size:11px;color:var(--text-lighter);margin-top:8px;font-style:italic}
+
+/* ===== Research Matrix ===== */
+.research-matrix{overflow-x:auto;margin:16px 0 28px;border-radius:var(--radius);border:1px solid var(--border)}
+.research-matrix table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+.research-matrix th{background:var(--black);color:#fff;font-weight:600;padding:12px 16px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.03em}
+.research-matrix td{padding:12px 16px;border-bottom:1px solid var(--border-light);color:var(--text);background:var(--white);vertical-align:top}
+.research-matrix tr:last-child td{border-bottom:none}
+.research-matrix td:first-child{font-weight:600;color:var(--black);white-space:nowrap}
+
+/* ===== Goal Alignment ===== */
+.goal-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);font-size:13px}
+.goal-table th{background:var(--black);color:#fff;font-weight:600;padding:12px 16px;text-align:left;font-size:12px}
+.goal-table td{padding:12px 16px;border-bottom:1px solid var(--border-light);background:var(--white);color:var(--text);vertical-align:top}
+.goal-table tr:last-child td{border-bottom:none}
+.goal-table .goal-handoff{font-size:11px;color:var(--brand);font-weight:600;display:block;margin-top:4px}
+.goal-table .kpi{display:inline-block;padding:2px 8px;border-radius:4px;background:var(--brand-bg);color:var(--brand);font-size:11px;font-weight:600;font-family:var(--font-mono);margin-top:4px}
+
+/* ===== Design Principles ===== */
+.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:800px){.principles-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.principles-grid{grid-template-columns:1fr}}
+.principle-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+.principle-card .principle-num{font-family:var(--font-display);font-size:48px;font-weight:900;color:var(--border);line-height:1;position:absolute;top:16px;right:20px}
+.principle-card .principle-icon{font-size:28px;margin-bottom:12px}
+.principle-card h4{font-size:16px;margin-bottom:8px}
+.principle-card .principle-en{font-size:11px;color:var(--text-lighter);font-family:var(--font-mono);margin-bottom:10px}
+.principle-card p{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.principle-card .principle-example{padding:10px 12px;background:var(--brand-bg);border-radius:6px;font-size:12px;color:var(--text);line-height:1.6;border-left:3px solid var(--brand)}
+
+/* ===== IA & Flow ===== */
+.ia-diagram{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;margin-bottom:24px;overflow-x:auto}
+.ia-tier{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.ia-tier:last-child{margin-bottom:0}
+.ia-tier .ia-label{font-size:10px;color:var(--text-lighter);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;width:60px;flex-shrink:0;padding-top:8px}
+.ia-node{padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;text-align:center;min-width:80px}
+.ia-node.primary{background:var(--black);color:#fff}
+.ia-node.secondary{background:var(--brand);color:#fff}
+.ia-node.tertiary{background:var(--brand-bg);color:var(--brand);border:1px solid var(--brand-glow)}
+.ia-node.ghost{background:var(--border-light);color:var(--text)}
+.ia-node .ia-sub{display:block;font-size:10px;font-weight:400;opacity:0.7;margin-top:2px}
+.ia-arrow-row{display:flex;justify-content:center;gap:12px;color:var(--text-lighter);font-size:11px;margin:6px 0 16px}
+.ia-arrow-row span{padding:0 8px}
+
+.flow-lanes{display:grid;gap:16px;margin-top:20px}
+.flow-lane{display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:start}
+@media(max-width:640px){.flow-lane{grid-template-columns:1fr;gap:8px}}
+.flow-lane .lane-role{font-size:13px;font-weight:700;color:var(--black);padding:10px 0}
+.flow-lane .lane-role span{display:block;font-weight:400;font-size:11px;color:var(--text-lighter)}
+.flow-lane .lane-steps{display:flex;gap:8px;flex-wrap:wrap}
+.flow-lane .lane-steps .step{padding:8px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text);position:relative}
+.flow-lane .lane-steps .step:not(:last-child)::after{content:'→';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--text-lighter);font-weight:700}
+.flow-lane .lane-steps .step.highlight{background:var(--brand-bg);border-color:var(--brand-glow);color:var(--brand);font-weight:600}
+.flow-lane .lane-rule{font-size:11px;color:var(--text-lighter);margin-top:4px;padding-left:14px}
+
+/* ===== MVP Scope ===== */
+.scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.scope-grid{grid-template-columns:1fr}}
+.scope-column h4{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.scope-column h4 .badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;font-family:var(--font-mono)}
+.scope-column h4 .badge.p0{background:var(--black);color:#fff}
+.scope-column h4 .badge.p1{background:var(--brand);color:#fff}
+.scope-column h4 .badge.p2{background:var(--border-light);color:var(--text)}
+.scope-list{list-style:none}
+.scope-list li{padding:10px 14px 10px 32px;position:relative;font-size:13px;color:var(--text);border-bottom:1px solid var(--border-light);line-height:1.5;background:var(--white);border-radius:6px;margin-bottom:6px}
+.scope-list li:last-child{border-bottom:none;margin-bottom:0}
+.scope-list li::before{position:absolute;left:12px;font-weight:700;font-size:12px}
+.scope-list.mvp li::before{content:'✓';color:#16a34a}
+.scope-list.p1 li::before{content:'○';color:var(--brand)}
+.scope-list.p2 li::before{content:'△';color:var(--text-lighter)}
+.scope-list li .scope-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:6px;font-family:var(--font-mono)}
+.scope-list li .scope-tag.p0{background:var(--black);color:#fff}
+.scope-list li .scope-tag.p1{background:var(--brand);color:#fff}
+.scope-list li .scope-tag.p2{background:var(--border-light);color:var(--text)}
+
+/* ===== Design Detail Cards ===== */
+.design-showcase{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media(max-width:768px){.design-showcase{grid-template-columns:1fr}}
+.design-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:box-shadow 0.2s}
+.design-card:hover{box-shadow:var(--shadow-md)}
+.design-card .design-visual{padding:28px;background:linear-gradient(135deg,var(--bg) 0%,var(--white) 100%);border-bottom:1px solid var(--border-light);min-height:140px;display:flex;align-items:center;justify-content:center}
+.design-card .design-visual .demo-stepper{display:inline-flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}
+.design-card .design-visual .demo-stepper button{width:36px;height:36px;border:none;background:var(--bg);font-size:16px;font-weight:600;cursor:default;color:var(--text)}
+.design-card .design-visual .demo-stepper .value{width:48px;text-align:center;font-size:14px;font-weight:700;font-family:var(--font-mono)}
+.design-card .design-visual .demo-stepper .moq-badge{font-size:9px;color:var(--brand);font-weight:700;padding:0 10px;background:var(--brand-bg);height:100%;display:flex;align-items:center}
+.design-card .design-visual .demo-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;width:200px}
+.design-card .design-visual .demo-card .demo-img{width:100%;height:100px;background:var(--border-light);border-radius:6px;margin-bottom:8px}
+.design-card .design-visual .demo-card .demo-title{font-size:12px;font-weight:700;margin-bottom:2px}
+.design-card .design-visual .demo-card .demo-meta{font-size:10px;color:var(--text-light)}
+.design-card .design-visual .demo-stock{width:160px;background:#fff;padding:12px 16px;border-radius:8px;border:1px solid var(--border)}
+.design-card .design-visual .demo-stock .bar{height:6px;background:var(--border-light);border-radius:3px;margin-top:6px;overflow:hidden}
+.design-card .design-visual .demo-stock .bar .fill{height:100%;border-radius:3px;width:75%;background:#16a34a}
+.design-card .design-visual .demo-stock .bar .fill.warning{width:25%;background:#d97706}
+.design-card .design-visual .demo-payment{width:220px;background:#fff;border-radius:10px;padding:14px;border:1px solid var(--border)}
+.design-card .design-visual .demo-payment .amt{font-size:18px;font-weight:800;font-family:var(--font-display);margin:4px 0}
+.design-card .design-visual .demo-payment .fee-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-light);padding:2px 0}
+.design-card .design-visual .demo-payment .fee-row.total{border-top:1px solid var(--border);padding-top:4px;margin-top:4px;font-weight:700;color:var(--black)}
+.design-card .design-info{padding:24px}
+.design-card .design-info .di-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--brand);margin-bottom:6px}
+.design-card .design-info h4{font-size:15px;margin-bottom:8px}
+.design-card .design-info p{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:8px}
+.design-card .design-info .why{font-size:12px;color:var(--text-light);padding:10px 12px;background:var(--brand-bg);border-radius:6px;line-height:1.6;border-left:3px solid var(--brand);margin-bottom:6px}
+.design-card .design-info .why strong{color:var(--black);display:block;margin-bottom:2px}
+
+/* ===== Timeline ===== */
+.timeline{position:relative;padding-left:36px;margin-top:24px}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--border)}
+.timeline-item{position:relative;margin-bottom:28px;padding-left:20px}
+.timeline-item:last-child{margin-bottom:0}
+.timeline-item::before{content:'';position:absolute;left:-28px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--white);border:2px solid var(--brand)}
+.timeline-item .tl-week{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--brand);margin-bottom:4px}
+.timeline-item h4{font-size:14px;margin-bottom:4px}
+.timeline-item p{font-size:13px;color:var(--text-light);line-height:1.6;margin-bottom:4px}
+.timeline-item .tl-done{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;background:#dcfce7;color:#15803d;font-weight:600}
+.timeline-item .tl-milestone{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;background:#fef3d0;color:#92400e;font-weight:600}
+
+/* ===== Risk Matrix ===== */
+.risk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:16px 0}
+@media(max-width:640px){.risk-grid{grid-template-columns:1fr}}
+.risk-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;border-left:4px solid}
+.risk-card.risk-high{border-left-color:#ba1a1a}
+.risk-card.risk-mid{border-left-color:#d97706}
+.risk-card.risk-low{border-left-color:#16a34a}
+.risk-card .risk-level{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.risk-card.risk-high .risk-level{color:#ba1a1a}
+.risk-card.risk-mid .risk-level{color:#d97706}
+.risk-card.risk-low .risk-level{color:#16a34a}
+.risk-card h4{font-size:14px;margin-bottom:6px}
+.risk-card p{font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px}
+.risk-card .mitigation{font-size:12px;color:var(--text-light);padding:8px 10px;background:var(--brand-bg);border-radius:6px;line-height:1.6}
+.risk-card .mitigation strong{color:var(--black);display:block;margin-bottom:2px}
+
+/* ===== KPI Dashboard ===== */
+.kpi-dash{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:16px 0}
+@media(max-width:800px){.kpi-dash{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.kpi-dash{grid-template-columns:1fr}}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.kpi-card .kpi-label{font-size:11px;color:var(--text-lighter);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.kpi-card .kpi-value{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--black);margin-bottom:2px}
+.kpi-card .kpi-unit{font-size:13px;color:var(--text-light)}
+.kpi-card .kpi-trend{font-size:11px;margin-top:6px;padding:2px 8px;border-radius:4px;display:inline-block}
+.kpi-card .kpi-trend.up{background:#dcfce7;color:#15803d}
+.kpi-card .kpi-trend.target{background:var(--brand-bg);color:var(--brand)}
+.kpi-section-title{font-size:13px;font-weight:700;color:var(--text);margin:24px 0 12px;padding-left:12px;border-left:3px solid var(--brand)}
+
+/* ===== Deliverables ===== */
+.deliverables-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.deliverables-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.deliverables-grid{grid-template-columns:1fr}}
+.deliverable-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:box-shadow 0.2s}
+.deliverable-item:hover{box-shadow:var(--shadow-md)}
+.deliverable-item .deliv-icon{font-size:28px;margin-bottom:8px}
+.deliverable-item h4{font-size:13px;margin-bottom:6px}
+.deliverable-item p{font-size:12px;color:var(--text-light);line-height:1.5;margin-bottom:0}
+
+/* ===== KPI Validation Timeline ===== */
+.validation-timeline{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.validation-timeline .v-day{padding:12px 16px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:center;flex:1;min-width:80px;font-size:12px}
+.validation-timeline .v-day .v-label{font-weight:700;color:var(--black);margin-bottom:2px}
+.validation-timeline .v-day .v-desc{font-size:10px;color:var(--text-lighter)}
+.validation-timeline .v-day.highlight{background:var(--brand);border-color:var(--brand)}
+.validation-timeline .v-day.highlight .v-label,.validation-timeline .v-day.highlight .v-desc{color:#fff}
+
+/* ===== Highlight Quote ===== */
+.highlight-quote{text-align:center;padding:56px 40px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);margin:40px 0;position:relative}
+.highlight-quote .quote-mark{font-family:var(--font-display);font-size:64px;color:var(--brand);opacity:0.15;position:absolute;top:16px;left:24px;line-height:1;pointer-events:none}
+.highlight-quote .quote-text{font-family:var(--font-display);font-size:clamp(20px,2.4vw,30px);font-weight:800;color:var(--black);margin-bottom:12px;line-height:1.3;max-width:700px;margin:0 auto 12px}
+.highlight-quote .quote-author{font-size:14px;color:var(--text-light)}
+
+/* ===== Call to Action ===== */
+.cta-section{text-align:center;padding:80px 40px;background:var(--black);border-radius:var(--radius-lg);color:#fff;margin-top:32px}
+.cta-section h2{color:#fff;margin-bottom:16px}
+.cta-section p{color:rgba(255,255,255,0.7);font-size:16px;max-width:560px;margin:0 auto 28px}
+.cta-section .cta-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 36px;background:var(--brand);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;font-family:var(--font-sans);cursor:pointer;text-decoration:none;transition:background 0.2s}
+.cta-section .cta-btn:hover{background:var(--brand-light)}
+
+/* ===== Footer ===== */
+footer{text-align:center;padding:48px 40px;border-top:1px solid var(--border-light)}
+footer .footer-brand{font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--black);margin-bottom:4px}
+footer .footer-brand span{color:var(--brand)}
+footer p{font-size:13px;color:var(--text-light);margin-bottom:0}
+
+/* ===== Section Separator ===== */
+.section-sep{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:0}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
+  section{padding:64px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">常州唯一<span>·</span>订货平台</a>
+    <ul class="nav-links">
+      <li><a href="#background">背景</a></li>
+      <li><a href="#stakeholders">干系人</a></li>
+      <li><a href="#personas">用户</a></li>
+      <li><a href="#evidence">洞察</a></li>
+      <li><a href="#goals">目标</a></li>
+      <li><a href="#principles">策略</a></li>
+      <li><a href="#ia">架构</a></li>
+      <li><a href="#scope">范围</a></li>
+      <li><a href="#design">设计</a></li>
+      <li><a href="#schedule">计划</a></li>
+      <li><a href="#kpi">KPI</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="container hero-content">
+    <div class="hero-version">
+      <span class="dot"></span>
+      项目介绍 · v1.0 &nbsp;—&nbsp; 2026.05
+    </div>
+    <h1>常州唯一<br/>数字化订货平台</h1>
+    <p class="hero-sub">打造常州唯一正规化数字订货平台，提高批发下单效率并降低人工对接成本</p>
+    <p class="hero-client">客户：<strong>常州某果酒厂</strong> &nbsp;·&nbsp; 服务：B2B 订货系统设计 + 前端开发</p>
+    <div class="hero-tags">
+      <span>B2B 交易</span>
+      <span>移动端优先</span>
+      <span>UCD 方法论</span>
+      <span>授信支付</span>
+      <span>角色即视图</span>
+      <span>Poka-yoke 防错</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>滚动阅读</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- ===== BACKGROUND ===== -->
+<section id="background">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">背景 · Why</div>
+      <h2>传统微信订货的隐性成本</h2>
+      <p class="section-sub">一条订单从下达到出库，平均经过 4 个人、3 个系统外环节，信息传递损耗触目惊心。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="causal-map">
+      <div class="causal-card">
+        <div class="emoji">📱</div>
+        <h4>批发商（买方）</h4>
+        <p class="pain">看不到实时库存和价格，每次问价都要等业务员回复。MOQ 全靠人工提醒，经常漏订或错订。</p>
+        <div class="impact">业务损失：平均每单需 2-3 轮微信沟通，下单效率降低 60%</div>
+      </div>
+      <div class="causal-card">
+        <div class="emoji">👤</div>
+        <h4>业务员（销售）</h4>
+        <p class="pain">被"查价格、查库存、查物流"的重复消息淹没，没有精力做客户拓展和关系维护。</p>
+        <div class="impact">业务损失：人均每天处理 50+ 条询价，有效工作时间不足 40%</div>
+      </div>
+      <div class="causal-card">
+        <div class="emoji">📦</div>
+        <h4>仓库核单员</h4>
+        <p class="pain">纸质出库单易丢失，核单靠肉眼比对，出库记录无法实时同步给业务和财务。</p>
+        <div class="impact">业务损失：错发率约 3%，每季度产生数千元退换货及运费成本</div>
+      </div>
+      <div class="causal-card">
+        <div class="emoji">📊</div>
+        <h4>财务 / 管理层</h4>
+        <p class="pain">授信额度管控全靠人工记忆与 Excel 台账，月底对账周期长达一周。</p>
+        <div class="impact">业务损失：资金周转效率低，坏账风险不可控，无法实时掌握经营状况</div>
+      </div>
+    </div>
+
+    <div class="transform-row">
+      <div class="transform-card before">
+        <strong>传统微信报单流程</strong>
+        <span class="step">客户微信报单 → 业务员手动录入 → 仓库核单 → 通知物流 → Excel 对账结算 → 售后</span>
+      </div>
+      <div class="arrow-wrap">→</div>
+      <div class="transform-card after">
+        <strong>数字化订货平台</strong>
+        <span class="step">批发商自助下单 → 自动校验 MOQ/库存 → 授信扣款 → 仓库扫码核单 → 实时数据看板</span>
+      </div>
+    </div>
+    <p class="transform-note">将 4 人 x 3 环节的信息接力，压缩为一人一端的自助闭环</p>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== STAKEHOLDERS ===== -->
+<section id="stakeholders" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">干系人 · Who</div>
+      <h2>谁受影响，谁决策，谁执行</h2>
+      <p class="section-sub">六个角色的诉求差异巨大，必须在登录首屏就分流，不能让所有人面对同一套界面。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="stakeholder-grid">
+      <div class="stakeholder-row">
+        <div class="role">批发商 <span>买方</span></div>
+        <div class="need">快速看货、确认库存与价格、自助下单、查物流</div>
+        <div class="pain-point">看不到实时库存，每次询价都要等回复；起订量无人提醒</div>
+      </div>
+      <div class="stakeholder-row">
+        <div class="role">业务员 <span>销售</span></div>
+        <div class="need">处理订单、审核、安排物流；减少重复询价沟通</div>
+        <div class="pain-point">被查价查库存的消息淹没，无法专注客户拓展</div>
+      </div>
+      <div class="stakeholder-row">
+        <div class="role">仓库核单员 <span>仓储</span></div>
+        <div class="need">按单拣货、扫码出库、更新库存状态</div>
+        <div class="pain-point">纸质单易丢，肉眼核对易错，出库信息无法实时同步</div>
+      </div>
+      <div class="stakeholder-row">
+        <div class="role">管理员 <span>工厂管理者</span></div>
+        <div class="need">配置商品与价格、设置供销规则、查看经营数据</div>
+        <div class="pain-point">缺乏实时数据看板，定价调价依赖人工通知</div>
+      </div>
+      <div class="stakeholder-row">
+        <div class="role">财务 <span>财务</span></div>
+        <div class="need">核对授信额度、对账结算、授信回收</div>
+        <div class="pain-point">月底对账一周，额度管控靠 Excel，缺乏系统支撑</div>
+      </div>
+      <div class="stakeholder-row">
+        <div class="role">物流 <span>配送</span></div>
+        <div class="need">接收出库通知、安排配送、签收确认</div>
+        <div class="pain-point">出库信息传递滞后，经常"车到了货没齐"</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <h4 style="font-size:14px;margin-bottom:12px">决策链</h4>
+      <div class="decision-chain">
+        <div class="chain-item decide"><div class="chain-label">拍板</div><div class="chain-name">厂领导 / 供应端主管</div></div>
+        <div class="chain-item"><div class="chain-label">执行</div><div class="chain-name">业务员 / 仓库核单员</div></div>
+        <div class="chain-item"><div class="chain-label">影响</div><div class="chain-name">财务 / 物流 / 批发商</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== PERSONAS ===== -->
+<section id="personas">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">用户与场景 · Who / Where</div>
+      <h2>四类用户，四个完全不同的世界</h2>
+      <p class="section-sub">角色即视图——选择什么角色，就看到什么界面，不需要额外的权限配置。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:#7c5cbf">陈</div>
+          <div class="persona-meta">
+            <h4>陈明 · 批发商</h4>
+            <div class="persona-title">高鑫零售 · 采购负责人</div>
+            <div class="persona-device">📱 手机 · 仓库/车上/饭局</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-flow">
+            <div class="flow-label">核心流程</div>
+            看货 → 选量 → 加入购物车 → 授信结算
+          </div>
+          <div class="persona-need">需要快速扫货、确认库存、自助下单，不想每次问业务员。"我只想知道今天能订什么、多少钱、什么时候到。"</div>
+        </div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:#3a7abd">王</div>
+          <div class="persona-meta">
+            <h4>王晓东 · 业务员</h4>
+            <div class="persona-title">果酒厂 · 销售主管</div>
+            <div class="persona-device">💻 手机/办公 · 办公室/外出</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-flow">
+            <div class="flow-label">核心流程</div>
+            查新订单 → 审核通过 → 分配物流 → 处理异常
+          </div>
+          <div class="persona-need">希望批发商能自助查价、自助下单，让自己从"人肉客服"中解脱出来做真正的销售。</div>
+        </div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:#d97706">刘</div>
+          <div class="persona-meta">
+            <h4>刘铁柱 · 仓库核单员</h4>
+            <div class="persona-title">果酒厂 · 仓储主管</div>
+            <div class="persona-device">📱 手持终端 · 仓库现场</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-flow">
+            <div class="flow-label">核心流程</div>
+            待核订单 → 扫码核单 → 录入车牌 → 一键出库
+          </div>
+          <div class="persona-need">要一个能随身携带的核单工具，扫码替代肉眼比对，减少错发漏发。"手机扫一下就行，不用来回跑办公室看单子。"</div>
+        </div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-head">
+          <div class="persona-avatar" style="background:#1b1c1c">徐</div>
+          <div class="persona-meta">
+            <h4>徐总 · 管理员</h4>
+            <div class="persona-title">果酒厂 · 供应端主管</div>
+            <div class="persona-device">💻 电脑/手机 · 办公室</div>
+          </div>
+        </div>
+        <div class="persona-body">
+          <div class="persona-flow">
+            <div class="flow-label">核心流程</div>
+            商品管理 → 价格微调 → 规则配置 → 数据看板
+          </div>
+          <div class="persona-need">需要在一个地方管理商品、价格、规则，并且能看到实时经营数据。"我要知道今天卖了多少、库存够不够、哪些客户欠款。"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== EVIDENCE / RESEARCH ===== -->
+<section id="evidence" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">研究方法与发现 · Evidence</div>
+      <h2>设计不是拍脑袋</h2>
+      <p class="section-sub">每个设计决策都来自对真实业务场景的观察与验证。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="research-matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>研究方法</th>
+            <th>对象</th>
+            <th>关键发现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>深度访谈</td>
+            <td>业务员 3 人、批发商 5 人、仓库 2 人</td>
+            <td>"查价格"和"查库存"占业务员日常微信消息的 70% 以上；批发商最怕的是"下了单被告知没货"</td>
+          </tr>
+          <tr>
+            <td>现场跟单</td>
+            <td>仓库核单、出库全过程</td>
+            <td>核单员需在纸质单与货架之间来回往返，一个订单平均跑 3-5 趟；扫码环节缺失是错发的根源</td>
+          </tr>
+          <tr>
+            <td>客服工单梳理</td>
+            <td>近 3 个月异常工单</td>
+            <td>42% 的异常工单与 MOQ 起订量有关（客户订少了工厂不发货）；18% 与额度超限有关</td>
+          </tr>
+          <tr>
+            <td>竞品分析</td>
+            <td>易订货、订货宝、勤策</td>
+            <td>三者均采用"后台管理菜单"模式，对批发商不够友好；登录体验重，演示场景卡顿</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:17px;margin-bottom:16px">关键洞察</h3>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-num">01</div>
+        <h4>库存与价格不可见是最大的效率杀手</h4>
+        <p>批发商每次询价平均等待 10-30 分钟，严重耽误采购决策。批发商需要的是自助查询能力。</p>
+        <div class="insight-impact">业务影响：将询价等待从分钟级降为秒级，预计节省业务员 70% 的重复沟通时间</div>
+        <div class="insight-source">来源：业务员访谈 &amp; 微信消息抽样</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">02</div>
+        <h4>MOQ 起订量不满足导致大量异常工单</h4>
+        <p>42% 的异常工单与 MOQ 有关。人工提醒不可靠，必须在交互层面强制校验。</p>
+        <div class="insight-impact">业务影响：前端防错设计可消除 90% 以上的 MOQ 相关异常</div>
+        <div class="insight-source">来源：客服工单梳理（近 3 个月）</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">03</div>
+        <h4>批发商需要可分享的商品信息</h4>
+        <p>批发商经常把产品信息转发给下线客户（酒吧/餐厅），"分享"是 B2B 分销链的一环，不是社交行为。</p>
+        <div class="insight-impact">业务影响：商品分享功能可辅助批发商的分销效率，间接提升复购率</div>
+        <div class="insight-source">来源：批发商跟访观察</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">04</div>
+        <h4>授信支付是 B2B 交易的必然选择</h4>
+        <p>酒水行业"先货后款"是百年惯例。直接用微信/支付宝付款不符合行业认知，也缺乏合同约束力。</p>
+        <div class="insight-impact">业务影响：授信扣款匹配已有习惯，降低支付环节的认知摩擦</div>
+        <div class="insight-source">来源：财务流程分析 &amp; 行业惯例调研</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">05</div>
+        <h4>登录体验直接影响演示采纳</h4>
+        <p>每次演示都要输入账号密码 10 秒以上，客户的注意力在登录环节就已经流失。一键预填在演示场景中是决定性的。</p>
+        <div class="insight-impact">业务影响：演示流畅度直接影响客户决策，一键预填将登录耗时从 10s 降至 2s</div>
+        <div class="insight-source">来源：沙箱演示观察 &amp; 客户反馈</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">06</div>
+        <h4>供应端三个角色的工作流完全不同</h4>
+        <p>业务员、仓库、管理员的工作场景和工具截然不同，统一后台在移动端上效率极低。</p>
+        <div class="insight-impact">业务影响："角色即视图"将各角色操作效率提升 50% 以上</div>
+        <div class="insight-source">来源：现场跟单 &amp; 工作流分析</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== GOALS ===== -->
+<section id="goals">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">目标对齐 · Business → Product → Design</div>
+      <h2>从商业目标到设计目标的逐层拆解</h2>
+      <p class="section-sub">每个设计目标的设定都直接关联一个可衡量的业务指标。</p>
+    </div>
+    <div class="divider"></div>
+
+    <table class="goal-table">
+      <thead>
+        <tr>
+          <th style="width:18%">层级</th>
+          <th>目标</th>
+          <th style="width:22%">对应 KPI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>🎯 业务目标</strong></td>
+          <td>订单处理时长缩短 40%，月工单量下降 30%，复购率提高 10%</td>
+          <td><span class="kpi">处理时长 ↓40%</span> <span class="kpi">工单 ↓30%</span> <span class="kpi">复购 ↑10%</span></td>
+        </tr>
+        <tr>
+          <td><strong>📦 产品目标</strong><span class="goal-handoff">承接业务目标</span></td>
+          <td>实现批发商自助下单、授信扣款、自动校验 MOQ、库存可见化</td>
+          <td><span class="kpi">自助下单率 &gt;80%</span> <span class="kpi">授信使用率 &gt;90%</span></td>
+        </tr>
+        <tr>
+          <td><strong>🎨 设计目标</strong><span class="goal-handoff">承接产品目标</span></td>
+          <td>核心任务步数 ≤ 4 步，新用户首单完成 ≤ 10 分钟，关键操作错误率降低 50%</td>
+          <td><span class="kpi">首单时间 ≤10min</span> <span class="kpi">错误率 ↓50%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="background:var(--brand-bg);border-radius:var(--radius);padding:20px 24px;margin-top:16px;font-size:13px;color:var(--text);line-height:1.7">
+      <strong style="color:var(--black)">设计目标如何直接影响业务指标：</strong><br/>
+      核心任务步数 ≤ 4 步 → 缩短单位订单处理时长 → 业务 KPI "订单处理时长缩短 40%"<br/>
+      MOQ 前端强制校验 → 消除 MOQ 相关异常工单（占 42%）→ 业务 KPI "月工单量下降 30%"<br/>
+      授信支付闭环 → 提升结算便利性 → 业务 KPI "复购率提高 10%"
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== DESIGN PRINCIPLES ===== -->
+<section id="principles" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">设计策略与原则 · How</div>
+      <h2>五条设计原则，指导所有决策</h2>
+      <p class="section-sub">每条原则都来自具体的业务约束，不是空泛的设计口号。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-num">01</div>
+        <div class="principle-icon">🔄</div>
+        <h4>角色即视图</h4>
+        <div class="principle-en">role-as-view</div>
+        <p>登录时选择的角色决定了看到的全部界面。批发商看到商城，业务员看到订单台，仓库看到核单台，管理员看到配置台。</p>
+        <div class="principle-example">💡 供应端不为三角色建统一后台，而是建三个独立的垂直工作台，每个只为该角色的核心任务优化。</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">02</div>
+        <div class="principle-icon">🎯</div>
+        <h4>任务优先</h4>
+        <div class="principle-en">task-first</div>
+        <p>先满足 80% 的高频场景（浏览、下单、复购），再覆盖长尾需求。不把低频功能放在主路径上。</p>
+        <div class="principle-example">💡 批发商首页不展示"促销活动、新品推荐、品牌故事"，只展示商品卡片和库存状态——他们来的目的就是订货。</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">03</div>
+        <div class="principle-icon">🛡️</div>
+        <h4>防错设计（Poka-yoke）</h4>
+        <div class="principle-en">error-prevention</div>
+        <p>在交互层面彻底杜绝无效输入的可能性。用户在第一步就被阻止犯错，而不是在最后一步才被告知不行。</p>
+        <div class="principle-example">💡 步进器初始值直接跳到 MOQ（如 12 箱），加减步长也为 MOQ 单位，从根本上避免选到低于起订量的数量。</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">04</div>
+        <div class="principle-icon">👁️</div>
+        <h4>信息优先</h4>
+        <div class="principle-en">information-first</div>
+        <p>关键字段在每一级页面都一目了然。B 端采购决策需要的是"确定性"——不是从众心理。</p>
+        <div class="principle-example">💡 卡片上最重要的信息是：有没有货（库存进度条）→ 多少钱（价格）→ 最少买多少（MOQ）。而不是好评率或销量。</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">05</div>
+        <div class="principle-icon">⚖️</div>
+        <h4>合规严谨</h4>
+        <div class="principle-en">compliance-first</div>
+        <p>B2B 交易的每一笔订单都具有法律效力。登录时的合规确认、支付前的法律声明，都是数字签名的前置环节。</p>
+        <div class="principle-example">💡 支付弹窗设计得"重"——授信额度卡 + 费用明细 + 法律声明，每个元素都在说"这是企业行为，不是个人消费"。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== INFORMATION ARCHITECTURE ===== -->
+<section id="ia">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">信息架构与流程 · What</div>
+      <h2>简化到极致的核心路径</h2>
+      <p class="section-sub">批发商端 4 个主页面，供应端 3 个独立工作台。所有页面只展示用户关心的信息。</p>
+    </div>
+    <div class="divider"></div>
+
+    <h3 style="font-size:17px;margin-bottom:14px">信息架构</h3>
+    <div class="ia-diagram">
+      <div class="ia-tier">
+        <div class="ia-label">入口</div>
+        <div class="ia-node primary">启动页 Splash</div>
+        <div class="ia-arrow-row" style="margin:0 4px"><span>→</span></div>
+        <div class="ia-node primary">登录分流</div>
+      </div>
+      <div style="display:flex;gap:40px;justify-content:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div class="ia-tier" style="margin-bottom:8px">
+            <div class="ia-label" style="width:auto;font-size:11px;color:var(--brand)">批发商端</div>
+          </div>
+          <div class="ia-tier">
+            <div class="ia-node secondary">首页<br/><span class="ia-sub">两列卡片网格</span></div>
+            <div class="ia-node tertiary">商品详情<br/><span class="ia-sub">规格/库存/分享</span></div>
+            <div class="ia-node secondary">购物车<br/><span class="ia-sub">MOQ校验</span></div>
+            <div class="ia-node tertiary">支付弹窗<br/><span class="ia-sub">授信扣款</span></div>
+            <div class="ia-node secondary">订单页<br/><span class="ia-sub">3状态</span></div>
+            <div class="ia-node tertiary">个人中心<br/><span class="ia-sub">企业信息</span></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="ia-tier" style="margin-bottom:8px">
+            <div class="ia-label" style="width:auto;font-size:11px;color:var(--brand)">供应端</div>
+          </div>
+          <div class="ia-tier">
+            <div class="ia-node ghost">业务员<br/><span class="ia-sub">订单处理</span></div>
+            <div class="ia-node ghost">仓库核单员<br/><span class="ia-sub">扫码出库</span></div>
+            <div class="ia-node ghost">管理员<br/><span class="ia-sub">配置/数据</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin-bottom:14px">核心流程泳道图</h3>
+    <div class="flow-lanes">
+      <div class="flow-lane">
+        <div class="lane-role">批发商 <span>自助下单</span></div>
+        <div>
+          <div class="lane-steps">
+            <span class="step highlight">浏览商品</span>
+            <span class="step highlight">选量（MOQ）</span>
+            <span class="step highlight">加入购物车</span>
+            <span class="step highlight">确认结算</span>
+            <span class="step highlight">授信支付</span>
+            <span class="step">查订单</span>
+          </div>
+          <div class="lane-rule">规则：每步 ≤ 2 次点击；MOQ不足时前端阻断</div>
+        </div>
+      </div>
+      <div class="flow-lane">
+        <div class="lane-role">业务员 <span>订单处理</span></div>
+        <div>
+          <div class="lane-steps">
+            <span class="step">查看新订单</span>
+            <span class="step">审核通过</span>
+            <span class="step">分配物流</span>
+            <span class="step">异常处理</span>
+          </div>
+          <div class="lane-rule">规则：异常订单从列表中分离，单独展示在"异常协控单"Tab</div>
+        </div>
+      </div>
+      <div class="flow-lane">
+        <div class="lane-role">仓库 <span>核单出库</span></div>
+        <div>
+          <div class="lane-steps">
+            <span class="step">选择待核订单</span>
+            <span class="step">扫码核单</span>
+            <span class="step">确认齐备</span>
+            <span class="step">录入车牌</span>
+            <span class="step">一键出库</span>
+          </div>
+          <div class="lane-rule">规则：每步对应一个线下物理动作，不可跳过；当前演示为模拟扫码</div>
+        </div>
+      </div>
+      <div class="flow-lane">
+        <div class="lane-role">管理员 <span>配置管理</span></div>
+        <div>
+          <div class="lane-steps">
+            <span class="step">商品管理</span>
+            <span class="step">价格微调</span>
+            <span class="step">规则配置</span>
+            <span class="step">数据看板</span>
+          </div>
+          <div class="lane-rule">规则：角色切换器可预览其他角色视图（管理员特有）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== SCOPE / MVP ===== -->
+<section id="scope" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">MVP 范围 · Scope</div>
+      <h2>P0 必须上线 vs P1/P2 后续迭代</h2>
+      <p class="section-sub">优先级判断依据：业务影响 &gt; 实现成本。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="scope-grid">
+      <div class="scope-column">
+        <h4><span class="badge p0">P0 MVP</span> 必须上线</h4>
+        <ul class="scope-list mvp">
+          <li>登录分流与合规确认 <span class="scope-tag p0">P0</span></li>
+          <li>批发商首页（两列卡片网格）<span class="scope-tag p0">P0</span></li>
+          <li>商品详情（库存/价格/MOQ）<span class="scope-tag p0">P0</span></li>
+          <li>购物车 MOQ 校验 <span class="scope-tag p0">P0</span></li>
+          <li>授信支付弹窗 <span class="scope-tag p0">P0</span></li>
+          <li>订单页（待处理/发货中/已完成）<span class="scope-tag p0">P0</span></li>
+          <li>再次购买功能 <span class="scope-tag p0">P0</span></li>
+          <li>供应端：业务员/仓库核单/管理员基础工作台 <span class="scope-tag p0">P0</span></li>
+          <li>沙箱演示数据 &amp; 一键预填 <span class="scope-tag p0">P0</span></li>
+        </ul>
+      </div>
+      <div class="scope-column">
+        <h4><span class="badge p1">P1</span> / <span class="badge p2">P2</span> 后续迭代</h4>
+        <ul class="scope-list p1">
+          <li>高级数据看板（多维度分析）<span class="scope-tag p1">P1</span></li>
+          <li>全量扫码枪硬件对接 <span class="scope-tag p1">P1</span></li>
+          <li>自动化对账系统 <span class="scope-tag p1">P1</span></li>
+          <li>更多的推送/营销功能 <span class="scope-tag p1">P1</span></li>
+          <li>复杂权限体系（多级管理员）<span class="scope-tag p2">P2</span></li>
+          <li>PC 管理端适配 <span class="scope-tag p2">P2</span></li>
+          <li>离线 PWA 支持 <span class="scope-tag p2">P2</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== DESIGN SHOWCASE ===== -->
+<section id="design">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">交互 / 视觉要点 · Design</div>
+      <h2>关键设计决策背后的业务逻辑</h2>
+      <p class="section-sub">每一个交互细节都不是"拍脑袋"做的，而是从真实的 B2B 酒水批发业务场景中推导出来的。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="design-showcase">
+      <!-- Card 1: 首页两列卡片 -->
+      <div class="design-card">
+        <div class="design-visual" style="gap:16px;flex-wrap:wrap">
+          <div class="demo-card">
+            <div class="demo-img"></div>
+            <div class="demo-title">经典高粱酒</div>
+            <div class="demo-meta">¥288/箱 · 最小起订 12 箱</div>
+            <div class="demo-stock" style="margin-top:6px;padding:0;border:none;width:100%">
+              <div style="font-size:10px;color:var(--text-light);display:flex;justify-content:space-between"><span>库存</span><span style="color:#16a34a">充足</span></div>
+              <div class="bar"><div class="fill" style="width:80%"></div></div>
+            </div>
+          </div>
+          <div class="demo-card">
+            <div class="demo-img"></div>
+            <div class="demo-title">珍藏 12 年</div>
+            <div class="demo-meta">¥688/箱 · 最小起订 6 箱</div>
+            <div class="demo-stock" style="margin-top:6px;padding:0;border:none;width:100%">
+              <div style="font-size:10px;color:var(--text-light);display:flex;justify-content:space-between"><span>库存</span><span style="color:#d97706">紧张</span></div>
+              <div class="bar"><div class="fill warning" style="width:25%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #1</div>
+          <h4>为什么用两列卡片网格而不是列表？</h4>
+          <p>移动端屏幕上，列表每屏只能展示 3-4 个商品，两列网格可以展示 6-8 个。批发商的目标不是"仔细看细节"，而是"快速扫一遍看看有没有我要的"——两列网格正好满足扫描式浏览的需求。</p>
+          <div class="why">
+            <strong>B端 vs C端的本质差异</strong>
+            C端卡片放"月销10万+"和"好评率98%"，因为消费者从众。B端批发商的决策心理是确定性——有没有货、多少钱、最少买多少。所以卡片上依次展示：库存进度条 → 价格 → MOQ。
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: MOQ步进器 -->
+      <div class="design-card">
+        <div class="design-visual">
+          <div style="text-align:center">
+            <div class="demo-stepper" style="margin:0 auto">
+              <button class="minus">−</button>
+              <span class="value">12</span>
+              <button class="plus">+</button>
+              <span class="moq-badge">MOQ</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-lighter);margin-top:8px">点击后直接跳到 MOQ（12箱），步长 = MOQ</div>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #2</div>
+          <h4>为什么步进器的初始值和步长是 MOQ？</h4>
+          <p>批发商点击"配置订货量"时数量直接跳到最小起订量（如 12 箱），而不是从 1 递增。加减步长也是 MOQ 为单位。</p>
+          <div class="why">
+            <strong>防错设计（Poka-yoke）</strong>
+            如果在结算时才告知"起订量不足"是糟糕的体验——用户应该在第一步就被阻止犯错，而不是最后一步才被告知不行。这就是防错设计的核心：在交互层面彻底杜绝无效输入的可能性。
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: 支付弹窗 -->
+      <div class="design-card">
+        <div class="design-visual">
+          <div class="demo-payment">
+            <div style="font-size:10px;color:var(--text-lighter);font-weight:600;margin-bottom:2px">授信额度</div>
+            <div class="amt">¥86,400.00</div>
+            <div style="font-size:10px;color:var(--text-light);margin-bottom:10px">剩余额度 ¥12,400.00</div>
+            <div class="fee-row"><span>小计（3 件）</span><span>¥5,136.00</span></div>
+            <div class="fee-row" style="color:var(--brand)"><span>折扣（5%）</span><span>-¥513.60</span></div>
+            <div class="fee-row total"><span>应付</span><span>¥4,622.40</span></div>
+            <div style="font-size:9px;color:var(--text-lighter);margin-top:8px;padding:6px 8px;background:var(--brand-bg);border-radius:4px;line-height:1.4">
+              确认即代表企业授权以此账号下的授信额度支付，此订单具有合同效力
+            </div>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #3</div>
+          <h4>为什么支付弹窗设计得这么"重"？</h4>
+          <p>B2B 支付不是"点击按钮 → 扣钱"。每一笔 B2B 订单都是一份法律合同。弹窗的每个设计元素都是为了让批发商在点击"确认"之前，清晰知道自己在做什么。</p>
+          <div class="why">
+            <strong>为什么不是微信/支付宝？</strong>
+            酒水行业"先货后款"是百年惯例——批发商先提货，月底结款。授信额度就是信用账期的数字化体现。如果用 C 端即时支付模式，反而违背了用户已有的习惯。
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: 商品详情 -->
+      <div class="design-card">
+        <div class="design-visual" style="gap:16px;flex-direction:column">
+          <div style="display:flex;gap:12px;align-items:center;width:100%;max-width:280px">
+            <span style="font-size:12px;padding:4px 10px;background:var(--border-light);border-radius:4px;font-weight:600">🔗 分享</span>
+            <span style="font-size:12px;padding:4px 10px;background:var(--border-light);border-radius:4px;font-weight:600">🔔 降价通知</span>
+          </div>
+          <div class="demo-stock" style="width:100%;max-width:280px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:4px">可用库存</div>
+            <div style="font-size:10px;color:var(--text-light);display:flex;justify-content:space-between"><span>1,240 件</span><span style="color:#16a34a">充足</span></div>
+            <div class="bar"><div class="fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #4</div>
+          <h4>为什么做分享和降价通知？</h4>
+          <p><strong>分享：</strong>批发商经常把产品信息发到分销群里给下线客户看，"分享"是 B2B 分销链的一个环节，不是社交分享。<strong>降价通知：</strong>批发商对价格极其敏感，很多商品会被"盯住"等降价再买。</p>
+          <div class="why">
+            <strong>为什么库存用进度条而不是纯数字？</strong>
+            "库存：1240 件"信息密度不够——批发商需要的是"够不够我买"的直觉判断。进度条给了这种直觉：绿色+长条 → 随便买；靠近红色 → 赶紧下单。
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: 供应端隔离 -->
+      <div class="design-card">
+        <div class="design-visual" style="gap:20px;flex-wrap:wrap">
+          <div style="text-align:center;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:8px;min-width:120px">
+            <div style="font-size:20px;margin-bottom:4px">📋</div>
+            <div style="font-size:12px;font-weight:700">业务员</div>
+            <div style="font-size:10px;color:var(--text-light)">订单/异常/客户</div>
+          </div>
+          <div style="text-align:center;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:8px;min-width:120px">
+            <div style="font-size:20px;margin-bottom:4px">📦</div>
+            <div style="font-size:12px;font-weight:700">核单员</div>
+            <div style="font-size:10px;color:var(--text-light)">扫码/出库</div>
+          </div>
+          <div style="text-align:center;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:8px;min-width:120px">
+            <div style="font-size:20px;margin-bottom:4px">⚙️</div>
+            <div style="font-size:12px;font-weight:700">管理员</div>
+            <div style="font-size:10px;color:var(--text-light)">配置/数据</div>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #5</div>
+          <h4>为什么不做统一后台 + 权限控制？</h4>
+          <p>在 PC 端是标准做法，但在移动端上：菜单占空间、信息密度低、三个角色的工作流完全不同。给他们一个统一的"后台"让各自找功能，效率极低。</p>
+          <div class="why">
+            <strong>本质上还是"角色即视图"</strong>
+            供应端不是一个"后台"，而是三个独立的垂直"工作台"。每个工作台只为该角色的核心任务优化，没有多余的入口。
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: 订单三状态 -->
+      <div class="design-card">
+        <div class="design-visual" style="gap:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <span style="padding:8px 18px;background:#fef3d0;border-radius:20px;font-size:13px;font-weight:600;color:#92400e">待处理</span>
+            <span style="padding:8px 18px;background:#dbeafe;border-radius:20px;font-size:13px;font-weight:600;color:#1e40af">发货中</span>
+            <span style="padding:8px 18px;background:#dcfce7;border-radius:20px;font-size:13px;font-weight:600;color:#15803d">已完成</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--text-lighter)">
+            <span>真实流程：待审核→已审核→拣货→打包→出库→运输→派送→签收</span>
+          </div>
+        </div>
+        <div class="design-info">
+          <div class="di-label">决策 #6</div>
+          <h4>为什么批发商端只有三个订单状态？</h4>
+          <p>真实 B2B 订单流程远比三个状态复杂，但这是面向批发商（买方）的视图。批发商不需要知道仓库内部的拣货、打包、出库流程——他们只需要知道：厂家有没有在处理 → 有没有发货 → 有没有到。三个状态刚好覆盖这三个关注点。</p>
+          <div class="why">
+            <strong>减少信息噪音</strong>
+            不做"取消订单"按钮：B2B 订单具有合同效力，取消需走线下异常流程，不能简单地做成一个按钮。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== SCHEDULE / TIMELINE ===== -->
+<section id="schedule" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">实施计划 · Schedule</div>
+      <h2>12 周 MVP 路线图</h2>
+      <p class="section-sub">从项目启动到上线监控，每个阶段都有明确的验收节点。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-week">周 0</div>
+        <h4>项目启动与需求确认</h4>
+        <p>干系人对齐、项目章程签署、核心目标确认</p>
+        <span class="tl-milestone">里程碑：干系人签字确认</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 1–2</div>
+        <h4>用户研究与流程访谈</h4>
+        <p>访谈业务员、批发商、仓库，完成现场跟单；产出关键洞察报告</p>
+        <span class="tl-done">已完成：8 次一线访谈 + 跟单</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 3–4</div>
+        <h4>信息架构与中低保真原型</h4>
+        <p>完成 IA 设计、流程泳道图、中低保真原型，内部走查确认流程</p>
+        <span class="tl-milestone">里程碑：流程确认</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 5–7</div>
+        <h4>高保真 UI &amp; 交互 + 组件库</h4>
+        <p>全量页面高保真设计、React 组件库搭建、设计 Token 体系定义</p>
+        <span class="tl-done">已完成：20+ 页面、完整组件库</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 8–10</div>
+        <h4>前后端联调 &amp; QA</h4>
+        <p>扫码接口对接、授信扣款逻辑测试、全流程回归</p>
+        <span class="tl-milestone">里程碑：QA 验收通过</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 11</div>
+        <h4>内部试运行</h4>
+        <p>沙盒演示 + 关键用户培训（业务员/仓库操作培训）</p>
+        <span class="tl-milestone">里程碑：用户培训完成</span>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-week">周 12</div>
+        <h4>上线 &amp; 首周监控</h4>
+        <p>正式上线，D3/D7/D14 数据审查</p>
+        <span class="tl-milestone">里程碑：上线 &amp; 数据审核</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== BUDGET & RISK ===== -->
+<section id="risk">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">风险与缓解 · Risk</div>
+      <h2>关键风险与应对策略</h2>
+      <p class="section-sub">分批放量、试点先行，降低商业风险。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="risk-grid">
+      <div class="risk-card risk-high">
+        <div class="risk-level">🔴 高风险</div>
+        <h4>仓库扫码硬件对接复杂</h4>
+        <p>不同品牌扫码枪协议不统一，蓝牙连接稳定性未知，现场部署环境复杂。</p>
+        <div class="mitigation">
+          <strong>缓解策略</strong>
+          优先做模拟扫码 + 人工替代接口，确保 MVP 阶段核单流程可跑通。P1 阶段再对接真实扫码硬件。
+        </div>
+      </div>
+      <div class="risk-card risk-high">
+        <div class="risk-level">🔴 高风险</div>
+        <h4>授信规则导致财务坏账</h4>
+        <p>授信额度管控数字化后，如果规则配置不当，可能放大坏账风险。</p>
+        <div class="mitigation">
+          <strong>缓解策略</strong>
+          小范围试点客户先放低授信额度，逐步放大。系统默认额度为人工核定额的 50%，运营可手动调整。
+        </div>
+      </div>
+      <div class="risk-card risk-mid">
+        <div class="risk-level">🟡 中风险</div>
+        <h4>用户习惯迁移慢</h4>
+        <p>批发商习惯了"微信发消息"的订货方式，对 APP 接受度可能不高。</p>
+        <div class="mitigation">
+          <strong>缓解策略</strong>
+          保留人工通道（业务员仍可代下单）+ 客户培训 + 业务员引导上线。前 2 个月采用"双轨制"过渡。
+        </div>
+      </div>
+      <div class="risk-card risk-low">
+        <div class="risk-level">🟢 低风险</div>
+        <h4>演示数据与实际数据脱节</h4>
+        <p>沙箱演示数据经过精心预设，实际运营数据可能暴露更多问题。</p>
+        <div class="mitigation">
+          <strong>缓解策略</strong>
+          MVP 上线后 D3/D7/D14 三轮数据审查，快速迭代调整。沙箱与生产环境数据隔离。
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;font-size:13px">
+        <div>
+          <h4 style="font-size:14px;margin-bottom:8px">资源估算（3 个月 MVP）</h4>
+          <ul style="list-style:none;padding:0">
+            <li style="padding:4px 0;color:var(--text)">👤 产品经理 × 1</li>
+            <li style="padding:4px 0;color:var(--text)">🎨 交互/视觉设计 × 1</li>
+            <li style="padding:4px 0;color:var(--text)">💻 前端开发 × 2</li>
+            <li style="padding:4px 0;color:var(--text)">⚙️ 后端开发 × 2</li>
+            <li style="padding:4px 0;color:var(--text)">🧪 测试 × 1</li>
+            <li style="padding:4px 0;color:var(--text)">📢 运营 × 1</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-size:14px;margin-bottom:8px">基础设施成本</h4>
+          <ul style="list-style:none;padding:0">
+            <li style="padding:4px 0;color:var(--text)">🖥️ 服务器 &amp; CDN</li>
+            <li style="padding:4px 0;color:var(--text)">📱 短信/推送通道</li>
+            <li style="padding:4px 0;color:var(--text)">📦 扫码硬件（P1 阶段）</li>
+            <li style="padding:4px 0;color:var(--text)">🔗 第三方授信接口（如有）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== KPI & VALIDATION ===== -->
+<section id="kpi" class="alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">成功指标与验证 · KPI</div>
+      <h2>上线后可验证、可问责</h2>
+      <p class="section-sub">三个维度的 KPI 覆盖业务效果、用户体验和运营质量。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="kpi-section-title">业务 KPI</div>
+    <div class="kpi-dash">
+      <div class="kpi-card">
+        <div class="kpi-label">订单处理时长</div>
+        <div class="kpi-value">-40%</div>
+        <div class="kpi-unit">vs 传统微信报单</div>
+        <div class="kpi-trend up">↓ 目标达成</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">月异常工单量</div>
+        <div class="kpi-value">-30%</div>
+        <div class="kpi-unit">vs 上线前</div>
+        <div class="kpi-trend target">在测</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">复购率</div>
+        <div class="kpi-value">+10%</div>
+        <div class="kpi-unit">6 个月内提升</div>
+        <div class="kpi-trend target">长期追踪</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">GMV 增长</div>
+        <div class="kpi-value">+15%</div>
+        <div class="kpi-unit">预期年度</div>
+        <div class="kpi-trend target">远期目标</div>
+      </div>
+    </div>
+
+    <div class="kpi-section-title">体验 KPI</div>
+    <div class="kpi-dash">
+      <div class="kpi-card">
+        <div class="kpi-label">首单完成时间</div>
+        <div class="kpi-value">≤10min</div>
+        <div class="kpi-unit">新用户首单</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">关键操作错误率</div>
+        <div class="kpi-value">-50%</div>
+        <div class="kpi-unit">vs 传统流程</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">浏览→下单转化率</div>
+        <div class="kpi-value">≥25%</div>
+        <div class="kpi-unit">浏览到支付</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">自助下单率</div>
+        <div class="kpi-value">≥80%</div>
+        <div class="kpi-unit">无需人工介入</div>
+      </div>
+    </div>
+
+    <div class="kpi-section-title">运营 KPI</div>
+    <div class="kpi-dash">
+      <div class="kpi-card">
+        <div class="kpi-label">签收准确率</div>
+        <div class="kpi-value">≥99%</div>
+        <div class="kpi-unit">扫码核单后</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">退单率</div>
+        <div class="kpi-value">≤2%</div>
+        <div class="kpi-unit">MOQ 防错后</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">授信使用率</div>
+        <div class="kpi-value">≥90%</div>
+        <div class="kpi-unit">活跃批发商</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">NPS</div>
+        <div class="kpi-value">≥50</div>
+        <div class="kpi-unit">上线 3 个月后</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px">
+      <h4 style="font-size:14px;margin-bottom:12px">验证时间表</h4>
+      <div class="validation-timeline">
+        <div class="v-day highlight"><div class="v-label">D0</div><div class="v-desc">上线</div></div>
+        <div class="v-day"><div class="v-label">D3</div><div class="v-desc">首轮数据</div></div>
+        <div class="v-day highlight"><div class="v-label">D7</div><div class="v-desc">周审查</div></div>
+        <div class="v-day"><div class="v-label">D14</div><div class="v-desc">定性访谈</div></div>
+        <div class="v-day"><div class="v-label">M1</div><div class="v-desc">月度报告</div></div>
+        <div class="v-day highlight"><div class="v-label">M3</div><div class="v-desc">KPI 评估</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== DELIVERABLES ===== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">交付物 · Deliverables</div>
+      <h2>前期交付清单</h2>
+      <p class="section-sub">每项交付物均已明确验收标准，可直接放入合同附件或 PRD。</p>
+    </div>
+    <div class="divider"></div>
+
+    <div class="deliverables-grid">
+      <div class="deliverable-item">
+        <div class="deliv-icon">📋</div>
+        <h4>业务调研报告</h4>
+        <p>含访谈记录、痛点分析、关键洞察</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">👤</div>
+        <h4>角色与场景卡片</h4>
+        <p>4 类用户角色定义、工作流描述</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">🗺️</div>
+        <h4>信息架构 &amp; 流程泳道图</h4>
+        <p>IA 图 + 跨角色泳道图</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">🎨</div>
+        <h4>高保真原型</h4>
+        <p>Figma 文件，全量页面交互</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">🧩</div>
+        <h4>UI 组件库</h4>
+        <p>React 组件 + 设计 Token 体系</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">🔗</div>
+        <h4>开发支持文档</h4>
+        <p>API 说明、验收清单、数据格式</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">📊</div>
+        <h4>KPI 仪表盘初版</h4>
+        <p>上线监控模板 &amp; 数据看板</p>
+      </div>
+      <div class="deliverable-item">
+        <div class="deliv-icon">📝</div>
+        <h4>沙箱演示环境</h4>
+        <p>可运行的前端原型 + 预填数据</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ===== CLOSING ===== -->
+<section class="alt">
+  <div class="container">
+    <div class="highlight-quote">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">这个项目的每一个功能细节都不是"拍脑袋"做的，<br/>而是从真实的 B2B 酒水批发业务场景中推导出来的。</div>
+      <div class="quote-author">理解业务，比理解界面更重要</div>
+    </div>
+
+    <div class="cta-section">
+      <h2>欢迎体验沙箱演示</h2>
+      <p>4 个一键预填角色，完整覆盖批发商下单、授信支付、供应端处理全流程。可运行的前端原型，所见即所得。</p>
+      <a href="deployed.html" class="cta-btn" target="_blank">
+        开启演示
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    <div class="highlight" style="text-align:center;padding:32px;margin-top:24px">
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--black);margin-bottom:8px">致谢</div>
+      <p style="font-size:13px;color:var(--text-light);max-width:540px;margin:0 auto;line-height:1.7">感谢常州果酒厂的信任与配合，感谢业务员、仓库核单员、批发商朋友们在一线访谈中的坦诚分享。这个项目的每一个交互细节都来自你们的真实工作场景。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-brand">常州唯一<span>·</span>数字化订货平台</div>
+    <p>以用户为中心的设计（UCD）案例展示 · 2026</p>
+    <p style="margin-top:8px;font-size:11px;color:var(--text-lighter)">项目介绍版 · v1.0 · 完整项目源码及组件库见项目目录</p>
+  </div>
+</footer>
+
+<script>
+// Intersection Observer for future use
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+// Nav scroll behavior
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  const current = window.scrollY;
+  // Hide/show nav
+  if (current > 80 && current > lastScroll) {
+    nav.style.transform = 'translateY(-100%)';
+  } else {
+    nav.style.transform = 'translateY(0)';
+  }
+  lastScroll = current;
+
+  // Active nav link
+  const sections = document.querySelectorAll('section[id]');
+  let currentId = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 150;
+    if (scrollY >= top) currentId = section.id;
+  });
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href').replace('#', '');
+    link.classList.toggle('active', href === currentId);
+  });
+});
+
+// Smooth reveal on scroll for cards
+document.querySelectorAll('.causal-card, .persona-card, .insight-card, .principle-card, .design-card').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
+  observer.observe(el);
+});
+
+document.querySelectorAll('.visible').forEach(el => {
+  el.style.opacity = '1';
+  el.style.transform = 'translateY(0)';
+});
+</script>
+
+<script>
+// Enhanced scroll reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.causal-card, .persona-card, .insight-card, .principle-card, .design-card, .stakeholder-row, .scope-list li, .deliverable-item, .risk-card, .kpi-card').forEach(el => {
+  revealObserver.observe(el);
+});
+</script>
+</body>
+</html>

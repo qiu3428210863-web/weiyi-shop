@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订货移动商城 - 线框图</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC",sans-serif;background:#eee;padding:30px 16px;color:#333}
+  h1{text-align:center;font-size:20px;margin-bottom:4px}
+  .sub{text-align:center;font-size:12px;color:#888;margin-bottom:30px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:1200px;margin:0 auto}
+
+  /* === Phone frame (minimal) === */
+  .phone{background:#fff;border-radius:24px;padding:10px 8px;box-shadow:0 4px 20px rgba(0,0,0,0.1);max-width:320px;margin:0 auto}
+  .phone-inner{border:1px solid #e0e0e0;border-radius:18px;overflow:hidden;background:#fafafa}
+  .tag{text-align:center;font-size:9px;color:#aaa;padding:6px 0 3px;border-bottom:1px solid #eee;letter-spacing:1px}
+  .screen{min-height:560px;position:relative}
+
+  /* === Wireframe primitives === */
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px dashed #ddd}
+  .box{background:#e8e8e8;border-radius:6px}
+  .box-d{background:#ddd;border-radius:6px}
+  .bar{height:6px;background:#e0e0e0;border-radius:3px}
+  .bar-fill{height:100%;background:#bbb;border-radius:3px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;font-size:10px;font-weight:600;color:#666}
+  .btn-p{background:#bbb;color:#fff}
+  .btn-s{padding:6px 14px;background:#e0e0e0;border-radius:6px;font-size:9px}
+  .lbl{font-size:9px;color:#999;font-weight:600}
+  .pr{font-size:13px;font-weight:700;color:#444}
+  .chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:#eee;border-radius:10px;font-size:9px;color:#888}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .flex{display:flex;align-items:center;gap:6px}
+  .flex-sb{display:flex;align-items:center;justify-content:space-between}
+  .gap-4{gap:4px}
+  .p-12{padding:12px}
+  .p-10{padding:10px}
+  .mt-8{margin-top:8px}
+  .mb-8{margin-bottom:8px}
+  .tc{text-align:center}
+  .border-b{border-bottom:1px dashed #e0e0e0}
+
+  /* === Splash === */
+  .splash{display:flex;flex-direction:column;justify-content:space-between;min-height:560px;background:#2a2a2a;color:#fff;padding:24px 20px}
+  .splash .logo{width:72px;height:72px;background:#fff;border-radius:16px;margin:0 auto 12px}
+  .splash h2{font-size:16px;font-weight:700;color:#ddd}
+  .splash p{font-size:10px;color:#999;line-height:1.5}
+
+  /* === Login === */
+  .login{padding:24px 16px}
+  .login .logo{width:32px;height:32px;background:#ddd;border-radius:8px;margin:0 auto 8px}
+  .login h2{font-size:13px;font-weight:700;text-align:center}
+  .login .tab-row{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eee;padding:3px;border-radius:8px;margin:12px 0}
+  .login .tab-row>div{padding:6px;text-align:center;font-size:10px;border-radius:6px;color:#888}
+  .login .tab-row>div.active{background:#fff;color:#333;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+  .login .inp{padding:8px 10px;background:#eee;border-radius:6px;font-size:10px;color:#aaa;border:1px solid #e0e0e0;margin-top:4px}
+
+  /* === Product card === */
+  .pcard{border:1px solid #e0e0e0;border-radius:8px;overflow:hidden}
+  .pcard .img{aspect-ratio:4/3;background:#ececec;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc}
+  .pcard .body{padding:6px 8px}
+  .pcard .nm{font-size:10px;font-weight:600;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+  /* === Detail === */
+  .dimg{width:100%;aspect-ratio:1/1;background:#ececec;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ccc}
+  .dinfo{padding:12px}
+  .dstepper{display:flex;align-items:center;border:1px solid #ddd;border-radius:6px}
+  .dstepper button{width:28px;height:28px;background:#eee;border:none;font-size:12px;cursor:default}
+  .dstepper span{width:32px;text-align:center;font-size:12px;font-weight:700}
+
+  /* === Cart === */
+  .citem{display:flex;align-items:center;gap:8px;padding:8px;background:#f5f5f5;border-radius:8px;margin-bottom:4px}
+  .citem .cb{width:14px;height:14px;border:1px solid #ccc;border-radius:3px;flex-shrink:0}
+  .citem .cb.on{background:#888;border-color:#888}
+  .citem .img{width:30px;height:30px;background:#e0e0e0;border-radius:4px;flex-shrink:0}
+  .citem .stp{display:flex;border:1px solid #ddd;border-radius:4px}
+  .citem .stp button{width:20px;height:20px;background:#eee;border:none;font-size:10px;cursor:default}
+  .citem .stp span{width:20px;text-align:center;font-size:9px;font-weight:700}
+
+  /* === Order === */
+  .ocard{border:1px solid #e0e0e0;border-radius:8px;padding:10px;margin-bottom:6px}
+  .ostat{font-size:8px;padding:2px 8px;border-radius:8px;background:#eee}
+
+  /* === Profile === */
+  .pmenu>div{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #eee;font-size:11px}
+  .pmenu>div:last-child{border:none}
+  .pchat{max-width:70%;padding:6px 8px;border-radius:8px;font-size:9px;margin-bottom:4px}
+  .pchat.u{background:#ddd;margin-left:auto}
+  .pchat.s{background:#eee}
+
+  /* Nav */
+  .nav{display:flex;justify-content:space-around;padding:6px 12px 8px;border-top:1px solid #e0e0e0;background:#fff}
+  .nav>div{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .nav .ni{width:18px;height:18px;background:#ddd;border-radius:4px}
+  .nav .ni.on{background:#888}
+  .nav .nl{font-size:8px;color:#aaa}
+  .nav .nl.on{color:#444;font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>📋 订货移动商城 · 线框图</h1>
+<p class="sub">基于 React + TypeScript 源码的结构提取</p>
+
+<div class="grid">
+
+<!-- ===== 1a. SPLASH LOADING ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">启动 · 加载中</div>
+<div class="screen splash">
+  <div class="tc"><span class="chip" style="background:rgba(255,255,255,0.08);color:#aaa;border-radius:999px">🔒 监管局直连</span></div>
+  <div class="tc">
+    <div class="logo"></div>
+    <h2>常州唯一产品订货平台</h2>
+    <p style="margin-top:6px">常州果酒B2B协议供销枢纽<br>智能仓储核单派单平台</p>
+  </div>
+  <div style="max-width:280px;margin:0 auto;width:100%">
+    <div class="flex-sb" style="font-size:8px;color:#888;margin-bottom:4px"><span>库存校准中...</span><span>65%</span></div>
+    <div class="bar" style="height:4px"><div class="bar-fill" style="width:65%;background:#a2375f"></div></div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">进度条 → 约1.5秒自动完成</div></div>
+
+<!-- ===== 1b. SPLASH ENTER ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">启动 · 就绪</div>
+<div class="screen splash">
+  <div class="tc"><span class="chip" style="background:rgba(255,255,255,0.08);color:#aaa;border-radius:999px">🔒 监管局直连</span></div>
+  <div class="tc">
+    <div class="logo"></div>
+    <h2>常州唯一产品订货平台</h2>
+    <p style="margin-top:6px">常州唯一果酒B2B协议供销枢纽<br>智能仓储核单派单一站式平台</p>
+  </div>
+  <div style="max-width:280px;margin:0 auto;width:100%">
+    <div style="padding:12px;background:#a2375f;border-radius:10px;text-align:center;font-weight:700;font-size:14px">开启订货新时代</div>
+    <div style="text-align:center;font-size:8px;color:#777;margin-top:8px">点击进入登录节点</div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">进度条消失 → 按钮出现</div></div>
+
+<!-- ===== 2. LOGIN ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">登录</div>
+<div class="screen login">
+  <div class="logo"></div>
+  <h2>常州唯一产品订货平台</h2>
+  <p style="font-size:9px;color:#999;text-align:center;margin:2px 0 10px">常州果酒厂及特约大宗直供供应链系统</p>
+  <div class="tab-row"><div class="active">批发采购商</div><div>供应方/工厂端</div></div>
+  <div style="margin:8px 0"><div class="lbl">协议账户/工号</div><div class="inp">手机号 / 工号...</div></div>
+  <div style="margin:8px 0"><div class="lbl">安全密钥</div><div class="inp">******</div></div>
+  <div class="flex" style="gap:6px;margin:10px 0;align-items:flex-start">
+    <div style="width:14px;height:14px;background:#888;border-radius:3px;flex-shrink:0;margin-top:1px"></div>
+    <span style="font-size:9px;color:#888">已阅读并签署《大宗提货合规契约》</span>
+  </div>
+  <div style="padding:10px;background:#bbb;color:#fff;border-radius:8px;text-align:center;font-weight:600;font-size:11px">安全验签并授权登录</div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">角色切换 · 登录表单 · 沙箱预填4入口</div></div>
+
+<!-- ===== 3. HOME ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">首页 · 产品目录</div>
+<div class="screen" style="padding-bottom:44px">
+  <div class="hdr"><div class="flex"><div class="box" style="width:20px;height:20px;border-radius:4px"></div><span style="font-size:9px;font-weight:700">订货平台</span></div><div class="box" style="width:20px;height:20px;border-radius:50%;position:relative">3</div></div>
+  <div style="margin:8px 10px;padding:6px 10px;background:#eee;border-radius:6px;font-size:9px;color:#aaa">🔍 搜索产品名称或SKU...</div>
+  <div class="flex" style="gap:4px;padding:6px 10px;border-bottom:1px dashed #e0e0e0">
+    <div class="chip">📊 价格</div><div class="chip">仅看现货</div><div style="flex:1"></div><div class="chip" style="font-size:8px;color:#888">重置</div>
+  </div>
+  <div class="grid-2" style="padding:8px 10px">
+    <div class="pcard"><div class="img">📦</div><div class="body"><div class="nm">Highland Reserve 12Y 威士忌</div><div class="flex-sb mt-8"><span class="pr">¥388</span><span class="lbl">MOQ 12</span></div><div style="margin-top:6px;padding-top:6px;border-top:1px dashed #eee"><div style="padding:5px;background:#bbb;color:#fff;border-radius:5px;text-align:center;font-size:9px;font-weight:600;width:100%">配置订货量</div></div></div></div>
+    <div class="pcard"><div class="img">📦</div><div class="body"><div class="nm">Botanist Dry Gin 金酒</div><div class="flex-sb mt-8"><span class="pr">¥268</span><span class="lbl">MOQ 6</span></div><div style="margin-top:6px;padding-top:6px;border-top:1px dashed #eee"><div style="padding:5px;background:#bbb;color:#fff;border-radius:5px;text-align:center;font-size:9px;font-weight:600;width:100%">配置订货量</div></div></div></div>
+    <div class="pcard"><div class="img">📦</div><div class="body"><div class="nm">Imperial Crystal Vodka</div><div class="flex-sb mt-8"><span class="pr">¥420</span><span class="lbl">MOQ 24</span></div><div style="margin-top:6px;padding-top:6px;border-top:1px dashed #eee"><div style="padding:5px;background:#bbb;color:#fff;border-radius:5px;text-align:center;font-size:9px;font-weight:600;width:100%">配置订货量</div></div></div></div>
+    <div class="pcard"><div class="img">📦</div><div class="body"><div class="nm">Château Margaux 2015</div><div class="flex-sb mt-8"><span class="pr">¥1,580</span><span class="lbl">MOQ 6</span></div><div style="margin-top:6px;padding-top:6px;border-top:1px dashed #eee"><div style="padding:5px;background:#bbb;color:#fff;border-radius:5px;text-align:center;font-size:9px;font-weight:600;width:100%">配置订货量</div></div></div></div>
+  </div>
+  <!-- floating bar -->
+  <div style="position:sticky;bottom:0;padding:8px 12px;border-top:1px dashed #ccc;display:flex;align-items:center;justify-content:space-between;background:#f0f0f0">
+    <div class="flex"><div style="position:relative"><div class="box" style="width:18px;height:18px;border-radius:4px"></div><span style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:#a2375f;color:#fff;border-radius:50%;font-size:7px;display:flex;align-items:center;justify-content:center">3</span></div><div><span style="font-size:8px;color:#999">大宗小计</span><br><span style="font-size:11px;font-weight:700">¥4,656.00</span></div></div>
+    <span class="btn btn-p" style="padding:8px 16px;font-size:10px">查看清单</span>
+  </div>
+</div>
+<div class="nav"><div><div class="ni on"></div><span class="nl on">首页</span></div><div><div class="ni"></div><span class="nl">订单</span></div><div><div class="ni"></div><span class="nl">我的</span></div></div>
+</div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">搜索/筛选 · 2列商品卡片 · 浮动购物车 · 底栏导航</div></div>
+
+<!-- ===== 4. PRODUCT DETAIL ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">商品详情</div>
+<div class="screen">
+  <div class="hdr"><div class="flex"><span style="font-size:14px">←</span><span style="font-size:10px;color:#888">返回</span></div><div class="flex gap-4"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><div class="box" style="width:16px;height:16px;border-radius:4px"></div></div></div>
+  <div class="dimg">📷 商品大图</div>
+  <div class="dinfo">
+    <div style="font-size:13px;font-weight:700">Highland Reserve 12Y</div>
+    <div style="font-size:9px;color:#999;margin:2px 0">SKU: WH-HR12-001</div>
+    <div class="flex" style="gap:6px;margin:6px 0"><span style="font-size:16px;font-weight:700">¥388</span><span style="font-size:10px;color:#bbb;text-decoration:line-through">¥428</span></div>
+    <div class="flex gap-4"><span class="chip">ABV 40%</span><span class="chip">苏格兰</span><span class="chip">雪莉桶</span></div>
+    <div class="flex" style="margin:10px 0;gap:8px">
+      <span class="lbl">数量</span>
+      <div class="dstepper"><button>−</button><span>12</span><button>+</button></div>
+      <span style="font-size:9px;color:#888">MOQ 12箱</span>
+    </div>
+    <div style="background:#f0f0f0;padding:8px;border-radius:6px;font-size:9px;color:#888">雪莉桶12年陈酿，蜂蜜干果香气，常州保税仓现货直发。</div>
+  </div>
+  <div class="grid-2" style="padding:0 12px 12px">
+    <div class="btn" style="padding:10px;background:#e8e8e8;color:#666">加入购物车</div>
+    <div class="btn btn-p" style="padding:10px">立即购买</div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">大图 · 价格规格 · MOQ步进器 · 加购/立即购买</div></div>
+
+<!-- ===== 5. CART ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">购物车</div>
+<div class="screen" style="padding-bottom:44px">
+  <div class="hdr"><span style="font-size:12px;font-weight:700">购物车清单</span><span style="font-size:10px;color:#888">管理</span></div>
+  <div style="margin:6px 10px;padding:6px 8px;background:#fef0f0;border:1px dashed #e0b0b0;border-radius:6px;font-size:9px;color:#966">⚠️ 1件商品未达MOQ</div>
+  <div style="padding:4px 10px">
+    <div class="citem"><div class="cb on"></div><div class="img"></div><div style="flex:1"><div style="font-size:10px;font-weight:600">Highland Reserve 12Y</div><div style="font-size:8px;color:#888">¥388/箱</div></div><div class="stp"><button>−</button><span>12</span><button>+</button></div><span style="color:#bbb;font-size:12px">✕</span></div>
+    <div class="citem" style="border:1px dashed #e0b0b0"><div class="cb"></div><div class="img"></div><div style="flex:1"><div style="font-size:10px;font-weight:600">Botanist Gin <span style="color:#966;font-size:8px">(不足MOQ)</span></div><div style="font-size:8px;color:#888">¥268/箱 · 最小6箱</div></div><div class="stp"><button>−</button><span>2</span><button>+</button></div><span style="color:#bbb;font-size:12px">✕</span></div>
+    <div class="citem"><div class="cb on"></div><div class="img"></div><div style="flex:1"><div style="font-size:10px;font-weight:600">Imperial Crystal Vodka</div><div style="font-size:8px;color:#888">¥420/箱</div></div><div class="stp"><button>−</button><span>24</span><button>+</button></div><span style="color:#bbb;font-size:12px">✕</span></div>
+  </div>
+  <div style="position:sticky;bottom:0;padding:8px 12px;border-top:1px dashed #ccc;display:flex;align-items:center;justify-content:space-between;background:#f0f0f0">
+    <div class="flex"><div class="cb on"></div><span style="font-size:9px">全选</span></div>
+    <div class="flex" style="gap:8px"><div style="text-align:right"><span style="font-size:8px;color:#888">含5%折扣</span><br><span style="font-size:12px;font-weight:800">¥4,441.20</span></div><span class="btn btn-p" style="padding:8px 16px;font-size:10px">结算 (2)</span></div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">勾选/数量步进 · MOQ警告 · 全选 · 5%批发折扣 · 结算</div></div>
+
+<!-- ===== 6. CHECKOUT MODAL ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">结算弹窗</div>
+<div class="screen" style="background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:12px;padding:14px;width:100%">
+    <div class="flex-sb" style="font-size:12px;font-weight:700;margin-bottom:10px"><span>极速大宗结算</span><span style="font-size:10px;color:#888">关闭</span></div>
+    <div style="background:#2a2a2a;color:#fff;border-radius:8px;padding:10px;margin-bottom:10px">
+      <div class="flex-sb" style="font-size:8px;opacity:.7"><span>李远 (LX-88204)</span><span>💳</span></div>
+      <div style="font-size:7px;opacity:.6;margin-top:4px">AVAILABLE CREDIT</div>
+      <div style="font-size:16px;font-weight:800">¥45,280.00</div>
+    </div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:8px;font-size:9px">
+      <div class="flex-sb" style="margin:3px 0"><span>已选件数</span><span>36箱</span></div>
+      <div class="flex-sb" style="margin:3px 0"><span>小计</span><span>¥4,656.00</span></div>
+      <div class="flex-sb" style="margin:3px 0;color:#888"><span>5%折扣</span><span>-¥232.80</span></div>
+      <div class="flex-sb" style="font-weight:700;margin:3px 0;border-top:1px dashed #ddd;padding-top:4px"><span>应付总额</span><span>¥4,423.20</span></div>
+    </div>
+    <div style="font-size:8px;color:#999;margin:8px 0">* 确认授权以授信额度支付</div>
+    <div class="btn btn-p" style="padding:10px;width:100%;font-size:11px">确认，安全授信扣款</div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">授信额度 · 订单明细 · 折扣计算 · 确认扣款</div></div>
+
+<!-- ===== 7. ORDERS ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">订单列表</div>
+<div class="screen" style="padding-bottom:44px">
+  <div class="hdr"><span style="font-size:12px;font-weight:700">我的订单</span></div>
+  <div style="display:flex;padding:6px 12px;border-bottom:1px dashed #e0e0e0">
+    <div style="flex:1;text-align:center;font-size:10px;font-weight:600;color:#333;border-bottom:2px solid #888;padding-bottom:4px">全部</div>
+    <div style="flex:1;text-align:center;font-size:10px;color:#999">待处理</div>
+    <div style="flex:1;text-align:center;font-size:10px;color:#999">发货中</div>
+    <div style="flex:1;text-align:center;font-size:10px;color:#999">已完成</div>
+  </div>
+  <div style="padding:6px 10px">
+    <div class="ocard">
+      <div class="flex-sb"><span style="font-size:10px;font-weight:700">#LX-88234</span><span class="ostat" style="background:#f0e0e8;color:#a08">待处理</span></div>
+      <div style="font-size:8px;color:#aaa">5月23日 · 现在交付</div>
+      <div style="margin:6px 0;font-size:9px">Highland Reserve × 12 · Imperial × 24</div>
+      <div class="flex-sb"><span style="font-size:11px;font-weight:700">¥4,423.20</span><span class="btn-s">再次购买</span></div>
+    </div>
+    <div class="ocard">
+      <div class="flex-sb"><span style="font-size:10px;font-weight:700">#LX-77145</span><span class="ostat" style="background:#e8e8f0;color:#668">发货中</span></div>
+      <div style="font-size:8px;color:#aaa">5月20日 · 顺丰SF123456</div>
+      <div style="margin:6px 0;font-size:9px">Château Margaux × 6</div>
+      <div class="flex-sb"><span style="font-size:11px;font-weight:700">¥9,480.00</span><div class="flex gap-4"><span class="btn-s">物流</span><span class="btn-s">再次购买</span></div></div>
+    </div>
+    <div class="ocard">
+      <div class="flex-sb"><span style="font-size:10px;font-weight:700">#LX-66032</span><span class="ostat" style="background:#e0e8e0;color:#686">已完成</span></div>
+      <div style="font-size:8px;color:#aaa">5月15日 · 已签收</div>
+      <div style="margin:6px 0;font-size:9px">Botanist Gin × 12</div>
+      <div class="flex-sb"><span style="font-size:11px;font-weight:700">¥3,216.00</span><span class="btn-s">再次购买</span></div>
+    </div>
+  </div>
+</div>
+<div class="nav"><div><div class="ni"></div><span class="nl">首页</span></div><div><div class="ni on"></div><span class="nl on">订单</span></div><div><div class="ni"></div><span class="nl">我的</span></div></div>
+</div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">Tab筛选(全部/待处理/发货中/已完成) · 订单卡片 · 再次购买</div></div>
+
+<!-- ===== 8. PROFILE ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">我的</div>
+<div class="screen" style="padding-bottom:44px">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#f5f5f5;border-bottom:1px dashed #e0e0e0">
+    <div class="box" style="width:36px;height:36px;border-radius:50%"></div>
+    <div><div style="font-size:13px;font-weight:700">李远</div><div style="font-size:9px;color:#888">批发采购商 · 鑫源商贸</div></div>
+  </div>
+  <div style="margin:8px 12px;padding:10px;background:#2a2a2a;color:#fff;border-radius:8px">
+    <div style="font-size:7px;opacity:.6">AVAILABLE CREDIT</div>
+    <div style="font-size:16px;font-weight:800">¥45,280.00</div>
+    <div class="flex-sb" style="font-size:8px;opacity:.6;margin-top:4px"><span>账期: 30天</span><span>详情 →</span></div>
+  </div>
+  <div class="pmenu" style="padding:0 12px">
+    <div><div class="flex"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><span>企业信息</span></div><span style="color:#ccc">›</span></div>
+    <div><div class="flex"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><span>收货地址管理</span></div><span style="color:#ccc">›</span></div>
+    <div><div class="flex"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><span>在线客服</span></div><span style="color:#ccc">›</span></div>
+    <div><div class="flex"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><span>授信与账期</span></div><span style="color:#ccc">›</span></div>
+    <div><div class="flex"><div class="box" style="width:16px;height:16px;border-radius:4px"></div><span>设置</span></div><span style="color:#ccc">›</span></div>
+  </div>
+  <div style="padding:10px 12px;border-top:1px dashed #eee;margin-top:6px">
+    <div style="font-size:10px;font-weight:600;margin-bottom:6px">在线客服</div>
+    <div class="pchat s">系统: 您的仓库出货车次已配属</div>
+    <div class="pchat u">好的，请更新物流单号</div>
+    <div class="flex" style="gap:4px;margin-top:6px"><div style="flex:1;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:9px;color:#aaa">输入消息...</div><span class="btn btn-p btn-s">发送</span></div>
+  </div>
+</div>
+<div class="nav"><div><div class="ni"></div><span class="nl">首页</span></div><div><div class="ni"></div><span class="nl">订单</span></div><div><div class="ni on"></div><span class="nl on">我的</span></div></div>
+</div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">用户信息 · 授信额度 · 菜单 · 客服对话</div></div>
+
+<!-- ===== 9. ADDRESSES ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">地址管理</div>
+<div class="screen">
+  <div class="hdr"><div class="flex"><span style="font-size:14px">←</span><span style="font-size:12px;font-weight:600">收货地址</span></div><span style="font-size:10px;color:#888">+新增</span></div>
+  <div style="padding:8px 12px">
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:10px;margin-bottom:6px">
+      <div class="flex-sb"><div><b style="font-size:11px">陈明</b><span style="font-size:9px;color:#888;margin-left:6px">138****8842</span></div><span style="font-size:8px;background:#888;color:#fff;padding:1px 6px;border-radius:6px">默认</span></div>
+      <div style="font-size:9px;color:#888;margin:4px 0">江苏省常州市武进区4号仓库</div>
+      <div class="flex-sb" style="font-size:9px;color:#888;margin-top:6px"><span>设为默认</span><span style="color:#966">删除</span></div>
+    </div>
+    <div style="border:1px solid #e0e0e0;border-radius:8px;padding:10px">
+      <div class="flex-sb"><b style="font-size:11px">高鑫零售</b><span style="font-size:9px;color:#888">139****2217</span></div>
+      <div style="font-size:9px;color:#888;margin:4px 0">新北区通江中路88号</div>
+      <div style="font-size:9px;color:#888;margin-top:6px">设为默认 · <span style="color:#966">删除</span></div>
+    </div>
+  </div>
+  <div style="margin:8px 12px;border:1px dashed #d0d0d0;border-radius:8px;padding:10px">
+    <div style="font-size:10px;font-weight:600;margin-bottom:6px">新增地址</div>
+    <div class="inp" style="margin:4px 0;font-size:9px">收件人</div>
+    <div class="inp" style="margin:4px 0;font-size:9px">手机号</div>
+    <div class="inp" style="margin:4px 0;font-size:9px">详细地址</div>
+    <div class="btn btn-p" style="padding:8px;width:100%;margin-top:6px;font-size:10px">保存</div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">地址卡片 · 默认标识 · 新增表单 · 删除</div></div>
+
+<!-- ===== 10. SUPPLIER DASHBOARD ===== -->
+<div>
+<div class="phone">
+<div class="phone-inner">
+<div class="tag">供应端看板</div>
+<div class="screen" style="padding-bottom:44px">
+  <div class="hdr"><div class="flex"><div class="box" style="width:18px;height:18px;border-radius:4px"></div><span style="font-size:9px;font-weight:700">常州供应端</span></div><span style="font-size:9px;color:#888">👤 王晓东</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:10px 12px">
+    <div style="border:1px dashed #ddd;border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800">12</div><div style="font-size:8px;color:#888">待处理</div></div>
+    <div style="border:1px dashed #ddd;border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800">8</div><div style="font-size:8px;color:#888">发货中</div></div>
+    <div style="border:1px dashed #ddd;border-radius:6px;padding:8px;text-align:center"><div style="font-size:14px;font-weight:800">45</div><div style="font-size:8px;color:#888">SKU</div></div>
+  </div>
+  <div style="display:flex;padding:6px 12px;border-top:1px dashed #e0e0e0">
+    <div style="flex:1;text-align:center;font-size:10px;font-weight:600;color:#333;border-bottom:2px solid #888;padding-bottom:4px">订单</div>
+    <div style="flex:1;text-align:center;font-size:10px;color:#999">商品</div>
+    <div style="flex:1;text-align:center;font-size:10px;color:#999">账期</div>
+  </div>
+  <div style="padding:6px 12px">
+    <div class="ocard" style="border-left:3px solid #d4a0a0">
+      <div class="flex-sb"><span style="font-size:10px;font-weight:700">#LX-88234 · 李远</span><span class="ostat" style="background:#f0e0e8;color:#a08">待处理</span></div>
+      <div style="font-size:9px;color:#aaa;margin:4px 0">Highland × 12 · Imperial × 24</div>
+      <div class="flex-sb"><span style="font-size:11px;font-weight:700">¥4,423.20</span><div class="flex gap-4"><span class="btn-s" style="background:#d4a0a0;color:#fff">确认发货</span><span class="btn-s" style="color:#966">异常</span></div></div>
+    </div>
+    <div class="ocard" style="border-left:3px solid #a0b0d4">
+      <div class="flex-sb"><span style="font-size:10px;font-weight:700">#LX-77145 · 高鑫</span><span class="ostat" style="background:#e8e8f0;color:#668">发货中</span></div>
+      <div style="font-size:9px;color:#aaa;margin:4px 0">顺丰SF1234567890</div>
+      <div class="flex-sb"><span style="font-size:11px;font-weight:700">¥9,480.00</span><span class="btn-s">修改运单</span></div>
+    </div>
+  </div>
+</div></div></div>
+<div class="tc" style="font-size:10px;color:#999;margin-top:6px">统计卡片 · 订单/商品/账期Tab · 发货/异常操作</div></div>
+
+</div>
+
+<!-- Site map -->
+<div style="max-width: 1200px; margin:40px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.04)">
+  <div style="font-size:14px;font-weight:700;text-align:center;margin-bottom:16px">🗺 页面流转</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;font-size:11px">
+    <span style="background:#e8e8e8;padding:6px 12px;border-radius:6px">启动</span><span style="color:#ccc">→</span>
+    <span style="background:#e8e8e8;padding:6px 12px;border-radius:6px">登录</span><span style="color:#ccc">→</span>
+    <span style="background:#d8e8d8;padding:6px 12px;border-radius:6px;font-weight:600">🟢 批发商</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">首页</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">详情</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">购物车</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">结算</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">订单</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">个人</span>
+    <div style="width:100%;height:4px"></div>
+    <span style="background:#e8d8c8;padding:6px 12px;border-radius:6px;font-weight:600">🟠 供应端</span>
+    <span style="color:#ccc">→</span><span style="background:#eee;padding:4px 8px;border-radius:4px">订单管理</span>
+    <span style="background:#eee;padding:4px 8px;border-radius:4px">商品管理</span>
+    <span style="background:#eee;padding:4px 8px;border-radius:4px">客户账期</span>
+  </div>
+</div>
+
+<div style="max-width:1200px;margin:0 auto 30px;text-align:center;font-size:10px;color:#aaa">订货移动商城 · react+typescript · 2026-05</div>
+</body>
+</html>

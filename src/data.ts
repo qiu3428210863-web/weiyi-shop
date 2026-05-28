@@ -329,7 +329,8 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'order-01',
     code: '#LX-89241',
-    date: '2025年10月24日 • 14:30',
+    date: '2026年5月18日 • 14:30',
+    createdAt: '2026-05-18T06:30:00.000Z',
     status: 'pending',
     items: [
       { productId: 'premium-liquor-decanter', quantity: 8, priceAtPurchase: 1250.0 },
@@ -340,7 +341,8 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'order-02',
     code: '#LX-89102',
-    date: '2025年10月21日 • 09:15',
+    date: '2026年5月3日 • 09:15',
+    createdAt: '2026-05-03T01:15:00.000Z',
     status: 'shipping',
     items: [
       { productId: 'cabernet-selection-red', quantity: 15, priceAtPurchase: 450.0 },
@@ -351,7 +353,8 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'order-03',
     code: '#LX-88950',
-    date: '2025年10月18日 • 16:45',
+    date: '2026年4月28日 • 16:45',
+    createdAt: '2026-04-28T08:45:00.000Z',
     status: 'completed',
     items: [
       { productId: 'cocktail-shaker-stainless', quantity: 10, priceAtPurchase: 290.0 }

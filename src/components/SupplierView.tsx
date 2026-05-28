@@ -13,15 +13,15 @@ interface SupplierViewProps {
   orders: Order[];
   products: Product[];
   onUpdateOrderStatus: (
-    orderId: string, 
-    status: Order['status'], 
+    orderId: string,
+    status: Order['status'],
     extra?: { carrier?: string; trackingNo?: string; isAbnormal?: boolean; abnormalReason?: string; resolveAbnormal?: boolean }
   ) => void;
   onUpdateProductStockOrPrice: (
-    productId: string, 
-    price?: number, 
-    stock?: number, 
-    moq?: number, 
+    productId: string,
+    price?: number,
+    stock?: number,
+    moq?: number,
     name?: string
   ) => void;
   onAddProduct: (product: Product) => void;
@@ -29,6 +29,8 @@ interface SupplierViewProps {
   onLogout: () => void;
   loggedInName: string;
   initialRole: 'sales' | 'warehouse' | 'admin';
+  wholesalerCreditPeriods: Record<string, number>;
+  onSetWholesalerCreditPeriod: (name: string, days: number) => void;
 }
 
 export const SupplierView: React.FC<SupplierViewProps> = ({
@@ -41,6 +43,8 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   onLogout,
   loggedInName,
   initialRole,
+  wholesalerCreditPeriods,
+  onSetWholesalerCreditPeriod,
 }) => {
   // Allow user to switch role on the fly inside the sandbox environment for rapid prototyping
   const [currentRole, setCurrentRole] = useState<'sales' | 'warehouse' | 'admin'>(initialRole);
@@ -968,6 +972,53 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                         下发额度
                       </button>
                     </div>
+                  </div>
+
+                  {/* 批发商账期配置（按批发商独立设置） */}
+                  <div className="space-y-3 border-t pt-3.5">
+                    <label className="font-bold text-brand-primary block text-xs">批发商账期配置（按批发商独立设置）</label>
+                    <p className="text-[10px] text-text-muted">为每个批发商单独设置信用账期天数，到期未结算将触发逾期提醒。</p>
+                    {Object.entries(wholesalerCreditPeriods).map(([name, days]) => (
+                      <div key={name} className="bg-surface-low rounded-lg p-3 border border-surface-highest space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-brand-primary">{name}</span>
+                          <span className="font-mono text-brand-secondary text-[10px] font-bold">{days} 天</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => {
+                              onSetWholesalerCreditPeriod(name, Math.max(7, days - 7));
+                              showToast(`${name} 账期已调整为 ${Math.max(7, days - 7)} 天`);
+                            }}
+                            className="w-7 h-7 rounded border text-base hover:bg-surface-lowest font-bold cursor-pointer flex items-center justify-center"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="range"
+                            min="7"
+                            max="180"
+                            step="1"
+                            className="flex-1 h-1.5 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-[#5c62b5]"
+                            value={days}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value, 10);
+                              onSetWholesalerCreditPeriod(name, val);
+                              showToast(`${name} 账期已更新为 ${val} 天`);
+                            }}
+                          />
+                          <button
+                            onClick={() => {
+                              onSetWholesalerCreditPeriod(name, Math.min(180, days + 7));
+                              showToast(`${name} 账期已调整为 ${Math.min(180, days + 7)} 天`);
+                            }}
+                            className="w-7 h-7 rounded border text-base hover:bg-surface-lowest font-bold cursor-pointer flex items-center justify-center"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { ShippingAddress, SupportMessage } from '../types';
-import { 
+import React, { useState, useMemo } from 'react';
+import { Order, Product, ShippingAddress, SupportMessage } from '../types';
+import {
   Building, MapPin, Mail,
   Settings, LogOut, ChevronRight, HelpCircle,
-  Send, User, ShieldCheck, Check, Plus, Trash2, Wallet
+  Send, User, ShieldCheck, Check, Plus, Trash2, Wallet,
+  AlertCircle, Clock, CreditCard, ClipboardCheck
 } from 'lucide-react';
 import { WLogo } from './WLogo';
 
@@ -16,6 +17,10 @@ interface ProfileViewProps {
   onAddSupportMessage: (text: string) => void;
   userCreditLimit: number;
   onLogout?: () => void;
+  orders: Order[];
+  products: Product[];
+  creditPeriodDays: number;
+  onSettleOrder: (orderId: string) => void;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
@@ -27,9 +32,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onAddSupportMessage,
   userCreditLimit,
   onLogout,
+  orders,
+  products,
+  creditPeriodDays,
+  onSettleOrder,
 }) => {
-  const [activeSubPage, setActiveSubPage] = useState<'profile' | 'enterprise' | 'addresses' | 'chats' | 'settings'>('profile');
+  const [activeSubPage, setActiveSubPage] = useState<'profile' | 'enterprise' | 'addresses' | 'chats' | 'settings' | 'payment'>('profile');
   const [typedMessage, setTypedMessage] = useState('');
+  const [showOverduePopup, setShowOverduePopup] = useState(false);
+  const [isSettling, setIsSettling] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   // Addresses forms inputs controllers
@@ -92,6 +103,58 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         onLogout();
       }, 1000);
     }
+  };
+
+  // 账期计算逻辑
+  const getCreditStatus = (order: Order) => {
+    if (order.status === 'completed') return { type: 'settled' as const };
+    const created = new Date(order.createdAt);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+    const daysRemaining = creditPeriodDays - diffDays;
+    if (daysRemaining < 0) return { type: 'overdue' as const, daysOverdue: Math.abs(daysRemaining) };
+    if (daysRemaining <= 3) return { type: 'expiring' as const, daysRemaining };
+    return { type: 'normal' as const, daysRemaining };
+  };
+
+  const unsettledOrders = useMemo(() => orders.filter(o => o.status !== 'completed'), [orders]);
+  const outstandingBalance = useMemo(
+    () => unsettledOrders.reduce((sum, o) => sum + o.totalPrice, 0),
+    [unsettledOrders]
+  );
+  const hasOverdueOrders = useMemo(
+    () => unsettledOrders.some(o => getCreditStatus(o).type === 'overdue'),
+    [unsettledOrders, creditPeriodDays]
+  );
+
+  const formatDate = (isoStr: string) => {
+    const d = new Date(isoStr);
+    return `${d.getMonth() + 1}月${d.getDate()}日`;
+  };
+
+  const navigateToPayment = () => {
+    setActiveSubPage('payment');
+    // 检查是否有逾期订单，有则弹出提醒
+    const overdueExists = unsettledOrders.some(o => {
+      if (o.status === 'completed') return false;
+      const created = new Date(o.createdAt);
+      const diffDays = Math.floor((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays > creditPeriodDays;
+    });
+    if (overdueExists) {
+      setTimeout(() => setShowOverduePopup(true), 500);
+    }
+  };
+
+  const handleSettleWithAnimation = (orderIds: string[], message: string) => {
+    if (isSettling) return;
+    setIsSettling(true);
+    setTimeout(() => {
+      orderIds.forEach(id => onSettleOrder(id));
+      setIsSettling(false);
+      setShowOverduePopup(false);
+      showToast(message);
+    }, 1200);
   };
 
   return (
@@ -360,6 +423,239 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       )}
 
+      {/* 5. Payment Management Subpage */}
+      {activeSubPage === 'payment' && (
+        <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
+          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0 z-30">
+            <button
+              onClick={() => { setActiveSubPage('profile'); setShowOverduePopup(false); }}
+              className="text-xs text-brand-secondary font-bold"
+            >
+              返回个人中心
+            </button>
+            <h2 className="text-sm font-bold font-sans">我的支付</h2>
+            <div className="w-10" />
+          </header>
+
+          <main className="p-4 max-w-sm mx-auto space-y-4 pb-24">
+            {/* 逾期弹窗 */}
+            {showOverduePopup && (
+              <div className="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-6 backdrop-blur-sm">
+                <div className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 text-center">
+                  <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto">
+                    <AlertCircle className="w-7 h-7 text-red-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-brand-primary">账期逾期提醒</h3>
+                    <p className="text-xs text-text-muted mt-2 leading-relaxed">
+                      您有以下订单已超过 <strong className="text-red-500">{creditPeriodDays}天</strong> 账期，请尽快结算以避免影响您的信用额度。
+                    </p>
+                  </div>
+                  <div className="bg-red-50 rounded-xl p-3 space-y-1.5 text-left max-h-32 overflow-y-auto">
+                    {unsettledOrders.filter(o => getCreditStatus(o).type === 'overdue').map(o => {
+                      const status = getCreditStatus(o) as { type: 'overdue'; daysOverdue: number };
+                      return (
+                        <div key={o.id} className="flex justify-between items-center text-xs">
+                          <span className="font-mono font-bold text-brand-primary">{o.code}</span>
+                          <span className="text-red-500 font-bold">逾期 {status.daysOverdue} 天</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => setShowOverduePopup(false)}
+                      className="flex-1 py-2.5 bg-surface-low hover:bg-surface-highest text-xs font-bold rounded-xl text-text-muted cursor-pointer transition-colors"
+                    >
+                      我知道了
+                    </button>
+                    <button
+                      onClick={() => handleSettleWithAnimation(
+                        unsettledOrders.filter(o => getCreditStatus(o).type === 'overdue').map(o => o.id),
+                        '逾期订单已结算'
+                      )}
+                      disabled={isSettling}
+                      className="flex-1 py-2.5 bg-brand-primary hover:bg-brand-secondary disabled:opacity-60 text-white text-xs font-bold rounded-xl cursor-pointer disabled:cursor-not-allowed transition-colors"
+                    >
+                      {isSettling ? '结算中...' : '立即结算'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 结算加载动画 */}
+            {isSettling && (
+              <div className="fixed inset-0 bg-black/40 z-[65] flex items-center justify-center backdrop-blur-sm">
+                <div className="bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4 min-w-[200px]">
+                  <svg className="animate-spin w-10 h-10 text-brand-secondary" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  <p className="text-sm font-bold text-brand-primary">正在结算...</p>
+                  <p className="text-[10px] text-text-muted">请稍候，信用额度即将恢复</p>
+                </div>
+              </div>
+            )}
+
+            {/* 支付概览卡片 */}
+            <div className="bg-gradient-to-br from-brand-primary to-[#7c82d0] text-white p-5 rounded-2xl shadow-lg relative overflow-hidden">
+              <div className="absolute right-0 top-0 opacity-5">
+                <CreditCard className="w-36 h-36 -translate-y-6 translate-x-8" />
+              </div>
+              <div className="relative z-10 space-y-4">
+                <p className="text-[10px] text-white/70 font-mono uppercase tracking-widest">待结算总额</p>
+                <p className="font-mono text-2xl font-bold">
+                  ¥{outstandingBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </p>
+                <div className="flex justify-between items-center pt-2 border-t border-white/20 text-[10px] text-white/80">
+                  <span>信用额度: ¥{userCreditLimit.toLocaleString()}</span>
+                  <span>账期: {creditPeriodDays}天</span>
+                </div>
+              </div>
+              {unsettledOrders.length > 0 && (
+                <button
+                  onClick={() => handleSettleWithAnimation(
+                    unsettledOrders.map(o => o.id),
+                    '已结算全部未付订单，信用额度已恢复'
+                  )}
+                  disabled={isSettling}
+                  className="w-full mt-3 py-2.5 bg-white/20 hover:bg-white/30 disabled:opacity-60 text-white text-xs font-bold rounded-xl cursor-pointer disabled:cursor-not-allowed transition-all border border-white/20"
+                >
+                  {isSettling ? '结算中...' : `一键结算全部 ¥${outstandingBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                </button>
+              )}
+            </div>
+
+            {/* 未结订单列表 */}
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                  未结算订单 ({unsettledOrders.length})
+                </h3>
+              </div>
+              <div className="space-y-3 pt-2">
+                {unsettledOrders.length === 0 ? (
+                  <div className="bg-surface-lowest p-8 rounded-xl border border-surface-highest text-center space-y-2">
+                    <Check className="w-8 h-8 text-green-500 mx-auto bg-green-50 p-1.5 rounded-full" />
+                    <p className="text-xs font-bold text-brand-primary">全部已结算</p>
+                    <p className="text-[10px] text-text-muted">暂无未结清的订单</p>
+                  </div>
+                ) : (
+                  unsettledOrders.map((ord) => {
+                    const creditStatus = getCreditStatus(ord);
+                    return (
+                      <div
+                        key={ord.id}
+                        className={`bg-surface-lowest border rounded-xl p-4 space-y-3 transition-all ${
+                          creditStatus.type === 'overdue' ? 'border-red-200 bg-red-50/20' :
+                          creditStatus.type === 'expiring' ? 'border-yellow-200 bg-yellow-50/10' :
+                          'border-surface-highest'
+                        }`}
+                      >
+                        {/* 订单头部 */}
+                        <div className="flex justify-between items-center">
+                          <span className="font-mono text-xs font-extrabold text-brand-primary">{ord.code}</span>
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                            creditStatus.type === 'overdue' ? 'bg-red-100 text-red-600' :
+                            creditStatus.type === 'expiring' ? 'bg-yellow-100 text-yellow-600' :
+                            creditStatus.type === 'settled' ? 'bg-green-100 text-green-600' :
+                            'bg-blue-100 text-blue-600'
+                          }`}>
+                            {creditStatus.type === 'overdue' ? `逾期 ${creditStatus.daysOverdue} 天` :
+                             creditStatus.type === 'expiring' ? `剩 ${creditStatus.daysRemaining} 天` :
+                             creditStatus.type === 'settled' ? '已结算' :
+                             `剩 ${creditStatus.daysRemaining} 天`}
+                          </span>
+                        </div>
+
+                        {/* 订单商品 */}
+                        <div className="space-y-1">
+                          {ord.items.map((itm, idx) => {
+                            const p = products.find(x => x.id === itm.productId);
+                            return (
+                              <div key={idx} className="flex justify-between text-xs font-sans">
+                                <span className="text-text-muted line-clamp-1 flex-grow">
+                                  {p ? p.name : itm.productId} ×{itm.quantity}箱
+                                </span>
+                                <span className="font-mono font-bold text-brand-primary ml-2">
+                                  ¥{(itm.priceAtPurchase * itm.quantity).toLocaleString()}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* 底部信息 */}
+                        <div className="flex justify-between items-center bg-surface-low p-2.5 rounded-lg text-xs">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3 h-3 text-text-muted" />
+                            <span className="text-[10px] text-text-muted font-mono">
+                              下单: {formatDate(ord.createdAt)}
+                            </span>
+                          </div>
+                          <span className="font-bold text-brand-secondary">
+                            ¥{ord.totalPrice.toLocaleString(undefined, { minimumFractionDigits: 1 })}
+                          </span>
+                        </div>
+
+                        {/* 过期进度条 */}
+                        {creditStatus.type !== 'settled' && (
+                          <div className="space-y-1">
+                            <div className="w-full h-1.5 bg-surface-low rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${
+                                  creditStatus.type === 'overdue' ? 'bg-red-500 w-full' :
+                                  creditStatus.type === 'expiring' ? 'bg-yellow-500' :
+                                  'bg-brand-secondary'
+                                }`}
+                                style={{
+                                  width: creditStatus.type === 'overdue' ? '100%' :
+                                    `${((creditPeriodDays - (creditStatus as any).daysRemaining) / creditPeriodDays) * 100}%`
+                                }}
+                              />
+                            </div>
+                            <p className="text-[9px] text-text-muted font-mono text-right">
+                              {creditStatus.type === 'overdue'
+                                ? `已超期 ${(creditStatus as any).daysOverdue} 天`
+                                : `剩余 ${(creditStatus as any).daysRemaining} 天 / 共 ${creditPeriodDays} 天`}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* 结算按钮 */}
+                        <button
+                          onClick={() => handleSettleWithAnimation(
+                            [ord.id],
+                            `订单 ${ord.code} 已结算，信用额度已恢复`
+                          )}
+                          disabled={isSettling}
+                          className="w-full py-2.5 bg-brand-secondary hover:bg-brand-primary disabled:opacity-60 text-white text-[10.5px] font-bold rounded-xl cursor-pointer disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1.5"
+                        >
+                          {isSettling ? (
+                            <>
+                              <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                              <span>结算中...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Check className="w-3.5 h-3.5" />
+                              <span>立即结算 ¥{ord.totalPrice.toLocaleString(undefined, { minimumFractionDigits: 1 })}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </main>
+        </div>
+      )}
 
       {/* Normal Main Center View */}
       {activeSubPage === 'profile' && (
@@ -422,24 +718,40 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </section>
 
             {/* Stats Overview boxes layout exactly */}
-            <section className="px-4 py-4 grid grid-cols-2 gap-3">
-              <div className="bg-surface-low p-4 rounded-xl border border-surface-highest flex flex-col justify-between h-28">
-                <div className="w-8 h-8 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
-                  <MapPin className="w-4 h-4" />
+            <section className="px-4 py-4 grid grid-cols-3 gap-2">
+              <div className="bg-surface-low p-3 rounded-xl border border-surface-highest flex flex-col justify-between h-24">
+                <div className="w-7 h-7 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
+                  <ClipboardCheck className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="font-hanken text-lg font-bold text-brand-primary">12</p>
-                  <p className="font-serif text-[10.5px] text-text-muted mt-0.5">进行中订单</p>
+                  <p className="font-hanken text-sm font-bold text-brand-primary">{unsettledOrders.length}</p>
+                  <p className="font-serif text-[9px] text-text-muted mt-0.5">未结订单</p>
                 </div>
               </div>
-              
-              <div className="bg-surface-low p-4 rounded-xl border border-surface-highest flex flex-col justify-between h-28">
-                <div className="w-8 h-8 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
-                  <Wallet className="w-4 h-4" />
+
+              <div className="bg-surface-low p-3 rounded-xl border border-surface-highest flex flex-col justify-between h-24">
+                <div className="w-7 h-7 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
+                  <Wallet className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="font-mono text-xs font-bold text-brand-primary">¥{userCreditLimit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-                  <p className="font-serif text-[10.5px] text-text-muted mt-0.5">信用额度</p>
+                  <p className="font-mono text-[10px] font-bold text-brand-primary">¥{userCreditLimit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  <p className="font-serif text-[9px] text-text-muted mt-0.5">信用额度</p>
+                </div>
+              </div>
+
+              <div className="bg-surface-low p-3 rounded-xl border border-surface-highest flex flex-col justify-between h-24 cursor-pointer hover:bg-surface-highest/20 transition-colors"
+                onClick={navigateToPayment}
+              >
+                <div className="w-7 h-7 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
+                  <CreditCard className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <p className="font-mono text-[10px] font-bold text-brand-secondary">
+                    ¥{outstandingBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </p>
+                  <p className="font-serif text-[9px] text-text-muted mt-0.5">
+                    待结算 {hasOverdueOrders ? '(逾期!)' : ''}
+                  </p>
                 </div>
               </div>
             </section>
@@ -476,8 +788,30 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
                 </button>
 
+                {/* Payment */}
+                <button
+                  onClick={navigateToPayment}
+                  className="w-full flex items-center justify-between px-4.5 py-4 hover:bg-surface-low transition-colors group active:bg-surface-container"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-surface-low flex items-center justify-center text-brand-primary border border-surface-highest/60 relative">
+                      <Wallet className="w-4.5 h-4.5" />
+                      {hasOverdueOrders && (
+                        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border border-surface-lowest"></span>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-brand-primary">我的支付</span>
+                      {hasOverdueOrders && (
+                        <span className="text-[9px] text-red-500 font-bold">有逾期账单!</span>
+                      )}
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
+                </button>
+
                 {/* Settings */}
-                <button 
+                <button
                   onClick={() => setActiveSubPage('settings')}
                   className="w-full flex items-center justify-between px-4.5 py-4 hover:bg-surface-low transition-colors group active:bg-surface-container"
                 >

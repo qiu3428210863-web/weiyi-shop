@@ -38,6 +38,11 @@ export default function App() {
   const [supportChats, setSupportChats] = useState<SupportMessage[]>(MOCK_CHATS_WELCOME);
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [userCreditLimit, setUserCreditLimit] = useState<number>(45280.00);
+  // 各批发商独立账期天数配置
+  const [wholesalerCreditPeriods, setWholesalerCreditPeriods] = useState<Record<string, number>>({
+    '李远': 30,
+    '高鑫零售有限公司': 45,
+  });
 
   // Initialize Shopping Cart exactly matching layout 2 of the design templates:
   // - Highland Reserve 12Y -> qty 12 (Moq 12 met)
@@ -195,6 +200,7 @@ export default function App() {
       id: `order-net-${Date.now()}`,
       code: `#LX-${Math.floor(10000 + Math.random() * 90000)}`,
       date: '2026年5月23日 • 现在交付',
+      createdAt: new Date().toISOString(),
       status: 'pending',
       items: checkoutItemsPayload,
       totalPrice: finalPrice,
@@ -351,6 +357,23 @@ export default function App() {
     setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
+  // 按登录名获取该批发商的账期天数
+  const currentCreditPeriodDays = wholesalerCreditPeriods[loggedInName] ?? 30;
+
+  const handleSetWholesalerCreditPeriod = (name: string, days: number) => {
+    setWholesalerCreditPeriods((prev) => ({ ...prev, [name]: days }));
+  };
+
+  const handleSettleOrder = (orderId: string) => {
+    const order = orders.find((o) => o.id === orderId);
+    if (order) {
+      setUserCreditLimit((prev) => prev + order.totalPrice);
+    }
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status: 'completed' as const } : o))
+    );
+  };
+
   // Render logic under focused state
   const renderActiveView = () => {
     // 1. Splash Page Layer
@@ -378,7 +401,9 @@ export default function App() {
           onDeleteProduct={handleDeleteProduct}
           onLogout={handleLogout}
           loggedInName={loggedInName}
-          initialRole={userRole}
+          initialRole={userRole as 'sales' | 'warehouse' | 'admin'}
+          wholesalerCreditPeriods={wholesalerCreditPeriods}
+          onSetWholesalerCreditPeriod={handleSetWholesalerCreditPeriod}
         />
       );
     }
@@ -458,6 +483,10 @@ export default function App() {
             }}
             userCreditLimit={userCreditLimit}
             onLogout={handleLogout}
+            orders={orders}
+            products={products}
+            creditPeriodDays={currentCreditPeriodDays}
+            onSettleOrder={handleSettleOrder}
           />
         );
       default:
