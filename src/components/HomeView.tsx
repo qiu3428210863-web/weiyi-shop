@@ -548,7 +548,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
                 <div className="bg-surface-lowest w-full max-w-sm rounded-xl p-5 border border-surface-highest space-y-4 shadow-xl">
                   <div className="flex justify-between items-center border-b border-surface-low pb-2.5">
-                    <h3 className="font-sans text-sm font-bold text-brand-primary">LuxeSpirit 极速大宗结算</h3>
+                    <h3 className="font-sans text-sm font-bold text-brand-primary">商品结算</h3>
                     <button onClick={() => setCheckoutOpen(false)} className="text-xs text-text-muted hover:text-brand-primary font-bold px-1">关闭</button>
                   </div>
 

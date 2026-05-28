@@ -37,7 +37,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   creditPeriodDays,
   onSettleOrder,
 }) => {
-  const [activeSubPage, setActiveSubPage] = useState<'profile' | 'enterprise' | 'addresses' | 'chats' | 'settings' | 'payment'>('profile');
+  const [activeSubPage, setActiveSubPage] = useState<'profile' | 'enterprise' | 'addresses' | 'chats' | 'settings' | 'payment' | 'empty'>('profile');
   const [typedMessage, setTypedMessage] = useState('');
   const [showOverduePopup, setShowOverduePopup] = useState(false);
   const [isSettling, setIsSettling] = useState(false);
@@ -657,6 +657,41 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       )}
 
+      {/* 缺省页 - Empty State */}
+      {activeSubPage === 'empty' && (
+        <div className="fixed inset-0 bg-surface-bg z-50 flex flex-col">
+          <header className="grid grid-cols-3 items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest">
+            <button
+              onClick={() => setActiveSubPage('profile')}
+              className="text-xs text-brand-secondary font-bold justify-self-start"
+            >
+              返回
+            </button>
+            <h2 className="text-sm font-bold font-sans text-center">缺省页</h2>
+            <div className="w-10 justify-self-end" />
+          </header>
+          <div className="flex-grow flex flex-col items-center justify-center px-8 text-center space-y-5">
+            <div className="w-20 h-20 rounded-full bg-surface-low flex items-center justify-center">
+              <svg className="w-10 h-10 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-base font-bold text-brand-primary">暂无内容</h3>
+              <p className="text-sm text-text-muted leading-relaxed max-w-xs">
+                当前页面暂无数据，请前往其他板块浏览或稍后再来查看。
+              </p>
+            </div>
+            <button
+              onClick={() => setActiveSubPage('profile')}
+              className="bg-brand-primary hover:bg-brand-secondary text-white text-xs font-bold px-8 py-2.5 rounded-xl transition-colors"
+            >
+              返回首页
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Normal Main Center View */}
       {activeSubPage === 'profile' && (
         <>
@@ -820,6 +855,22 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       <Settings className="w-4.5 h-4.5" />
                     </div>
                     <span className="text-xs font-bold text-brand-primary">通用参数设置</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                {/* Empty State Demo */}
+                <button
+                  onClick={() => setActiveSubPage('empty')}
+                  className="w-full flex items-center justify-between px-4.5 py-4 hover:bg-surface-low transition-colors group active:bg-surface-container"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-surface-low flex items-center justify-center text-brand-primary border border-surface-highest/60">
+                      <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-bold text-brand-primary">缺省页示例</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-text-muted group-hover:translate-x-1 transition-transform" />
                 </button>
