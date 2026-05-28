@@ -164,15 +164,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* 1. Chats Window Subpage */}
       {activeSubPage === 'chats' && (
         <div className="fixed inset-0 bg-surface-bg z-50 flex flex-col">
-          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest">
-            <button 
-              onClick={() => setActiveSubPage('profile')} 
-              className="text-xs text-brand-secondary font-bold"
+          <header className="grid grid-cols-3 items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest">
+            <button
+              onClick={() => setActiveSubPage('profile')}
+              className="text-xs text-brand-secondary font-bold justify-self-start"
             >
-              返回个人中心
+              返回
             </button>
-            <h2 className="text-sm font-bold font-sans">企业分销消息中心</h2>
-            <HelpCircle className="w-4 h-4 text-text-muted" />
+            <h2 className="text-sm font-bold font-sans text-center">企业分销消息中心</h2>
+            <HelpCircle className="w-4 h-4 text-text-muted justify-self-end" />
           </header>
           
           <div className="flex-grow overflow-y-auto p-4 space-y-4">
@@ -215,17 +215,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* 2. Addresses Management Subpage */}
       {activeSubPage === 'addresses' && (
         <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
-          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0 z-30">
-            <button 
-              onClick={() => setActiveSubPage('profile')} 
-              className="text-xs text-brand-secondary font-bold"
+          <header className="grid grid-cols-3 items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0 z-30">
+            <button
+              onClick={() => setActiveSubPage('profile')}
+              className="text-xs text-brand-secondary font-bold justify-self-start"
             >
-              返回个人中心
+              返回
             </button>
-            <h2 className="text-sm font-bold font-sans">收货网点地址簿</h2>
-            <button 
+            <h2 className="text-sm font-bold font-sans text-center">收货网点地址簿</h2>
+            <button
               onClick={() => setShowAddressCreator((prev) => !prev)}
-              className="text-[10px] bg-brand-secondary text-white px-2.5 py-1 rounded font-bold"
+              className="text-[10px] bg-brand-secondary text-white px-2.5 py-1 rounded font-bold justify-self-end"
             >
               {showAddressCreator ? '取消' : '添加网点'}
             </button>
@@ -381,15 +381,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* 4. Settings Dashboard Settings panel */}
       {activeSubPage === 'settings' && (
         <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
-          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0">
-            <button 
-              onClick={() => setActiveSubPage('profile')} 
-              className="text-xs text-brand-secondary font-bold"
+          <header className="grid grid-cols-3 items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0">
+            <button
+              onClick={() => setActiveSubPage('profile')}
+              className="text-xs text-brand-secondary font-bold justify-self-start"
             >
-              返回个人中心
+              返回
             </button>
-            <h2 className="text-sm font-bold font-sans">系统参数设置</h2>
-            <Settings className="w-4 h-4 text-brand-primary" />
+            <h2 className="text-sm font-bold font-sans text-center">系统参数设置</h2>
+            <Settings className="w-4 h-4 text-brand-primary justify-self-end" />
           </header>
 
           <main className="p-4 max-w-sm mx-auto space-y-4">
@@ -426,15 +426,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* 5. Payment Management Subpage */}
       {activeSubPage === 'payment' && (
         <div className="fixed inset-0 bg-surface-bg z-50 overflow-y-auto">
-          <header className="flex justify-between items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0 z-30">
+          <header className="grid grid-cols-3 items-center px-4 h-14 bg-surface-lowest border-b border-surface-highest sticky top-0 z-30">
             <button
               onClick={() => { setActiveSubPage('profile'); setShowOverduePopup(false); }}
-              className="text-xs text-brand-secondary font-bold"
+              className="text-xs text-brand-secondary font-bold justify-self-start"
             >
-              返回个人中心
+              返回
             </button>
-            <h2 className="text-sm font-bold font-sans">我的支付</h2>
-            <div className="w-10" />
+            <h2 className="text-sm font-bold font-sans text-center">我的支付</h2>
+            <div className="w-10 justify-self-end" />
           </header>
 
           <main className="p-4 max-w-sm mx-auto space-y-4 pb-24">
