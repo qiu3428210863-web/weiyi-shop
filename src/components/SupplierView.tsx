@@ -96,6 +96,16 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   const [newWholesalerName, setNewWholesalerName] = useState('');
   const [newWholesalerDays, setNewWholesalerDays] = useState(30);
 
+  // Derive display name from current role (so role switcher updates the name)
+  const roleDisplayName = useMemo(() => {
+    const map: Record<string, string> = {
+      sales: '王晓东 (业务经理)',
+      warehouse: '刘铁柱 (仓储主管)',
+      admin: '系统管理员 (最高权限)',
+    };
+    return map[currentRole] ?? loggedInName;
+  }, [currentRole, loggedInName]);
+
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => {
@@ -278,10 +288,10 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
         <div className="bg-surface-lowest border border-surface-highest rounded-xl p-4 flex justify-between items-center relative overflow-hidden shadow-sm">
           <div className="space-y-1.5 z-10">
             <span className="text-[9px] bg-brand-primary/10 text-brand-primary font-bold tracking-widest uppercase px-2 py-0.5 rounded-full">
-              协议企业内部网络 (VPN ON)
+              协议企业内网
             </span>
             <h2 className="font-sans text-sm font-extrabold text-brand-primary">
-              您好，{loggedInName}
+              您好，{roleDisplayName}
             </h2>
             <p className="text-[10.5px] text-text-muted leading-relaxed">
               常州果酒厂出库状态良好，当前有 <span className="text-brand-secondary font-bold">{statistics.pendingShipmentCount} </span>笔待核配采购单。
