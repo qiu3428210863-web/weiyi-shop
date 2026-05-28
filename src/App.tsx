@@ -364,6 +364,14 @@ export default function App() {
     setWholesalerCreditPeriods((prev) => ({ ...prev, [name]: days }));
   };
 
+  const handleAddWholesaler = (name: string, days: number) => {
+    if (!name.trim()) return;
+    setWholesalerCreditPeriods((prev) => {
+      if (prev[name.trim()]) return prev; // 已存在则不重复添加
+      return { ...prev, [name.trim()]: days };
+    });
+  };
+
   const handleSettleOrder = (orderId: string) => {
     const order = orders.find((o) => o.id === orderId);
     if (order) {
@@ -404,6 +412,7 @@ export default function App() {
           initialRole={userRole as 'sales' | 'warehouse' | 'admin'}
           wholesalerCreditPeriods={wholesalerCreditPeriods}
           onSetWholesalerCreditPeriod={handleSetWholesalerCreditPeriod}
+          onAddWholesaler={handleAddWholesaler}
         />
       );
     }

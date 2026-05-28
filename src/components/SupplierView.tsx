@@ -31,6 +31,7 @@ interface SupplierViewProps {
   initialRole: 'sales' | 'warehouse' | 'admin';
   wholesalerCreditPeriods: Record<string, number>;
   onSetWholesalerCreditPeriod: (name: string, days: number) => void;
+  onAddWholesaler: (name: string, days: number) => void;
 }
 
 export const SupplierView: React.FC<SupplierViewProps> = ({
@@ -45,6 +46,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   initialRole,
   wholesalerCreditPeriods,
   onSetWholesalerCreditPeriod,
+  onAddWholesaler,
 }) => {
   // Allow user to switch role on the fly inside the sandbox environment for rapid prototyping
   const [currentRole, setCurrentRole] = useState<'sales' | 'warehouse' | 'admin'>(initialRole);
@@ -89,6 +91,10 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   const [b2bMoqMultiplier, setB2bMoqMultiplier] = useState(1);
   const [b2bWholesaleDiscount, setB2bWholesaleDiscount] = useState(5); // 5% bulk discount
   const [creditLimitDefault, setCreditLimitDefault] = useState(50000); // 50,000 credit allocation
+
+  // Add wholesaler form state
+  const [newWholesalerName, setNewWholesalerName] = useState('');
+  const [newWholesalerDays, setNewWholesalerDays] = useState(30);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -490,46 +496,36 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
             {/* Sales SubTab Content 3: Customer History Book */}
             {salesSubTab === 'customers' && (
               <div className="space-y-3">
-                <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州大宗交易授信契约商</h3>
-                
-                <div className="bg-surface-lowest p-4 rounded-xl border border-surface-highest space-y-3">
-                  {/* Lead client 1 */}
-                  <div className="flex items-center gap-3 border-b pb-3">
-                    <div className="w-10 h-10 rounded-lg bg-brand-primary/10 flex items-center justify-center font-bold font-mono text-brand-primary text-xs">
-                      MC
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between w-full">
-                        <p className="text-xs font-bold text-brand-primary">李远 - 尊贵企业</p>
-                        <span className="text-[9px] bg-green-100 text-green-600 font-bold px-1.5 rounded">
-                          协议账期授信良好
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：常州新北区太湖东路大宗1号仓库</p>
-                      <p className="text-[10px] font-mono text-[#5c62b5] font-bold mt-1">
-                        历史总合购额：¥194,500 | 累签果酒 2,400 箱
-                      </p>
-                    </div>
-                  </div>
+                <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">常州大宗交易授信契约商（{Object.keys(wholesalerCreditPeriods).length} 家）</h3>
 
-                  {/* Lead client 2 */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center font-bold font-mono text-neutral-600 text-xs text-center">
-                      WH
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between w-full">
-                        <p className="text-xs font-bold text-brand-primary">高鑫零售有限公司</p>
-                        <span className="text-[9px] bg-yellow-100 text-yellow-600 font-bold px-1.5 rounded">
-                          授信待归还校准
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-text-muted mt-0.5">默认履约库：上海浦东新区外高桥物流中心</p>
-                      <p className="text-[10px] font-mono text-[#5c62b5] font-bold mt-1">
-                        历史总合购额：¥82,100 | 累购果酒 890 箱
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-surface-lowest p-4 rounded-xl border border-surface-highest space-y-3">
+                  {Object.keys(wholesalerCreditPeriods).length === 0 ? (
+                    <p className="text-xs text-text-muted text-center py-4">暂无批发采购商，请先在「规则配置」中新增。</p>
+                  ) : (
+                    Object.entries(wholesalerCreditPeriods).map(([name, days], idx) => {
+                      const initials = name.replace(/[有限公司（()）\s]/g, '').slice(0, 2).toUpperCase();
+                      const colors = ['bg-brand-primary/10', 'bg-neutral-100', 'bg-amber-100', 'bg-blue-100', 'bg-green-100'];
+                      const colorClass = colors[idx % colors.length];
+                      const textColors = ['text-brand-primary', 'text-neutral-600', 'text-amber-600', 'text-blue-600', 'text-green-600'];
+                      const textColor = textColors[idx % textColors.length];
+                      return (
+                        <div key={name} className={`flex items-center gap-3 ${idx < Object.keys(wholesalerCreditPeriods).length - 1 ? 'border-b pb-3' : ''}`}>
+                          <div className={`w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center font-bold font-mono ${textColor} text-xs`}>
+                            {initials}
+                          </div>
+                          <div className="flex-grow">
+                            <div className="flex justify-between w-full">
+                              <p className="text-xs font-bold text-brand-primary">{name}</p>
+                              <span className="text-[9px] font-mono text-brand-secondary font-bold px-1.5">
+                                {days} 天账期
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-text-muted mt-0.5">信用账期 {days} 天 · 协议授信契约商</p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             )}
@@ -1019,6 +1015,50 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                         </div>
                       </div>
                     ))}
+
+                    {/* 新增批发商 */}
+                    <div className="bg-surface-low rounded-lg p-3 border border-dashed border-brand-secondary/40 space-y-2">
+                      <div className="flex items-center gap-1.5 text-brand-secondary">
+                        <Plus className="w-3.5 h-3.5" />
+                        <span className="text-xs font-bold">新增批发采购商</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="输入批发商名称..."
+                          className="flex-1 bg-white border border-surface-highest rounded px-2.5 py-1.5 text-xs font-sans outline-none focus:border-brand-primary"
+                          value={newWholesalerName}
+                          onChange={(e) => setNewWholesalerName(e.target.value)}
+                        />
+                        <div className="flex items-center gap-1 shrink-0">
+                          <span className="text-[10px] text-text-muted">账期</span>
+                          <input
+                            type="number"
+                            min="7"
+                            max="180"
+                            className="w-16 bg-white border border-surface-highest rounded px-2 py-1.5 text-xs font-mono text-center outline-none focus:border-brand-primary"
+                            value={newWholesalerDays}
+                            onChange={(e) => setNewWholesalerDays(parseInt(e.target.value) || 30)}
+                          />
+                          <span className="text-[10px] text-text-muted">天</span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (!newWholesalerName.trim()) {
+                              showToast('请输入批发商名称');
+                              return;
+                            }
+                            onAddWholesaler(newWholesalerName.trim(), newWholesalerDays);
+                            showToast(`已新增批发商「${newWholesalerName.trim()}」，账期 ${newWholesalerDays} 天`);
+                            setNewWholesalerName('');
+                            setNewWholesalerDays(30);
+                          }}
+                          className="shrink-0 bg-brand-secondary hover:brightness-110 text-white text-xs font-bold px-3 py-1.5 rounded transition-all"
+                        >
+                          添加
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
