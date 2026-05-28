@@ -32,6 +32,7 @@ interface SupplierViewProps {
   wholesalerCreditPeriods: Record<string, number>;
   onSetWholesalerCreditPeriod: (name: string, days: number) => void;
   onAddWholesaler: (name: string, days: number) => void;
+  onDeleteWholesaler: (name: string) => void;
 }
 
 export const SupplierView: React.FC<SupplierViewProps> = ({
@@ -47,6 +48,7 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   wholesalerCreditPeriods,
   onSetWholesalerCreditPeriod,
   onAddWholesaler,
+  onDeleteWholesaler,
 }) => {
   // Allow user to switch role on the fly inside the sandbox environment for rapid prototyping
   const [currentRole, setCurrentRole] = useState<'sales' | 'warehouse' | 'admin'>(initialRole);
@@ -89,7 +91,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
 
   // Base B2B rules states
   const [b2bMoqMultiplier, setB2bMoqMultiplier] = useState(1);
-  const [b2bWholesaleDiscount, setB2bWholesaleDiscount] = useState(5); // 5% bulk discount
   const [creditLimitDefault, setCreditLimitDefault] = useState(50000); // 50,000 credit allocation
 
   // Add wholesaler form state
@@ -928,37 +929,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     <p className="text-[10px] text-text-muted">当仓库运力极度紧张时，可适度拉升MOQ多箱整合运送以提防配载损耗。</p>
                   </div>
 
-                  {/* Pricing discounts default percentage */}
-                  <div className="space-y-1.5 border-t pt-3.5">
-                    <div className="flex justify-between">
-                      <label className="font-bold text-brand-primary block">大单协议成交折减折扣 (满签返现比例)</label>
-                      <span className="font-mono text-brand-secondary font-bold">{b2bWholesaleDiscount}% (5%返点)</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => {
-                          setB2bWholesaleDiscount(prev => Math.max(0, prev - 1));
-                          showToast('批量合同折扣已降级调差，保障工厂净利');
-                        }}
-                        className="w-8 h-8 rounded border text-lg hover:bg-surface-low font-bold"
-                      >
-                        -
-                      </button>
-                      <span className="text-xs font-mono font-bold w-12 text-center text-brand-primary">{b2bWholesaleDiscount}%</span>
-                      <button 
-                        type="button"
-                        onClick={() => {
-                          setB2bWholesaleDiscount(prev => Math.min(20, prev + 1));
-                          showToast('协议折扣上调，激发代理商大额提单冲量！');
-                        }}
-                        className="w-8 h-8 rounded border text-lg hover:bg-surface-low font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-text-muted">对满足 B2B 授信签单条件的，默认提供一键成交时折点核消。</p>
-                  </div>
-
                   {/* Defaut credit limits allocation */}
                   <div className="space-y-1.5 border-t pt-3.5">
                     <label className="font-bold text-brand-primary block">常州代理采购结算默认账户授信总额度</label>
@@ -985,10 +955,24 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                     <label className="font-bold text-brand-primary block text-xs">批发商账期配置（按批发商独立设置）</label>
                     <p className="text-[10px] text-text-muted">为每个批发商单独设置信用账期天数，到期未结算将触发逾期提醒。</p>
                     {Object.entries(wholesalerCreditPeriods).map(([name, days]) => (
-                      <div key={name} className="bg-surface-low rounded-lg p-3 border border-surface-highest space-y-2">
+                      <div key={name} className="bg-surface-low rounded-lg p-3 border border-surface-highest space-y-2 relative">
                         <div className="flex justify-between items-center">
                           <span className="text-xs font-bold text-brand-primary">{name}</span>
-                          <span className="font-mono text-brand-secondary text-[10px] font-bold">{days} 天</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-brand-secondary text-[10px] font-bold">{days} 天</span>
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`确定要删除批发商「${name}」吗？`)) {
+                                  onDeleteWholesaler(name);
+                                  showToast(`已删除批发商「${name}」`);
+                                }
+                              }}
+                              className="w-5 h-5 rounded bg-surface-lowest hover:bg-red-50 hover:text-red-500 text-text-muted flex items-center justify-center cursor-pointer transition-colors"
+                              title="删除此批发商"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
@@ -1032,41 +1016,43 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                         <Plus className="w-3.5 h-3.5" />
                         <span className="text-xs font-bold">新增批发采购商</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="space-y-2">
                         <input
                           type="text"
                           placeholder="输入批发商名称..."
-                          className="flex-1 bg-white border border-surface-highest rounded px-2.5 py-1.5 text-xs font-sans outline-none focus:border-brand-primary"
+                          className="w-full bg-white border border-surface-highest rounded px-2.5 py-1.5 text-xs font-sans outline-none focus:border-brand-primary"
                           value={newWholesalerName}
                           onChange={(e) => setNewWholesalerName(e.target.value)}
                         />
-                        <div className="flex items-center gap-1 shrink-0">
-                          <span className="text-[10px] text-text-muted">账期</span>
-                          <input
-                            type="number"
-                            min="7"
-                            max="180"
-                            className="w-16 bg-white border border-surface-highest rounded px-2 py-1.5 text-xs font-mono text-center outline-none focus:border-brand-primary"
-                            value={newWholesalerDays}
-                            onChange={(e) => setNewWholesalerDays(parseInt(e.target.value) || 30)}
-                          />
-                          <span className="text-[10px] text-text-muted">天</span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] text-text-muted">账期</span>
+                            <input
+                              type="number"
+                              min="7"
+                              max="180"
+                              className="w-16 bg-white border border-surface-highest rounded px-2 py-1.5 text-xs font-mono text-center outline-none focus:border-brand-primary"
+                              value={newWholesalerDays}
+                              onChange={(e) => setNewWholesalerDays(parseInt(e.target.value) || 30)}
+                            />
+                            <span className="text-[10px] text-text-muted">天</span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (!newWholesalerName.trim()) {
+                                showToast('请输入批发商名称');
+                                return;
+                              }
+                              onAddWholesaler(newWholesalerName.trim(), newWholesalerDays);
+                              showToast(`已新增批发商「${newWholesalerName.trim()}」，账期 ${newWholesalerDays} 天`);
+                              setNewWholesalerName('');
+                              setNewWholesalerDays(30);
+                            }}
+                            className="bg-brand-secondary hover:brightness-110 text-white text-xs font-bold px-4 py-1.5 rounded transition-all"
+                          >
+                            添加
+                          </button>
                         </div>
-                        <button
-                          onClick={() => {
-                            if (!newWholesalerName.trim()) {
-                              showToast('请输入批发商名称');
-                              return;
-                            }
-                            onAddWholesaler(newWholesalerName.trim(), newWholesalerDays);
-                            showToast(`已新增批发商「${newWholesalerName.trim()}」，账期 ${newWholesalerDays} 天`);
-                            setNewWholesalerName('');
-                            setNewWholesalerDays(30);
-                          }}
-                          className="shrink-0 bg-brand-secondary hover:brightness-110 text-white text-xs font-bold px-3 py-1.5 rounded transition-all"
-                        >
-                          添加
-                        </button>
                       </div>
                     </div>
                   </div>

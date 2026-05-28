@@ -372,6 +372,14 @@ export default function App() {
     });
   };
 
+  const handleDeleteWholesaler = (name: string) => {
+    setWholesalerCreditPeriods((prev) => {
+      const updated = { ...prev };
+      delete updated[name];
+      return updated;
+    });
+  };
+
   const handleSettleOrder = (orderId: string) => {
     const order = orders.find((o) => o.id === orderId);
     if (order) {
@@ -413,6 +421,7 @@ export default function App() {
           wholesalerCreditPeriods={wholesalerCreditPeriods}
           onSetWholesalerCreditPeriod={handleSetWholesalerCreditPeriod}
           onAddWholesaler={handleAddWholesaler}
+          onDeleteWholesaler={handleDeleteWholesaler}
         />
       );
     }
