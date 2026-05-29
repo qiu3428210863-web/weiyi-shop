@@ -862,9 +862,9 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                       </div>
                       
                       <div className="flex-grow space-y-1">
-                        <div className="flex justify-between w-full">
-                          <h4 className="text-xs font-bold text-brand-primary line-clamp-1 pr-6">{p.name}</h4>
-                          <span className="text-[9.5px] text-text-muted font-mono bg-surface-low px-1.5 rounded">{p.sku}</span>
+                        <div className="w-full">
+                          <h4 className="text-xs font-bold text-brand-primary line-clamp-1 pr-12">{p.name}</h4>
+                          <span className="text-[9.5px] text-text-muted font-mono bg-surface-low px-1.5 rounded mt-0.5 inline-block">{p.sku}</span>
                         </div>
                         <p className="text-[10px] text-text-muted font-mono leading-none">类目：{p.category === 'fruitwine' ? '果酒' : p.category === 'baijiu' ? '白酒' : p.category === 'wine' ? '红洋酒' : p.category === 'beer' ? '啤酒' : '配件'}</p>
                         <div className="flex justify-between items-center pt-1.5 border-t border-dashed">
