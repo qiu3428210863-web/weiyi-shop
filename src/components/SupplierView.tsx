@@ -58,8 +58,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   
   // Sales Tab Selector
   const [salesSubTab, setSalesSubTab] = useState<'orders' | 'exceptions' | 'customers'>('orders');
-  // Selected Order for Edit/Action Modals (Sales)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [carrier, setCarrier] = useState('顺丰速运 (B2B大宗专列)');
   const [trackingNo, setTrackingNo] = useState('SF55289947219');
   
@@ -117,7 +115,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
   const handleApplyOrderStatus = (orderId: string, status: Order['status'], logisticsCarrier?: string, code?: string) => {
     onUpdateOrderStatus(orderId, status, { carrier: logisticsCarrier, trackingNo: code });
     showToast(`订单 #${orderId.replace('order-net-', '')} 状态已更新为 ${status === 'shipping' ? '配载发货中' : '已妥投收单'}`);
-    setSelectedOrder(null);
   };
 
   // Trigger Abnormal State flag
@@ -365,10 +362,12 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                           </div>
                           <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full ${
                             ord.status === 'pending' ? 'bg-yellow-50 text-yellow-600' :
+                            ord.status === 'approved' ? 'bg-blue-50 text-blue-600' :
                             ord.status === 'shipping' ? 'bg-blue-50 text-blue-600' :
                             'bg-green-50 text-green-600'
                           }`}>
-                            {ord.status === 'pending' ? '待签认出库' :
+                            {ord.status === 'pending' ? '待审核' :
+                             ord.status === 'approved' ? '待仓库核单' :
                              ord.status === 'shipping' ? '在途配送' :
                              '妥投签收'}
                           </span>
@@ -421,18 +420,24 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                               >
                                 申控异常
                               </button>
-                              <button 
+                              <button
                                 onClick={() => {
-                                  setSelectedOrder(ord);
-                                  // Pre-fill waybill numbers
-                                  setTrackingNo(`SF${Math.floor(1000000000+Math.random()*9000000000)}`);
+                                  onUpdateOrderStatus(ord.id, 'approved');
+                                  showToast(`订单 ${ord.code} 已审核通过，已发往仓库等待核单出库`);
                                 }}
                                 className="px-4.5 py-1.5 bg-brand-primary text-white hover:bg-brand-secondary text-[10.5px] font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
                               >
                                 <CheckCircle className="w-3.5 h-3.5" />
-                                <span>签发合同并出库</span>
+                                <span>审核通过，发往仓库</span>
                               </button>
                             </>
+                          )}
+
+                          {ord.status === 'approved' && !isOrderAbnormal && (
+                            <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-3 py-1.5 rounded-lg flex items-center gap-1">
+                              <PackageOpen className="w-3.5 h-3.5" />
+                              <span>已发往仓库，待核单出库</span>
+                            </span>
                           )}
 
                           {isOrderAbnormal && (
@@ -557,14 +562,14 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                 }`}
               >
                 <PackageOpen className="w-4 h-4" />
-                <span>备货出库清单 ({orders.filter(o => o.status === 'pending').length})</span>
+                <span>备货出库清单 ({orders.filter(o => o.status === 'approved').length})</span>
               </button>
               <button
                 onClick={() => {
-                  if (orders.filter(o => o.status === 'pending').length > 0) {
-                    handleStartScanning(orders.filter(o => o.status === 'pending')[0]);
+                  if (orders.filter(o => o.status === 'approved').length > 0) {
+                    handleStartScanning(orders.filter(o => o.status === 'approved')[0]);
                   } else {
-                    showToast('当前仓库暂无待核配出库的空闲提货合同！');
+                    showToast('当前仓库暂无待核配出库的订单！');
                   }
                   setWarehouseSubTab('scanning');
                 }}
@@ -588,14 +593,14 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
                 </div>
 
                 <div className="space-y-3">
-                  {orders.filter(o => o.status === 'pending').length === 0 ? (
+                  {orders.filter(o => o.status === 'approved').length === 0 ? (
                     <div className="bg-surface-lowest p-8 rounded-xl border border-surface-highest text-center space-y-2">
                       <Check className="w-8 h-8 text-green-500 mx-auto bg-green-50 p-1 rounded-full" />
-                      <p className="text-xs font-bold text-brand-primary">已全数备料上架！暂无待发货订单</p>
-                      <p className="text-[10px] text-text-muted font-medium">前线销售人员正在积极对接新的企业客户</p>
+                      <p className="text-xs font-bold text-brand-primary">暂无待核单出库的订单</p>
+                      <p className="text-[10px] text-text-muted font-medium">业务员审核通过后的订单将出现在这里</p>
                     </div>
                   ) : (
-                    orders.filter(o => o.status === 'pending').map((ord) => (
+                    orders.filter(o => o.status === 'approved').map((ord) => (
                       <div key={ord.id} className="bg-surface-lowest border border-surface-highest p-4 rounded-xl space-y-3">
                         <div className="flex justify-between border-b pb-2">
                           <div>
@@ -1206,60 +1211,6 @@ export const SupplierView: React.FC<SupplierViewProps> = ({
               </button>
             </div>
           </form>
-        </div>
-      )}
-
-
-      {/* 2. Modal: Sales - Confirm shipment carrier details before dispatch */}
-      {selectedOrder && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-sm rounded-xl p-5 space-y-4 shadow-2xl border border-surface-highest">
-            <h3 className="font-sans text-xs font-bold text-brand-primary flex items-center gap-1.5 uppercase border-b pb-2">
-              <Truck className="w-4 h-4 text-brand-secondary" />
-              <span>分配协议大宗承运商车队</span>
-            </h3>
-
-            <div className="text-xs text-text-muted space-y-2">
-              <p>请为已经到款的企业订单 <strong>{selectedOrder.code}</strong> 签发仓储配装调拔单。并默认推送到1号仓库：</p>
-              
-              <div className="space-y-3.5 pt-2">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-text-primary block">配送车队承运名</label>
-                  <input 
-                    type="text" 
-                    className="w-full text-xs font-sans p-2 border border-surface-highest rounded bg-surface-low"
-                    value={carrier}
-                    onChange={(e) => setCarrier(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-text-primary block">预分配物流单号</label>
-                  <input 
-                    type="text" 
-                    className="w-full text-xs font-mono p-2 border border-surface-highest rounded bg-surface-low font-bold"
-                    value={trackingNo}
-                    onChange={(e) => setTrackingNo(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t">
-              <button
-                onClick={() => setSelectedOrder(null)}
-                className="py-2 BG-surface-low hover:bg-surface-highest text-xs rounded-lg text-text-muted cursor-pointer font-bold"
-              >
-                取消
-              </button>
-              <button
-                onClick={() => handleApplyOrderStatus(selectedOrder.id, 'shipping', carrier, trackingNo)}
-                className="py-2 bg-brand-primary hover:bg-brand-secondary text-white text-xs rounded-lg shadow-md cursor-pointer font-bold"
-              >
-                签审并交仓库出货
-              </button>
-            </div>
-          </div>
         </div>
       )}
 

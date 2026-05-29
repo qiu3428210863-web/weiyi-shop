@@ -34,7 +34,7 @@ export interface Order {
   code: string;
   date: string;
   createdAt: string; // ISO date string for credit period calculation
-  status: 'pending' | 'shipping' | 'completed';
+  status: 'pending' | 'approved' | 'shipping' | 'completed';
   items: {
     productId: string;
     quantity: number; // boxes purchased

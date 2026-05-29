@@ -34,6 +34,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
 
   const filteredOrders = React.useMemo(() => {
     if (activeTab === 'all') return orders;
+    if (activeTab === 'pending') return orders.filter((o) => o.status === 'pending' || o.status === 'approved');
     return orders.filter((o) => o.status === activeTab);
   }, [orders, activeTab]);
 
@@ -51,6 +52,12 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
         return (
           <span className="px-2 py-0.5 bg-brand-secondary/15 text-brand-secondary text-[10px] font-bold rounded tracking-wide">
             待处理
+          </span>
+        );
+      case 'approved':
+        return (
+          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded tracking-wide">
+            待仓库发货
           </span>
         );
       case 'shipping':

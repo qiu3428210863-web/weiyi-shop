@@ -288,6 +288,8 @@ export default function App() {
     setUserRole(role);
     setLoggedInName(name);
     setAppState('authenticated');
+    setActiveTab('home');
+    setSelectedProduct(null);
   };
 
   const handleLogout = () => {
