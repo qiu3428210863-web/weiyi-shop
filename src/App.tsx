@@ -20,7 +20,9 @@ import { Home, ClipboardCheck, User as UserIcon } from 'lucide-react';
 
 export default function App() {
   // B2B Dynamic Portals & Authentication States
-  const [appState, setAppState] = useState<'splash' | 'login' | 'authenticated'>('splash');
+  const [appState, setAppState] = useState<'splash' | 'login' | 'authenticated'>(
+    localStorage.getItem('lx_hasSeenSplash') ? 'login' : 'splash'
+  );
   const [userRole, setUserRole] = useState<'wholesaler' | 'sales' | 'warehouse' | 'admin'>('wholesaler');
   const [loggedInName, setLoggedInName] = useState<string>('');
 
@@ -395,6 +397,7 @@ export default function App() {
     // 1. Splash Page Layer
     if (appState === 'splash') {
       return <SplashView onEnter={() => {
+            localStorage.setItem('lx_hasSeenSplash', '1');
             setAppState('login');
           }} />;
     }
